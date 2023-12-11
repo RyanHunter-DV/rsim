@@ -1,0 +1,48 @@
+busDefinition 'vendor/lib/RxPorts/1.0' do
+  directConnection true
+  isAddressable false
+  # maxMasters 1
+  # maxSlaves 1 # by default is 1, don't need to declare this
+  maxClients :slave => 1, :master => 1
+end
+
+abstractionDefinition 'vendor/lib/RxPorts/1.0' do
+	busRef 'vendor/lib/RxPorts/1.0'
+	wire 'clk',:isClock do
+		onSystem :group=>:clock,:width=>1,:direction=>:out
+		onMaster :presence=>:required,:direction=>:in
+		onSlave  :presence=>:required,:direction=>:in
+	end
+	wire 'rst',:isReset do
+		onMaster :presence=>:required, :direction=>:in
+		onSlave  :presence=>:required, :direction=>:in
+	end
+	wire 'rx',:isData do
+		onMaster :presence=>:required, :direction=>:in
+		onSlave  :presence=>:required, :direction=>:out
+	end
+	wire 'rxDone',:isData do
+		onMaster :presence => :required,:direction=>:out
+		onSlave  :presence => :required,:direction=>:in
+	end
+	wire 'rxData',:isData do
+		onMaster :width=>8, :presence=>:required, :direction => :out
+		onSlave  :width=>8, :presence=>:required, :direction => :in
+	end
+end
+
+component 'vendor/lib/Rx/1.0' do
+	busInterface 'rif' do
+		busRef 'vendor/lib/RxPorts/1.0'
+		abstractionRef 'vendor/lib/RxPorts/1.0'
+		portMap do
+			#TODO, direct api can be used to map directly with the same name and same bits vector from logical to physical.
+			l2p :clk=>:clk_200m
+			l2p :rst=>:sys_rst
+			l2p :rx=>:rx
+			l2p :rxDone=>:rx_done
+			# lhs (left hand side bit vector), rhs (right hand side bit vector)
+			l2p :rxData=>:rx_data,:lhs=>[7,0],:rhs=>[7,0]
+		end
+	end
+end
