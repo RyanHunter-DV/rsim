@@ -1,0 +1,22 @@
+config :FuncConfig do
+	#TODO, generatorConfig xxx
+	# compiler :eda=>'vcs'
+	# compiler :compOpts=>'+define+XXXX'
+	buildflow :typevalue=>'value'
+	compileflow :elabOpts=>['value','value2'...]
+	compileflow :compOpts=>['value','value2'...]
+	compileflow :eda=>'vcs' # by default is vcs
+	design.rx.generator, :typevalue=>'value'
+
+	need :uart, :view=>:rtl
+	need :tb, :view=>:sim
+end
+config :RtlOnly do
+	need :uart,:view=>:rtl
+	compileflow :compOpts=>['+define+SYNTHESIS']
+end
+config :PvEvaluate do
+	need :uart,:view=>:sim
+	need :tb,:view=>:sim
+	...
+end

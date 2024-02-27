@@ -1,0 +1,40 @@
+# define reg typed internal net.
+reg 'rxbuf',1
+reg 'rxfall',1
+...
+
+ff('clk'=>:posedge) do
+	assign rxbuf=>rxif.rx,rxfall=>'rxbuf & (~rx)'
+	v :block, <<-CODE
+		.if (rxfall && (~idle)) begin
+		.	receive <= 1'b1;
+		.end else if (cnt==8'd168) begin
+		.	receive <= 1'b0;
+		.end
+	CODE
+end
+
+ff('clk'=>:posedge) do
+	codes = <<-CODE
+		.if (receive==1'b1) begin
+		.	case (cnt)
+	CODE
+	caseCount=[0];
+	countIncr="cnt <= cnt + 8'd1;";
+	doutrx = -> {|pos| return "dataout[#{pos}] <= rx;"}
+	doutv = {24=>0,40=>1,}; #TODO
+	rdsigv= {0=>0,24=>0,136=>1}; #TODO, more cnt
+	caseCount.each do |v|
+		b = <<-CODE
+			.		8'd#{v}: begin
+			.			idle <= 1'b1;
+			.			#{countIncr}
+			.			rdsig <= 1'b#{rdsigv[v]};
+		CODE
+		b+= "\n.			#{doutrx(doutv[v])}" if doutv.has_key?(v);
+		b+= "\n.		end"
+		... #TODO
+	end
+
+	v :block,codes
+end

@@ -1,0 +1,14 @@
+wire 'en',1
+instance 'Ryan/UartLib/UartRx/1.0', :as=>'rx' do
+	connect {
+		rx.rxDone=>en[0],
+		... #TODO, more connections, if not mnually specified, then will connect like: rx.portname => portname
+	}
+end
+
+instance 'Ryan/UartLib/UartTx/1.0', :as=>'tx' do
+	connect {
+		tx.rxDone=>en[0],
+		...
+	}
+end

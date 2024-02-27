@@ -1,0 +1,9 @@
+rhload 'buildflow'
+rhload 'compileflow'
+rhload 'testflow'
+
+generator 'execute' do
+	#TODO
+	flow = ['build','compile','run']
+	if skipped['build'] flow.delete('build') ...
+end

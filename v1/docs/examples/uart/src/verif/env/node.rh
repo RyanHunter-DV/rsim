@@ -1,0 +1,12 @@
+component 'Ryan/UartDvLib/TbEnv/1.0' do
+	generator 'BuildLink' do
+		#TODO, following is built-in set by Generator mechanism.
+		parameter :set, :original=>parent.srcLocation[:root]
+		parameter :set, :target=>parent.outLocation[:root]
+	end
+	model do
+		view :sim do
+			fileSet 'UartTbEnv.sv'
+		end
+	end
+end

@@ -1,0 +1,59 @@
+# The bus command used to generate the busDefinition and abstractionDefinition information
+# as in IP-XACT flow
+bus 'RyanH/UartLib/UartTxRxBus/1.0' do
+	desc """
+		The description of bus, support multiple line inputs.
+		This is the bus/abstraction definition of the UartRx
+	"""
+	extends '' # no extends, it's optional command
+	wire 'clk' do
+		is :clock # :reset, :address, :data
+		# the width and group feature can be specified by the onSystem command.
+		# Then for onMaster/onSlave won't specify it again.
+		onSystem :direction=>:out,:width=>1,:group=>'clock'
+		onMaster :direction=>:in
+		onSlave  :direction=>:in
+	end
+	wire 'resetn' do
+		is :reset
+		onSystem :direction=>:out,:width=>1,:group=>'reset'
+		onMaster :direction=>:in # by default present is true
+		onSlave  :direction=>:in
+	end
+	wire 'rx' do
+		is :data
+		#onSystem :width=>1
+		onMaster :present=>false
+		onSlave  :present=>true,:direction=>:in,:width=>1
+	end
+	wire 'dout' do
+		is :data
+		#onSystem :direction=>:out,:width=>8
+		onMaster :present=>false
+		onSlave  :present=>true, :direction=>:out,:width=>8
+	end
+	wire 'rxDone' do
+		is :data
+		desc "signal to indicate one byte been received"
+		#onSystem :direction=>:out,:width=>1
+		onSlave  :present=>true,:direction=>:out,:width=>1
+		onMaster :present=>true,:direction=>:in,:width=>1
+	end
+	wire 'tx' do
+		is :data
+		onMaster :present=>true,:direction=>:out,:width=>1
+		onSlave  :present=>false
+	end
+	#wire 'dataError' do
+	#	is :data
+	#	onSystem :direction=>:out,:width=>1
+	#	onMaster :direction=>:out
+	#	onSlave  :direction=>:in
+	#end
+	#wire 'frameError' do
+	#	is :data
+	#	onSystem :direction=>:out,:width=>1
+	#	onMaster :direction=>:out
+	#	onSlave  :direction=>:in
+	#end
+end

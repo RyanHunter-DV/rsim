@@ -1,0 +1,5 @@
+
+generator 'compiler' do
+	exe '<path>/compileflow'
+	group 'compile'
+end

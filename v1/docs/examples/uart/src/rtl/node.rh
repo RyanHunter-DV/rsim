@@ -1,0 +1,32 @@
+rhload 'rx/node' # loading within current path first, if not found then loading others
+rhload 'tx/node'
+component 'Ryan/UartLib/UartRtl/1.0' do
+	
+	#TODO, channel 'RyanH/UartLib/UartRxBus/1.0', :as=>'rxif'
+	#TODO, channel 'RyanH/UartLib/UartTxBus/1.0', :as=>'txif'
+
+	busInterface 'RyanH/UartLib/UartTxRxBus/1.0'
+
+	generator 'verilog-builder' do
+		parameter :set, :src=>parent.fileSets #TODO, need detailed code to add filesets as the src parameter.
+		parameter :set, :lib=>[parent.vlnv(:lib),'RtlCommonLib']
+	end
+
+
+	fileSet 'rtl-fs' do
+		source 'UartTop.vsrc'
+	end
+	model do
+		view 'rtl' do
+			fileSet 'fs-rtl'
+			# subComponent shall be within view since different view may have different sub components
+			# if the verilog-builder can support auto instance, then the subComponent no is not required.
+			#TODO, subComponent 'RyanH/UartLib/UartRx/1.0', :as=>'urx',:view=>'rtl' do
+			#TODO, 	#TODO, block for instance operations such as RTL connection.
+			#TODO, 	rtlConnect :byDefault
+			#TODO, end
+		end
+		view 'shell' do
+		end
+	end
+end

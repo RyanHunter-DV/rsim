@@ -1,0 +1,6 @@
+design 'Ryan/UartLib/Uart/1.0' do
+	component 'Ryan/UartLib/UartRtl/1.0', as: :uart
+	component 'Ryan/UartDvLib/UartTb/1.0', as: :tb
+	component 'Ryan/UartDvLib/UartTbEnv/1.0', as: :env
+	component 'Ryan/UartDvLib/UartTests/1.0', as: :tests
+end

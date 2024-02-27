@@ -1,0 +1,21 @@
+# the name of VLNV will be the module name.
+component 'Ryan/UartLib/UartRx/1.0' do
+	busInterface 'RyanH/UartLib/UartTxRxBus/1.0', :isSlave
+	generator 'RhHdlBuilder' do
+		parameter :set, :src=>fileSets #TODO, need detailed code to add filesets as the src parameter.
+		parameter :set, :lib=>[parent.vlnv(:lib),'RtlCommonLib']
+	end
+	model do
+		view 'rtl' do
+# TODO, used for a component view to contain a design, mostly used by a SoC level component to include the IP's design
+# TODO, not used in this UartRx component.
+# TODO, hierchyRef 'v/l/n/v' 
+			fileSet 'uartrx.vsrc' #TODO
+		end
+		view 'shell' do
+		end
+		view 'sim' do
+			fileSet 'uartrx.vsim' #TODO, for sim module, will be simply logical behavior and cannot synthesis.
+		end
+	end
+end

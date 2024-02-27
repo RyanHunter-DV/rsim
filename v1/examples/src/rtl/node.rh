@@ -44,5 +44,11 @@ component 'vendor/lib/Rx/1.0' do
 			# lhs (left hand side bit vector), rhs (right hand side bit vector)
 			l2p :rxData=>:rx_data,:lhs=>[7,0],:rhs=>[7,0]
 		end
+		model do
+			view :rtl do
+				wire 'clk_200m',
+				
+			end
+		end
 	end
 end
