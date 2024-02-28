@@ -27,7 +27,7 @@ module Rsim
 	## self.dispatcher, return the dispatch manager for threads control, just like plugin/node...
 	def self.dispatcher; ##{{{
 		puts "#{__FILE__}:(self.dispatcher) is not ready yet."
-		@dp=DispatchManager.new if @dp==nil;
+		@dp=ThreadController.new if @dp==nil;
 		return @dp;
 	end ##}}}
 
@@ -47,17 +47,17 @@ module Rsim
 	# 7. run if has
 	def self.run; ##{{{
 		ui = self.userInterface;
-		pm = self.plugin;
-		nm = self.node;
 		begin
 			ui.checkEnvValues;
 			ui.processUserInputs;
-			pm.loading(ui); ##TODO, require loading api from plugin/node manager.
-			nm.loading(ui);
+			self.plugin.loading(ui); ##TODO, require loading api from plugin/node manager.
+			self.node.loading(ui);
 
 			#TODO, after the plugins are loaded and setup according to ui, it's ready to execute
 			# the plugins.
-			pm.execute(self.dispatcher);
+			# Call plugin manager's execute can start executing plugins in different phase, and each plugin
+			# will have different steps.
+			self.plugin.execute(self.dispatcher);
 		end
 	end ##}}}
 
