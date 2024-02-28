@@ -1,71 +1,18 @@
-generator 'BuildFlow' do
-	root
-	group 'build'
-	transportMethod :SOAP
-	selector 'BuildRtl', :phase=>0
-	selector 'BuildVerify', :phase=>1
-end
-
-generator 'BuildRtl' do
-	#TODO, group 'build'
-	# TODO, no exe, only execute the selected generators, exe '<path>/rtl-builder'
-	MetaData.design.components.each do |c|
-		next if c.componentType!=:rtl;
-		g=c.generator
-		if g==nil
-			selector 'BuildLink',:target=>c,:phase=>0
-		else
-			selector g,:target=>c,:phase=>g.phase
+flow :buildflow do
+	step 'pre-run' do
+		#TODO, xxx
+	end
+	step :run do
+		after 'pre-run',:blocked=>true;
+		# call to run the metadata's generator chain.
+		# the step running context is in current flow.
+		exe do
+			MetaData.generator(:build).run
 		end
 	end
-	# actions that the generator will be called.
-	# calling like: g.actions.each do |b| b.call end
-	# TODO, not used, action :run do
-	# TODO, not used, end
-end
-
-generator 'BuildVerify' do
-	#TODO, group 'build'
-	Rsim.design.components.each do |c|
-		next if c.componentType!=:verify;
-		g=c.generator
-		if g==nil
-			selector 'BuildLink',:target=>c,:phase=>0
-		else
-			selector g,:target=>c,:phase=>g.phase
-		end
+	step 'post-run' do
+		#TODO, xxx
+		after 'run',:blocked=>true;
+		# if no exe specifeid, this is a dummy step, which will not be registered into flow
 	end
-end
-
-# the default copy builder, which will directly copy files from source to target.
-generator 'BuildCopy' do
-	group 'build'
-	exe '<path>/cp'
-	## TODO, if following option declaration required?
-	## TODO, option :src, :required
-	## TODO, option :target, :required
-	parameter :support,:options=>:optional,:priority=>0
-	parameter :support,:src=>:mandatory,:priority=>1
-	parameter :support,:target=>:mandatory,:priority=>2
-end
-
-# generator to build a link in out from source.
-generator 'BuildLink' do
-	group 'build'
-	exe '<path>/ln' #TODO, need realpath.
-	# declare built-in options required whenever it's called
-	# :priority opt is used for the position it shall be placed while build *.cmd
-	# :support, to add a supported option, :mandatory require a component to specify the parameter once its been used.
-	parameter :support,:original=>:mandatory,:priority=>1
-	parameter :support,:target=>:mandatory,:priority=>2
-	parameter :support,:SymbolLink=>:mandatory,:priority=>0
-	# :set, to set a parameter with a given string value.
-	parameter :set, :SymbolLink=>'-s'
-	# command format: ln -s <original> <target>
-end
-
-generator 'RhHdlBuilder' do
-	group 'build'
-	exe '<path>/verilog-builder'
-	parameter :support,:src=>:mandatory,:priority=>0
 end

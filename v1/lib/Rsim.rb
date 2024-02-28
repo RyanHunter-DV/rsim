@@ -2,6 +2,9 @@
 # The very top level of the whole Rsim tool.
 # ----------------------------------------------------------------------------------------------
 
+# The LOAD_PATH of this Rsim tool is ~/rsim/v1/
+require 'lib/xxx'
+require 'ipxact/xxx'
 module Rsim
 
 	## plugin, returns the instance variable of plugin manager in this tool.
