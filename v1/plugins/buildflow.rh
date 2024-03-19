@@ -1,4 +1,5 @@
 flow :buildflow do
+	api :build
 	step 'pre-run' do
 		#TODO, xxx
 	end
@@ -6,8 +7,10 @@ flow :buildflow do
 		after 'pre-run',:blocked=>true;
 		# call to run the metadata's generator chain.
 		# the step running context is in current flow.
-		exe do
-			MetaData.generator(:build).run
+		action do
+			# options coming from the call of build in Rsim tool, like: build(:Config)
+			# MARKER, 
+			MetaData.generator(:build).run(@options[:config]);
 		end
 	end
 	step 'post-run' do
