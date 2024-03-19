@@ -8,7 +8,7 @@ require 'ipxact/xxx'
 module Rsim
 
 	## plugin, returns the instance variable of plugin manager in this tool.
-	def self.plugin; ##{{{
+	def self.plugins; ##{{{
 		@pm = PluginManager.new if @pm==nil;
 		return @pm;
 	end ##}}}
@@ -21,7 +21,7 @@ module Rsim
 	end ##}}}
 
 	## self.nm, return the tool's node namager.
-	def self.node; ##{{{
+	def self.nodes; ##{{{
 		puts "#{__FILE__}:(self.nm) is not ready yet."
 		@nm=NodeManager.new if @nm==nil;
 		return @nm;
@@ -30,8 +30,30 @@ module Rsim
 	## self.dispatcher, return the dispatch manager for threads control, just like plugin/node...
 	def self.dispatcher; ##{{{
 		puts "#{__FILE__}:(self.dispatcher) is not ready yet."
-		@dp=ThreadController.new if @dp==nil;
+		@dp=Dispatcher.new if @dp==nil;
 		return @dp;
+	end ##}}}
+
+	## self.init, initialization of Rsim tool.
+	def self.init; ##{{{
+		ui = self.userInterface;
+		ui.checkEnvValues;
+		ui.processUserInputs;
+		self.dispatcher.init(:maxJobs=>ui.maxJobs);
+		self.plugins.loading(ui); ##TODO, require loading api from plugin/node manager.
+		self.nodes.loading(ui);
+	end ##}}}
+	## self.execute(), 
+	# execute the Rsim tool according to ui commands
+	# args:
+	# - commands is array type arranged by the UserInterface.
+	# ['build(:Config)','compile(:Config)']
+	def self.execute(commands); ##{{{
+		self.plugins.execute(commands);
+		commands.each do |dc|
+			cmdS = %Q|Rsim.plugins.#{dc}|;
+			self.instance_eval cmdS;
+		end
 	end ##}}}
 
 	## The main entry of Rsim tool, ##{{{
@@ -49,18 +71,10 @@ module Rsim
 	# 6. compile if has
 	# 7. run if has
 	def self.run; ##{{{
-		ui = self.userInterface;
 		begin
-			ui.checkEnvValues;
-			ui.processUserInputs;
-			self.plugin.loading(ui); ##TODO, require loading api from plugin/node manager.
-			self.node.loading(ui);
-
-			#TODO, after the plugins are loaded and setup according to ui, it's ready to execute
-			# the plugins.
-			# Call plugin manager's execute can start executing plugins in different phase, and each plugin
-			# will have different steps.
-			self.plugin.execute(self.dispatcher);
+			self.init;
+			ui=self.userInterface;
+			self.execute(ui.commands);
 		end
 	end ##}}}
 
