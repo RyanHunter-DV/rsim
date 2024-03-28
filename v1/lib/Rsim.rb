@@ -37,23 +37,13 @@ module Rsim
 	## self.init, initialization of Rsim tool.
 	def self.init; ##{{{
 		ui = self.userInterface;
+		dp = self.dispatcher;
 		ui.checkEnvValues;
 		ui.processUserInputs;
-		self.dispatcher.init(:maxJobs=>ui.maxJobs);
-		self.plugins.loading(ui); ##TODO, require loading api from plugin/node manager.
+		dp.init(:maxJobs=>ui.maxJobs);
+		self.plugins.init(dp,ui); ##TODO, require loading api from plugin/node manager.
 		self.nodes.loading(ui);
-	end ##}}}
-	## self.execute(), 
-	# execute the Rsim tool according to ui commands
-	# args:
-	# - commands is array type arranged by the UserInterface.
-	# ['build(:Config)','compile(:Config)']
-	def self.execute(commands); ##{{{
-		self.plugins.execute(commands);
-		commands.each do |dc|
-			cmdS = %Q|Rsim.plugins.#{dc}|;
-			self.instance_eval cmdS;
-		end
+		@simulator = Simulator.new();
 	end ##}}}
 
 	## The main entry of Rsim tool, ##{{{
@@ -73,8 +63,10 @@ module Rsim
 	def self.run; ##{{{
 		begin
 			self.init;
+			MetaData.finalize; # after loading nodes, need to finalize the data base
+			@simulator.setup; # setup simulator by User options in MetaData.
 			ui=self.userInterface;
-			self.execute(ui.commands);
+			self.plugins.execute(ui.commands);
 		end
 	end ##}}}
 

@@ -1,0 +1,42 @@
+flow :regressionflow do
+	api :regression do |**opts|
+		@plugins[:regressionflow].options=opts;
+		@plugins[:regressionflow].run;
+	end
+
+	step :build_db do
+		#1. search all configs of the given tag.
+		configs = MetaData.searchConfigsByTag(@options[:tag]);
+		#2. call plugins.build(:config) ...
+		configs.each do |config|
+			action :proc do
+				Rsim.plugins.build(config.to_sym);
+			end
+		end
+	end
+
+	step :compile do
+		after :build_db
+		configs = MetaData.searchConfigsByTag(@options[:tag]);
+		configs.each do |config|
+			action :proc do
+				Rsim.plugins.compile(config.to_sym);
+			end
+		end
+	end
+
+	step :multiple_sim do
+		after :compile
+		# searchTestsByTag will return testnames of the given tag
+		tests = MetaData.testnamesByTag(@options[:tag]);
+		tests.each do |t|
+			action :proc do
+				Rsim.plugins.runtest(t.to_sym);
+			end
+		end
+	end
+	step :post_regression_process do
+		#TODO, can add actions such as process the regression results etc.
+	end
+
+end

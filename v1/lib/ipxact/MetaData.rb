@@ -9,5 +9,11 @@ module MetaData
 	@design= nil;
 	@generators={};
 
+	# path stored.
+	# [:components] => 'OUT/components'
+	# [:ComponentName] => 'OUT/components/ComponentName'
+	# [:configs] => 'OUT/configs'
+	# [:ConfigName] => 'OUT/configs/ConfigName'
+	@outs = {};
 
 end

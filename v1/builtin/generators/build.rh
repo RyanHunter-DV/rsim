@@ -1,0 +1,9 @@
+generator 'copy' do
+	exe '/bin/cp'
+	run do |o|
+		o.fileSets.each do |src|
+			t=o.out;
+			cmd src,t;
+		end
+	end
+end

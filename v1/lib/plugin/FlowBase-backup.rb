@@ -19,8 +19,3 @@ class FlowBase
 		#- s.dispatch
 	end ##}}}
 end
-
-## flow(name,&block), global method to create a new flow
-def flow(name,&block) ##{{{
-	# TODO
-end ##}}}

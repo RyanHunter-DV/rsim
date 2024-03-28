@@ -13,6 +13,13 @@ class Component ##{{{
 	end ##}}}
 
 	## -- Supported commands for user nodes ##{{{
+	## generator(name), 
+	# specify a generator name.
+	# block used to declare extra parameters for the generator.
+	def generator(name,&block); ##{{{
+		puts "#{__FILE__}:(generator(name)) is not ready yet."
+		
+	end ##}}}
 
 	## }}}
 

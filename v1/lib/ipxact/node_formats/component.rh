@@ -1,0 +1,10 @@
+ component 'vlnv' do
+	# specify which generator to use by this component.
+	generator 'name' do
+		# specify parameter of this generator.
+		param 'var' => 'value'
+	end
+	# specify model configurations within this component
+	model do
+	end
+end

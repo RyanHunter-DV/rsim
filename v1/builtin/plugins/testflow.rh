@@ -1,0 +1,44 @@
+flow :testflow do
+	api 'runtest' do |**opts|
+		@plugins[:testflow].options=opts;
+		@plugins[:testflow].run;
+	end
+
+	step :pre_test do
+	end
+
+	step :build_test_cmd do
+		after :pre_test
+		s=Rsim.simulator;
+		steps=s.steps(:sim);
+		steps.each do |step|
+			action :exe do
+				testname = @options[:test].to_sym;
+				cd=MetaData.outs[testname];
+				testCmd = %Q|#{s.eda}_#{step}.cmd|;
+				cmd = %Q|cd #{cd};touch #{testCmd};echo "#{s.command(step)}" > #{testCmd}|
+				cmd; # return the result of block
+			end
+		end
+	end
+
+	step :test do
+		after :build_test_cmd
+		s=Rsim.simulator;
+		steps=s.steps(:sim);
+		steps.each do |step|
+			action :exe do
+				testname = @options[:test].to_sym;
+				cd=MetaData.outs[testname];
+				testCmd = %Q|#{s.eda}_#{step}.cmd|;
+				cmd = %Q|cd #{cd};source #{testCmd}|;
+				cmd;
+			end
+		end
+	end
+
+	step :post_test do
+		after :test
+	end
+
+end

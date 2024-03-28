@@ -47,8 +47,15 @@ component 'vendor/lib/Rx/1.0' do
 		model do
 			view :rtl do
 				wire 'clk_200m',
-				
 			end
 		end
+	end
+	# specify which generator to use by this component.
+	generator 'name' do
+		# specify parameter of this generator.
+		param 'var' => 'value'
+	end
+	# specify model configurations within this component
+	model do
 	end
 end
