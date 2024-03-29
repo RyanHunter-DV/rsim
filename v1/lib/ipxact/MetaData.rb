@@ -16,4 +16,23 @@ module MetaData
 	# [:ConfigName] => 'OUT/configs/ConfigName'
 	@outs = {};
 
+	## registerBus(o), description
+	def registerBus(o); ##{{{
+		puts "#{__FILE__}:(registerBus(o)) is not ready yet."
+		raise UserNodeException.new("bus(#{o.vlnv}) defined multiple times") if @busDefinitions.has_key?(o.vlnv);
+		@busDefinitions[o.vlnv]=o;
+	end ##}}}
+
+	## self.register(obj), 
+	# according to obj.datatype, select to register into local pool.
+	# the obj must be extends of IpXactData
+	def self.register(obj); ##{{{
+		puts "#{__FILE__}:(self.register(obj)) is not ready yet."
+		if obj.datatype
+			msg = "register#{obj.datatype.capitalize}".to_sym;
+			self.send(msg,obj);
+		else
+			raise ToolFatalException.new("MetaData's register called by an object without IpXactData")
+		end
+	end ##}}}
 end
