@@ -4,7 +4,7 @@ IpXactData, base and common object for IP-XACT
 """
 class IpXactData ##{{{
 	
-	attr_accessor :datatype;
+	attr :datatype;
 	attr :nodes;
 	attr :desc;
 	## initialize(t), description
@@ -13,6 +13,10 @@ class IpXactData ##{{{
 		@datatype=t.to_sym;
 		@nodes=[];
 		@desc='';
+	end ##}}}
+	## datatype, return the string typed datatype
+	def datatype; ##{{{
+		return @datatype.to_s;
 	end ##}}}
 
 	## addUserNode(b), description

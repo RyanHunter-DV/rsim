@@ -22,6 +22,12 @@ module MetaData
 		raise UserNodeException.new("bus(#{o.vlnv}) defined multiple times") if @busDefinitions.has_key?(o.vlnv);
 		@busDefinitions[o.vlnv]=o;
 	end ##}}}
+	## registerComponent(o), 
+	# called by self.register, specific operations while registering the Component object
+	def registerComponent(o); ##{{{
+		puts "#{__FILE__}:(registerComponent(o)) is not ready yet."
+		#TODO
+	end ##}}}
 
 	## self.register(obj), 
 	# according to obj.datatype, select to register into local pool.
