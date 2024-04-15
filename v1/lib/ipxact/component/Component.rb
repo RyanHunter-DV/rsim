@@ -5,7 +5,7 @@ Represents the IP-XACT component, created by the global component command, which
 in user nodes.
 """
 require 'lib/ipxact/IpXactData.rb'
-require 'lib/ipxact/ComponentModel.rb'
+require 'lib/ipxact/component/ComponentModel.rb'
 class Component < IpXactData ##{{{
 
 	attr_accessor :vlnv;
