@@ -5,16 +5,14 @@ BusDefinition, object to define the bus interface data
 """
 class BusDefinition < IpXactData ##{{{
 	
-	attr :vlnv;
 	attr :addressable;
 	attr :max;
 	## initialize, description
 	def initialize(n); ##{{{
-		puts "#{__FILE__}:(initialize) is not ready yet."
-		vlnv=n.to_s;
 		addressable=false;
 		@max={:master=>1,:slave=>1}; # default
-		super(:bus);
+		vlnv=n.to_s;setupNameId(vlnv,:vlnv);
+		super(:busDefinition);
 	end ##}}}
 
 	## isAddresable(v), set the addressable field to v
@@ -32,6 +30,11 @@ class BusDefinition < IpXactData ##{{{
 		puts "#{__FILE__}:(maxSlaves(num)) is not ready yet."
 		@max[:slave]=num;
 	end ##}}}
+
+
+	def finalize
+		evalUserNodes(self);
+	end
 
 end ##}}}
 ## busDefinition(name,&block), define a new busDefinition by user nodes.
@@ -57,8 +60,7 @@ class AbstractionDefinition < IpXactData ##{{{
 	## initialize(n), 
 	#
 	def initialize(n); ##{{{
-		puts "#{__FILE__}:(initialize(n)) is not ready yet."
-		super(:abstraction);
+		super(:abstractionDefinition);
 		@busRef='';
 		@ports={};
 	end ##}}}

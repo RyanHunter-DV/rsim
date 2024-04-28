@@ -5,7 +5,7 @@ plugin files, such as buildflow, compileflow ...
 """
 # require 'lib/plugin/FlowBase.rb'
 require 'lib/plugin/FlowStep.rb'
-class Plugin ##{{{
+class Plugin
 	attr :options; # options required to call different actions.
 	attr :dp; # dispatcher
 	# format: steps[:name] => object
@@ -92,4 +92,4 @@ class Plugin ##{{{
 	end ##}}}
 	# }}}
 
-end ##}}}
+end

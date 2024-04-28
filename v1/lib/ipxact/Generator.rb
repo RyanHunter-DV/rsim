@@ -13,7 +13,7 @@
 # Object description:
 Generator,
 """
-class Generator ##{{{
+class Generator
 
 	attr :exe;
 	attr :action;
@@ -43,8 +43,11 @@ class Generator ##{{{
 
 	## cmd(s), execute the given command string with given args, the executor is in @exe
 	def cmd(*args); ##{{{
-		puts "#{__FILE__}:(cmd(s)) is not ready yet."
-		s = Command.new(%Q|#{@exe} #{*args}|,:external);
+		as='';
+		args.each do |a|
+			as+=" #{a}";
+		end
+		s = Command.new(%Q|#{@exe} #{as}|,:external);
 		@dp.schedule(s);
 	end ##}}}
 
@@ -59,7 +62,7 @@ class Generator ##{{{
 	end ##}}}
 
 	
-end ##}}}
+end
 
 ## generator(name,&block), 
 # provided by global, to create a new generator definition in MetaData scope.

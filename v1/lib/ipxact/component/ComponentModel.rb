@@ -17,7 +17,7 @@ class ComponentModel ##{{{
 	# support opts:
 	# -:width=>[l,r]
 	# -:displayName=>'xxx'
-	def wire(id,dir,**opts={}); ##{{{
+	def wire(id,dir,**opts); ##{{{
 		#TODO, this WirePort type will be the same class as the port object in busDefinition, plan to redefine the WirePort object.
 		# id is mandatory and for the portName in IP-XACT.
 		# 1.build a WirePort object

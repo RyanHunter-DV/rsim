@@ -1,14 +1,8 @@
 # Design description
 #reference/dv/ipxact/design 
 ## elements
-- [x] versionedIdentifier, vlnv
-- [x] componentInstance
-- [x] interconnections
-- [x] adHocInterconnections
-- [x] hierConnections
-- [x] description
 
-**componentInstance**:
+### componentInstance
 - instanceName, the instance name, unique within this design.
 - displayName, for short display.
 - description, description for this instance.
@@ -20,7 +14,12 @@ all parameters are available in component level, by which means a component.view
 ```xml
 <spirit:configurableElementValue spirit:referenceId="TPRESC">22</spirit:configurableElementValue>
 ```
-**interconnections**:
+
+*strategies on Rsim*:
+can use instance command on a design to instance the specified component, like:
+`instance <component vlnv>, as: :<instance name>`
+
+### interconnections
 contains a boundle of ==interconnection== and/or ==monitorInterconnection==.
 interconnection, specify the component instance and the bus reference of that component
 ```xml
@@ -46,7 +45,7 @@ needs to exist in the current design. The path attribute is of type instancePath
 
 **adHocConnection**:
 - [x] what's encompassing component?
-when the design is integrated to upper leve, then it will be treated as a component, the encompassing component means the component whose view refered this design. (hierarchical mechanism)
+when the design is integrated to upper level, then it will be treated as a component, the encompassing component means the component whose view referred this design. (hierarchical mechanism)
 `<nameGroup>`, specify the connection of this name.
 ```xml
 <!-- connect ports from component instance, to upper level -->
@@ -63,4 +62,23 @@ used to connect bus interfaces within this design to upper level when the design
 <hierConnection interfaceRef='xxx'> <!-- interface name that used by upper level when this design is instantiated as a component -->
 	<activeInterface componentRef='xxx',busRef='xxx'/>
 </hierConnection>
+```
+
+*strategies on Rsim*:
+Interconnection with a component instance will be declared by a connect command like:
+```ruby
+design 'vlnv' do
+	instance 'comp0-vlnv', as: :inst0
+	instance 'comp1-vlnv', as: :inst1
+
+	# bus to bus connection
+	connect inst0.bus0 => inst1.bus2
+
+	# hierConnect <encompass component interface> => <instance.interface>
+	# if key is a string, then is hierConnect
+	connect 'bus ref name' => inst1.bus0
+
+	# adHocConnect
+	adhoc inst1.port0 => [<left>,<right>],'extern port name'=>[<left>,<right>]
+end
 ```

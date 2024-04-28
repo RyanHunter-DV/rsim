@@ -2,31 +2,48 @@
 # Object description:
 IpXactData, base and common object for IP-XACT
 """
-class IpXactData ##{{{
+class IpXactData
 	
-	attr :datatype;
+	attr_accessor :datatype;
 	attr :nodes;
 	attr :desc;
 	## initialize(t), description
-	def initialize(t); ##{{{
+	def initialize(dt); ##{{{
 		puts "#{__FILE__}:(initialize(t)) is not ready yet."
-		@datatype=t.to_sym;
-		@nodes=[];
-		@desc='';
+		@datatype=dt.to_sym;
+		@nodes=[];@desc='';
 	end ##}}}
-	## datatype, return the string typed datatype
-	def datatype; ##{{{
-		return @datatype.to_s;
-	end ##}}}
+
+	# for IP-XACT data, support name types are: vlnv, envId and nameGroup
+	def setupNameId(val,t=:vlnv)
+		var=%Q|@#{t}|;
+		self.instance_variable_set(var,val);
+		self.define_singleton_method t do
+			return self.instance_variable_get(var);
+		end
+		self.define_singleton_method :id do
+			# return the name id by calling a unified method for different
+			# datatypes
+			return self.instance_variable_get(var);
+		end
+	end
 
 	## addUserNode(b), description
 	def addUserNode(b); ##{{{
-		puts "#{__FILE__}:(addUserNode(b)) is not ready yet."
+		@nodes.append(*b) if b.is_a?(Array);
 		@nodes << b;
 	end ##}}}
+	def evalUserNodes(o) ##{{{
+		@nodes.each do |node|
+			o.instance_eval &node;
+		end
+	end ##}}}
+	def nodes
+		return @nodes;
+	end
 	## description(d)
 	def description(d); ##{{{
 		puts "#{__FILE__}:(description(d)) is not ready yet."
 		@desc = d;
 	end ##}}}
-end ##}}}
+end

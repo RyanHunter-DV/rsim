@@ -11,9 +11,10 @@ class PluginManager ##{{{
 	BUILT_IN = 'builtin/plugins/node';
 	
 	## initialize(), 
-	def initialize(); ##{{{
+	def initialize(dp,ui); ##{{{
 		puts "#{__FILE__}:(initialize()) is not ready yet."
 		@plugins={};
+		init(dp,ui);
 	end ##}}}
 
 	## init(patcher), 

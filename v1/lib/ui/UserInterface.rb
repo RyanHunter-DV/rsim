@@ -6,8 +6,18 @@ UI class for processing all user interface and tool configurations
 class UserInterface ##{{{
 	## initialize, description
 	def initialize; ##{{{
-		puts "#{__FILE__}:(initialize) is not ready yet."
+		checkEnvValues;
+		parseUserInputs;
 	end ##}}}
+	# detect key ENV variables required by this tool.
+	# RSIM_PLUGIN, RSIM_ROOT, STEM
+	#TODO
+	def checkEnvValues
+	end
+
+	# user optparse to setup and processing the user inputs.
+	def parseUserInputs
+	end
 
 
 	## commands, return a certain formatted command

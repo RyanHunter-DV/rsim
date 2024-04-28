@@ -19,7 +19,7 @@ module MetaData
 	## registerBus(o), description
 	def registerBus(o); ##{{{
 		puts "#{__FILE__}:(registerBus(o)) is not ready yet."
-		raise UserNodeException.new("bus(#{o.vlnv}) defined multiple times") if @busDefinitions.has_key?(o.vlnv);
+		raise NodeException.new("bus(#{o.vlnv}) defined multiple times") if @busDefinitions.has_key?(o.vlnv);
 		@busDefinitions[o.vlnv]=o;
 	end ##}}}
 	## registerComponent(o), 

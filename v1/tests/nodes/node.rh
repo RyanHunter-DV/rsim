@@ -1,0 +1,12 @@
+component 'CsuPmEnv' do
+	# generator 'copy'
+	param :PA => 34
+	trans 'uimp', :requires  do
+		# serviceType(typename,typeDefinition,**params)
+		serviceType :ResetGenTrans,'ResetGenTrans.svh',:physical => 'PA'
+		serviceType :ResetGenMonitor, 'ResetGenMonitor.svh'
+		transType :uvm_analysis_imp, 'path/filename'
+		connection :max => 1, :min => 1
+	end
+	wire 'wpt',:in,:left => @PA-1,:right => 0
+end

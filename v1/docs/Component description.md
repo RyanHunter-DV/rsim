@@ -10,6 +10,18 @@ Described for flow tool: [[User commands to describe components]]
 - [ ] choices
 
 ## model
+element used to define module related information such as views, ports and modelParameters.
+
+- view is an element within model, represents the implementation of a model through different view elements.
+	- of ViewType, ref: [[View description]]
+	- port is an element to specify the componnt's external ports.
+		- of PortType, ref: [[PortType description]]
+		- 
+
+collection of following data objects, it shall only have one model in a component:
+- views, [[view of component]]
+- modelParameters, the modelParameter is used to describe an HDL's model parameters, for language specific, such as the verilog module's parameter.
+
 - [ ] defaultFileBuilder
 ```xml
 <component>
@@ -26,8 +38,6 @@ Described for flow tool: [[User commands to describe components]]
 	</model>
 </component>
 ```
-view is an element within model, which is of ViewType, ref: [[View description]]
-componentPort: #marker
 
 
 - vlnv
