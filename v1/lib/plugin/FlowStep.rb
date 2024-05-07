@@ -3,7 +3,7 @@
 FlowStep, object to describe the flow steps.
 """
 require 'lib/threads/Command.rb'
-class FlowStep ##{{{
+class FlowStep
 	
 	#attr :successor;
 	attr :container;
@@ -16,9 +16,8 @@ class FlowStep ##{{{
 
 	## initialize(n), 
 	def initialize(n,o); ##{{{
-		puts "#{__FILE__}:(initialize(n)) is not ready yet."
 		@predecessor={:step=>nil,:blocked=>true};
-		@with=[];
+		@with=nil;
 		@container=o;
 		@name=n.to_s;
 		@phase=0;
@@ -35,18 +34,19 @@ class FlowStep ##{{{
 		raise PluginException.new("cannot find step(#{n}) in flow(#{@container.name})") if n==nil;
 		@predecessor[:step]=s;
 		if (@predecessor[:blocked])
-			@phase=s.phase+1;
+			@phase=s.phase+0.1;
 		else
 			@phase=s.phase;
 		end
 	end ##}}}
 
 	## with(n), set a step that can be run with current step.
+	# TODO, currently not support.
 	def with(n); ##{{{
 		n=n.to_s;
 		s=@container.findStep(n);
 		raise PluginException.new("cannot find step(#{n}) in flow(#{@container.name})") if n==nil;
-		@with << s;
+		@with = s;
 		if s.predecessor
 			@predecessor=s.predecessor ;
 			@phase=s.phase;
@@ -62,4 +62,4 @@ class FlowStep ##{{{
 	end ##}}}
 
 
-end ##}}}
+end

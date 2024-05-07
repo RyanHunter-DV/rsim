@@ -52,13 +52,13 @@ class PluginManager ##{{{
 	# register a new loaded plugin into this plugin manager
 	def register(p); ##{{{
 		@plugins[p.name.to_sym] = p;
-		p.dispatcher @dp;
+		p.dispatcher= @dp;
 		# define api which described by the plugin obj, so that it can be easily called
 		# by the user command from: Rsim.plugins.build(:Config)...
-		return unless p.api.has_key?(:block)
-		block=p.api[:block];
+		return unless p.api.has_key?(:proc)
+		block=p.api[:proc];
 		name =p.api[:name];
-		self.define_singleton_method name.to_sym do |**opts|
+		self.define_singleton_method name do |**opts|
 			self.instance_eval block,**opts;
 		end
 	end ##}}}
@@ -67,10 +67,10 @@ end ##}}}
 ## flow(name,&block), description
 def flow(name,&block); ##{{{
 	name=name.to_sym;
-	np = Rsim.plugins.send(name);
+	np = Rsim.pm.send(name);
 	unless np
 		np = Plugin.new(name.to_s);
-		Rsim.plugins.register(np);
+		Rsim.pm.register(np);
 	end
 	np.instance_eval &block;
 end ##}}}

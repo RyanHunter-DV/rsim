@@ -13,16 +13,13 @@ flow :buildflow do
 		# call to run the metadata's generator chain.
 		# the step running context is in current flow.
 		action :proc do
+			cn= @options[:config];
 			# build up the MetaData by the given config name.
-			MetaData.build(@options[:config]);
+			MetaData.elaborate(cn);
 			# run generators, at this step, all generator parameters shall be satisfied.
-			MetaData.generators.run;
+			MetaData.configs[cn].build;
 		end
 	end
-	# test:
-	#step 'build2' do
-	#	with 'build'
-	#end
 	step 'post_build' do
 		#TODO, xxx
 		after 'build',:blocked=>true;

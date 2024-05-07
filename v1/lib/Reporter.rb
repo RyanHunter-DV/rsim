@@ -8,7 +8,7 @@ class Reporter
 	def info(msg,verbo=5)
 		return if verbo > @threshold;
 		pos=caller(2)[0];
-		formatted = "[I]#{pos}: #{msg}";
+		formatted = "(I)[#{Time.now}]#{pos}: #{msg}";
 		puts formatted;
 		return;
 	end

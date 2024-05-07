@@ -7,28 +7,30 @@ plugin files, such as buildflow, compileflow ...
 require 'lib/plugin/FlowStep.rb'
 class Plugin
 	attr :options; # options required to call different actions.
-	attr :dp; # dispatcher
 	# format: steps[:name] => object
 	attr :steps;
 	attr :api;
 	attr_accessor :name;
+	attr_accessor :dispatcher; # dispatcher
+	# attr :basePhase;
 
 	## initialize(n), description
 	def initialize(n); ##{{{
-		@name = n.to_s;
+		@name = n.to_sym;
 		@api={};@steps={};
-	end ##}}}
-	## dispatcher(o), set dispatcher
-	def dispatcher(o); ##{{{
-		@dp=o;
+		@basePhase=0;
 	end ##}}}
 	## register(so), register the step into current plugin
+	# so: step object
 	def register(so); ##{{{
 		puts "#{__FILE__}:(register(so)) is not ready yet."
 		#1.check current so's dependency, if has after/before/with information
+		after=so.predecessor[:step];
 		#2.if has, then need find the index of the target step. and then insert
 		# before/after or along with current step into @steps.
+		so.phase=after.phase+0.1 if after and so.phase<=after.phase;
 		#3.if has no dependency, then insert at the end of current @steps.
+		@steps[so.name]=so;
 	end ##}}}
 
 	## findStep(n), 
@@ -60,12 +62,14 @@ class Plugin
 		steps = arrangeStepOrdering;
 		phases = steps.keys;phases.sort!;
 		phases.each do |ph|
-			steps[ph].each do |single|
+			pids=[];
+			steps[ph].each do |step|
 				# action is object of Command.
-				@dp.schedule(single.action)
+				step.actions.each do |action|
+					pids<<@dispatcher.emit(action);
+				end
 			end
-			@dp.emit(:all)
-			@dp.wait(:all)
+			raise ToolException.new("flow(#{@name} failed") if @dispatcher.wait(*pids);
 		end
 	end ##}}}
 	# User commands for new plugin definition ##{{{

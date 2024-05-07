@@ -5,33 +5,33 @@ Command, object used to store attributes and apis for a command
 Which can be internal block, or external command string that can be operated
 by this object
 """
-class Command ##{{{
+class Command
 
 	#TODO, attr fields.
 	attr :procedures;
-	attr :scope;
+	attr_accessor :scope;
 
 	## initialize(p), description
 	def initialize(s); ##{{{
-		puts "#{__FILE__}:(initialize(p)) is not ready yet."
 		@scope = s;
 		# format:
 		# [{:proc=>xxx,:type=>:string/:proc},{}]
 		@procedures=[];
 	end ##}}}
+	# :proc->internal cmd, :extern->call open.capture3
+	def type
+		return @procedures[0][:type];
+	end
 	## add(p,t), description
 	# support type: 
-	# :string,
+	# :extern -> external cmd
 	# :proc -> block
-	# :exe -> external executor.
-	def add(b,t); ##{{{
-		if t.to_sym==:exe
-			cmd= eval b;
-			p={:proc=>cmd,:type=>t.to_sym};
-		else
-			p={:proc=>b,:type=>t.to_sym};
-		end
+	def add(e,t); ##{{{
+		p={:exe=>e,:type=>t.to_sym};
 		@procedures << p;
+	end ##}}}
+	def exe ##{{{
+		return @procedures[0][:exe];
 	end ##}}}
 	## owner(o), for internal proc executing, to specify which object
 	# will evaluate this proc.
@@ -44,10 +44,10 @@ class Command ##{{{
 	def raw; ##{{{
 	end ##}}}
 	## isBuiltinCommand, description
-	# return if the given command has block or string type
+	# return if the given command is of type :proc
 	def isBuiltinCommand; ##{{{
 		return false if @procedures.empty?;
 		return true if @procedures[0][:type]==:proc;
 		return false;
 	end ##}}}
-end ##}}}
+end

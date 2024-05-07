@@ -1,9 +1,9 @@
 generator 'copy' do
 	exe '/bin/cp'
-	run do |o|
+	action do |o|
 		o.fileSets.each do |src|
 			t=o.out;
-			cmd src,t;
+			cmd src,t; # cmd *opts -> %Q|#{exe}|+ %Q| |+opts.each -> @pids<<dp.emit(cmd)
 		end
 	end
 end
