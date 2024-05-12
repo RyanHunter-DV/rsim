@@ -12,24 +12,26 @@ class FlowStep
 	attr_accessor :predecessor;
 	attr_accessor :with;
 	attr_accessor :phase;
-	attr_accessor :action;
+	attr :action;
+	attr :options;
 
 	## initialize(n), 
-	def initialize(n,o); ##{{{
+	def initialize(n,o,opt={}); ##{{{
 		@predecessor={:step=>nil,:blocked=>true};
 		@with=nil;
 		@container=o;
 		@name=n.to_s;
-		@phase=0;
-		@action=nil;
+		@phase=0;@action=nil;
+		@options=opt;
+		Rsim.info("step build with name(#{name}),opts:(#{@options})",9);
 	end ##}}}
 
 	## after(n), given the name of the step that this step
 	# will called after it.
-	def after(n,**opts={}); ##{{{
-		#puts "#{__FILE__}:(after(n)) is not ready yet."
+	def after(n,**opts); ##{{{
 		@predecessor[:blocked]=opts[:blocked] if opts.has_key?(:blocked);
 		n=n.to_s;
+		Rsim.info("container is:(#{@container})",9);
 		s=@container.findStep(n);
 		raise PluginException.new("cannot find step(#{n}) in flow(#{@container.name})") if n==nil;
 		@predecessor[:step]=s;
@@ -55,9 +57,9 @@ class FlowStep
 	end ##}}}
 	## action(&block), 
 	# the real actions to d by calling this step
-	def action(t,&block); ##{{{
-		return @action unless block;
-		@action=Command.new(self) unless @action;
+	def action(t=nil,&block); ##{{{
+		return @action unless block and t;
+		@action=Command.new(self);
 		@action.add(block,t);
 	end ##}}}
 

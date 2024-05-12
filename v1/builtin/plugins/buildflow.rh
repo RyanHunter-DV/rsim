@@ -1,9 +1,13 @@
 flow :buildflow do
-	api :build do |**opts|
+	api :build do |o,**opts|
+		Rsim.info("calling build with context(#{o})",6);
+		Rsim.info("calling build with options(#{opts})",6);
+		Rsim.info("plugins:#{o.plugins}",9);
+		Rsim.info("self:#{self}",9);
 		# setup options attribute of this plugin.
-		@plugins[:buildflow].options= opts;
+		o.plugins[:buildflow].options= opts;
 		## this will start executing the different steps
-		@plugins[:buildflow].run;
+		o.plugins[:buildflow].run;
 	end
 	step 'pre_build' do
 		#TODO, xxx
@@ -13,7 +17,9 @@ flow :buildflow do
 		# call to run the metadata's generator chain.
 		# the step running context is in current flow.
 		action :proc do
-			cn= @options[:config];
+			cn=nil;
+			cn= @options[:config] if @options.has_key?(:config);
+			Rsim.error("no config name specified") unless cn;
 			# build up the MetaData by the given config name.
 			MetaData.elaborate(cn);
 			# run generators, at this step, all generator parameters shall be satisfied.

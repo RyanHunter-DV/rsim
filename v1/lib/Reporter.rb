@@ -18,4 +18,9 @@ class Reporter
 		puts formatted;
 		return;
 	end
+	def warning(msg)
+		##pos=caller(2)[0];
+		formatted = "[w] #{msg}";
+		puts formatted;
+	end
 end

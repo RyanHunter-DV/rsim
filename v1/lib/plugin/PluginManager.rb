@@ -3,18 +3,18 @@
 PluginManager, Object to manage all plugins
 """
 require 'lib/plugin/Plugin.rb'
-class PluginManager ##{{{
+class PluginManager
 
-	attr :plugins;
+	attr_accessor :plugins;
 	attr :dp;
 
-	BUILT_IN = 'builtin/plugins/node';
+	BUILT_IN = 'builtin/plugins/node.rh';
 	
 	## initialize(), 
-	def initialize(dp,ui); ##{{{
+	def initialize(); ##{{{
 		puts "#{__FILE__}:(initialize()) is not ready yet."
 		@plugins={};
-		init(dp,ui);
+		#init(dp,ui);
 	end ##}}}
 
 	## init(patcher), 
@@ -32,7 +32,7 @@ class PluginManager ##{{{
 		fromuser = ui.plugins;
 		builtin= BUILT_IN;
 		#TODO, add display message here.
-		rhload builtin;
+		rhload builtin,:tool;
 		fromuser.each do |node|
 			rhload node;
 		end
@@ -55,22 +55,28 @@ class PluginManager ##{{{
 		p.dispatcher= @dp;
 		# define api which described by the plugin obj, so that it can be easily called
 		# by the user command from: Rsim.plugins.build(:Config)...
-		return unless p.api.has_key?(:proc)
-		block=p.api[:proc];
-		name =p.api[:name];
-		self.define_singleton_method name do |**opts|
-			self.instance_eval block,**opts;
-		end
+		Rsim.info("register plugin, api:#{p.api}",9);
+		p.container=self;
+		#return unless p.api.has_key?(:proc)
+		#block=p.api[:proc];
+		#name =p.api[:name];
 	end ##}}}
-end ##}}}
+end
 
 ## flow(name,&block), description
 def flow(name,&block); ##{{{
 	name=name.to_sym;
-	np = Rsim.pm.send(name);
-	unless np
+	np=nil;
+	Rsim.info("defining flow: #{name}",9);
+	if Rsim.pm.respond_to?(name);
+		Rsim.info("in branch 1",9);
+		np=Rsim.pm.send(name);
+	else
+		Rsim.info("in branch 2",9);
 		np = Plugin.new(name.to_s);
 		Rsim.pm.register(np);
+		Rsim.info("#{np} registered",9);
+		Rsim.info("#{np.name} registered",8);
 	end
 	np.instance_eval &block;
 end ##}}}

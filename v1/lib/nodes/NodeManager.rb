@@ -6,15 +6,29 @@
 # node.rh: rhload 'f'
 # else if it's been called by tool self(:internal), then shall use 
 def rhload(f,from=:node)
+	Rsim.info("calling rhload",9);
 	if from==:node
 		# if is from node, then first to load according to the node path.
-		parent = caller(1)[0];
+		parent = File.dirname(caller(1)[0].split(/:/)[0]);
 		f=f+'.rh' unless f=~/\./;
+		full=File.join(parent,f);
 		Rsim.info("getting parent path for rhload(#{parent})",9);
-		load File.join(parent,f) if File.exists?(File.join(parent,f));
+		Rsim.info("get full file path(#{full})",9);
+		if File.exists?(full)
+			load full;
+			return;
+		end
 	end
 	Rsim.info("getting file direct path(#{f})",9);
-	load f;return if File.exists?(f);
+	paths=['./'];paths.append(*$LOAD_PATH);
+	paths.each do |p|
+		full=File.join(p,f);
+		if File.exists?(full)
+			Rsim.info("get load file(#{full})",9);
+			load full;
+			return;
+		end
+	end
 	#TODO, raise NodeException.new("file not exists: #{f}");
 	Rsim.info("<Exception here> file not exists: #{f}",0);
 end

@@ -6,6 +6,9 @@
 require 'lib/Reporter.rb'
 module Rsim
 
+	def self.pm
+		return @pm;
+	end
 
 	## self.init, initialization of Rsim tool.
 	def self.init; ##{{{

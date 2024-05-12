@@ -65,6 +65,7 @@ class Dispatcher
 			Process.wait(pid);
 			Rsim.info("#{pid} waited",9);
 		end
+		return 0; # TODO, need tell caller if pid failed.
 	end ##}}}
 	
 end
