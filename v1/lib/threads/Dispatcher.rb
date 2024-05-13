@@ -16,7 +16,6 @@ class Dispatcher
 
 	## initialize, description
 	def initialize(ui); ##{{{
-		puts "#{__FILE__}:(initialize) is not ready yet."
 		init(:maxJobs=>ui.maxJobs,:logdir=>ui.logdir);
 	end ##}}}
 

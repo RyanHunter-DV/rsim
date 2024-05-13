@@ -1,1 +1,8 @@
 #! /usr/bin/env ruby
+
+home = File.absolute_path(File.join(File.dirname(__FILE__),'..'));
+puts "tool home: #{home}";
+$LOAD_PATH << home;
+require 'lib/Rsim.rb';
+Rsim.run;
+

@@ -7,7 +7,7 @@ busDefinition 'vendor/lib/RxPorts/1.0' do
 end
 
 abstractionDefinition 'vendor/lib/RxPorts/1.0' do
-	busRef 'vendor/lib/RxPorts/1.0'
+	bus 'vendor/lib/RxPorts/1.0'
 	wire 'clk',:isClock do
 		onSystem :group=>:clock,:width=>1,:direction=>:out
 		onMaster :presence=>:required,:direction=>:in
@@ -44,18 +44,13 @@ component 'vendor/lib/Rx/1.0' do
 			# lhs (left hand side bit vector), rhs (right hand side bit vector)
 			l2p :rxData=>:rx_data,:lhs=>[7,0],:rhs=>[7,0]
 		end
-		model do
-			view :rtl do
-				wire 'clk_200m',
-			end
+		view :rtl do
+			#wire 'clk_200m'
 		end
 	end
 	# specify which generator to use by this component.
 	generator 'name' do
 		# specify parameter of this generator.
 		param 'var' => 'value'
-	end
-	# specify model configurations within this component
-	model do
 	end
 end

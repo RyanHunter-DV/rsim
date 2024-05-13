@@ -12,7 +12,6 @@ class PluginManager
 	
 	## initialize(), 
 	def initialize(); ##{{{
-		puts "#{__FILE__}:(initialize()) is not ready yet."
 		@plugins={};
 		#init(dp,ui);
 	end ##}}}
@@ -21,7 +20,6 @@ class PluginManager
 	# initialize the plugin manager, such like set dispatcher,
 	# loading all plugins required.
 	def init(patcher,ui); ##{{{
-		puts "#{__FILE__}:(init(patcher)) is not ready yet."
 		@dp=patcher;
 		loading(ui);
 	end ##}}}
@@ -31,7 +29,7 @@ class PluginManager
 	def loading(ui); ##{{{
 		fromuser = ui.plugins;
 		builtin= BUILT_IN;
-		#TODO, add display message here.
+		Rsim.info("loading builtin plugin node(#{builtin})",6);
 		rhload builtin,:tool;
 		fromuser.each do |node|
 			rhload node;

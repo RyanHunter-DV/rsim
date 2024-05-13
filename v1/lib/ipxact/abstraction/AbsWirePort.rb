@@ -18,9 +18,8 @@ class AbsWirePort < PortType
 	
 	## initialize(n), description
 	def initialize(n); ##{{{
-		@name[:logical] = n.to_s;
-		@name[:display] = n.to_s;
-		@dir={};@width={};@presence={};
+		@name={};@dir={};@width={};@presence={};
+		@name[:logical]=n.to_s; @name[:display] = n.to_s;
 		super(:wire);
 	end ##}}}
 	## display(n), set display name

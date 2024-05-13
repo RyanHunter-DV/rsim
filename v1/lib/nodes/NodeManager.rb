@@ -20,6 +20,11 @@ def rhload(f,from=:node)
 		end
 	end
 	Rsim.info("getting file direct path(#{f})",9);
+	if f[0]=='/' and File.exists?(f)
+		Rsim.info("load by absolute path",9);
+		load f;
+		return;
+	end
 	paths=['./'];paths.append(*$LOAD_PATH);
 	paths.each do |p|
 		full=File.join(p,f);
@@ -29,8 +34,8 @@ def rhload(f,from=:node)
 			return;
 		end
 	end
-	#TODO, raise NodeException.new("file not exists: #{f}");
-	Rsim.info("<Exception here> file not exists: #{f}",0);
+	raise NodeException.new("file not exists: #{f}");
+	#Rsim.info("<Exception here> file not exists: #{f}",0);
 end
 
 class NodeManager
@@ -43,7 +48,8 @@ class NodeManager
 	# the commands to register information in MetaData module scope.
 	def loading(stem,entries)
 		entries.each do |entry|
-			entry = File.join(stem,entry);
+			#entry = File.absolute_path(File.join(stem,entry));
+			entry = Rsim.join(stem,entry);
 			Rsim.info("loading entry node: #{entry}",9);
 			rhload(entry,:internal);
 		end

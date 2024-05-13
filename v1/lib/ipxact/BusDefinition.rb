@@ -15,22 +15,32 @@ class BusDefinition < IpXactData ##{{{
 		super(:busDefinition);
 	end ##}}}
 
-	## isAddresable(v), set the addressable field to v
-	def isAddresable(v); ##{{{
+	## isAddressable(v), set the addressable field to v
+	def isAddressable(v); ##{{{
 		@addressable = v;
 	end ##}}}
 
 	## maxMasters(num)
 	def maxMasters(num); ##{{{
-		puts "#{__FILE__}:(maxMasters(num)) is not ready yet."
 		@max[:master]=num;
 	end ##}}}
 	## maxSlaves(num)
 	def maxSlaves(num); ##{{{
-		puts "#{__FILE__}:(maxSlaves(num)) is not ready yet."
 		@max[:slave]=num;
 	end ##}}}
+	## maxClients(**opts), specify maximum masters,slaves or other devices
+	def maxClients(**opts) ##{{{
+		opts.each_pair do |k,n|
+			m="max#{k.capitalize}s".to_sym;
+			self.send(m,n);
+		end
+	end ##}}}
 
+	## directConnection(v), set true/false indicate the bus supports
+	# direct connection or not
+	def directConnection(v) ##{{{
+		# TODO, currently not supported yet
+	end ##}}}
 
 	def finalize
 		evalUserNodes(self);
@@ -39,7 +49,6 @@ class BusDefinition < IpXactData ##{{{
 end ##}}}
 ## busDefinition(name,&block), define a new busDefinition by user nodes.
 def busDefinition(vlnv,&block); ##{{{
-	puts "#{__FILE__}:(busInterface(name,&block)) is not ready yet."
 	bs = BusDefinition.new(vlnv);
 	bs.addUserNode(block);
 	MetaData.register(bs);
@@ -60,24 +69,30 @@ class AbstractionDefinition < IpXactData ##{{{
 	## initialize(n), 
 	#
 	def initialize(n); ##{{{
-		super(:abstractionDefinition);
 		@busRef='';
 		@ports={};
+		vlnv=n.to_s;setupNameId(vlnv,:vlnv);
+		super(:abstractionDefinition);
 	end ##}}}
 
 	## bus(vlnv), specify the vlnv of referenced bus
 	def bus(vlnv); ##{{{
-		puts "#{__FILE__}:(bus(vlnv)) is not ready yet."
 		@busRef=vlnv;
 	end ##}}}
-	## wire(name,&block), declare a wire typed port
-	def wire(name,&block); ##{{{
-		puts "#{__FILE__}:(wire(name,&block)) is not ready yet."
-		p=WirePort.new(name);
+	## wire(name,q,&block), declare a wire typed port
+	# q-> specify the qualifier of the wire, can be :isClock, :isReset...
+	def wire(name,q,&block); ##{{{
+		#puts "#{__FILE__}:(wire(name,&block)) is not ready yet."
+		p=AbsWirePort.new(name);
+		p.send(q.to_sym);
 		p.addUserNode(block);
 		@ports[:wire] << p;
 	end ##}}}
 
+	## finalize, do finalize of loading nodes process
+	def finalize ##{{{
+		evalUserNodes(self);
+	end ##}}}
 end ##}}}
 
 ## abstractionDefinition(vlnv,&block), description

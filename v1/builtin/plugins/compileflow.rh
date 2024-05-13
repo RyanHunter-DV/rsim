@@ -11,7 +11,7 @@ flow :compileflow do
 		s=Rsim.simulator;
 		steps=s.steps(:compile);
 		steps.each do |step|
-			action :exe do
+			action :extern do
 				configname = @options[:config].to_sym;
 				cd = MetaData.outs[configname];
 				compileCmd = %Q|#{s.eda}_#{step}.cmd|;
