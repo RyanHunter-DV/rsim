@@ -100,6 +100,28 @@ A global generator command is used to declare a generatorChain, with sub command
 # user nodes loading system
 Based on IP-XACT protocol, but more ease to describe an object.
 The seven top objects are described by calling a global method like global: `component`,`config` …
+## test nodes
+The test nodes are for users to describe a test which will be executed through the Rsim tool, for the first edition, the test description are simply support for EDA running.
+### Support test templates
+Test templates can be used to specify common options for multiple tests, such as config, when tag, simopts etc.
+The tests can derive from it through the clones option.
+Example:
+```ruby
+template :template_name do
+	# commands same as tests
+end
+test :name, :clones => :template_name do
+	# ...
+end
+```
+
+### Commands for users in tests and templates
+`_when`:
+the when tag, used for picking up tests when running regression.
+`config :configname`:
+specify which config this test apply to.
+`simopt 'option string','string',...`:
+specify sim options for eda, usually are plusargs.
 
 ## testing for nodes loading system
 - build a simple project to describe bus, component, design, config basics.

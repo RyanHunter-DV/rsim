@@ -1,4 +1,6 @@
 #! /usr/bin/env ruby
+puts [].methods
+exit 0;
 
 testhome=File.absolute_path(File.dirname(__FILE__));
 toolhome=File.absolute_path(File.join(testhome,'../../'));

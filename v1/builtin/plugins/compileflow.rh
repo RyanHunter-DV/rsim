@@ -9,14 +9,14 @@ flow :compileflow do
 	step 'build_compile_cmd' do
 		#self.instance_variable_set(:@simulator,Simulator.new());
 		s=Rsim.simulator;
-		steps=s.steps(:compile);
+		steps=s.steps(:build);
 		steps.each do |step|
 			action :extern do
 				configname = @options[:config].to_sym;
 				cd = MetaData.outs[configname];
 				compileCmd = %Q|#{s.eda}_#{step}.cmd|;
 				cmd = %Q|cd #{cd};touch #{compileCmd};echo "#{s.command(step)}" > #{compileCmd}|
-				cmd; # return the result of block
+				cmd; # return the result of block as cmd string.
 			end
 		end
 	end
@@ -26,7 +26,7 @@ flow :compileflow do
 		s=Rsim.simulator;
 		steps=s.steps(:compile);
 		steps.each do |step|
-			action :exe do
+			action :extern do
 				configname = @options[:config].to_sym;
 				cd = MetaData.outs[configname];
 				compileCmd = %Q|#{s.eda}_#{step}.cmd|;
@@ -35,6 +35,7 @@ flow :compileflow do
 			end
 		end
 	end
-	step 'post_compile' do
-	end
+	#step 'post_compile' do
+	#	after 'compile'
+	#end
 end

@@ -44,6 +44,8 @@ class DesignConfiguration < IpXactData
 
 	def finalize
 		evalUserNodes(self);
+		Rsim.simulator.compopts(@compopts);
+		Rsim.simulator.elabopts(@elabopts);
 	end
 end
 

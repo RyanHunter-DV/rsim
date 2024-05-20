@@ -12,9 +12,9 @@ flow :testflow do
 	step :build_test_cmd do
 		after :pre_test
 		s=Rsim.simulator;
-		steps=s.steps(:sim);
+		steps=s.steps(:run);
 		steps.each do |step|
-			action :exe do
+			action :extern do
 				testname = @options[:test].to_sym;
 				cd=MetaData.outs[testname];
 				testCmd = %Q|#{s.eda}_#{step}.cmd|;
@@ -27,9 +27,9 @@ flow :testflow do
 	step :test do
 		after :build_test_cmd
 		s=Rsim.simulator;
-		steps=s.steps(:sim);
+		steps=s.steps(:run);
 		steps.each do |step|
-			action :exe do
+			action :extern do
 				testname = @options[:test].to_sym;
 				cd=MetaData.outs[testname];
 				testCmd = %Q|#{s.eda}_#{step}.cmd|;

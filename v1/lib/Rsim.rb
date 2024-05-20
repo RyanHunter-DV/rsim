@@ -13,6 +13,16 @@ require 'lib/nodes/NodeManager.rb'
 require 'lib/nodes/MetaData.rb'
 module Rsim
 
+	@reporter;
+	@simulator;
+	@ui;@dp;@pm;@nm;
+
+	## self.simulator, return a pre-defined simulator object.
+	def self.simulator ##{{{
+		raise ToolException.new("no simulator initialized") unless @simulator;
+		return @simulator;
+	end ##}}}
+
 	def self.pm
 		return @pm;
 	end
@@ -26,6 +36,7 @@ module Rsim
 		@dp=Dispatcher.new(@ui);
 		@pm=PluginManager.new();@pm.init(@dp,@ui);
 		@nm=NodeManager.new(@ui);
+		@simulator=Simulator.new(@ui.eda);
 	end ##}}}
 
 	## The main entry of Rsim tool, ##{{{

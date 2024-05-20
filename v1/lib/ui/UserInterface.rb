@@ -7,6 +7,7 @@ require 'lib/erh/EnvException'
 require 'optparse';
 class UserInterface
 
+	EnvVars={:entries=>'RSIM_ROOT',:stem=>'STEM'};
 	attr_accessor :maxJobs;
 	attr_accessor :logdir;
 	attr_accessor :plugins;
@@ -15,6 +16,7 @@ class UserInterface
 	# ENV variables
 	attr_accessor :stem;
 	attr_accessor :entries;
+	attr_accessor :eda;
 
 	## initialize, description
 	def initialize; ##{{{
@@ -27,8 +29,7 @@ class UserInterface
 	#TODO
 	def checkEnvValues
 		reason='env($ENV_VAR) not detected';
-		vars={:entries=>'RSIM_ROOT',:stem=>'STEM'};
-		vars.each_pair do |lv,ev|
+		EnvVars.each_pair do |lv,ev|
 			if ENV[ev]
 				self.instance_variable_set("@#{lv}",ENV[ev]);
 			else
@@ -43,6 +44,8 @@ class UserInterface
 		@maxJobs=1;@logdir='.';@plugins=[];
 		@verbo=5;
 		processEnvVars;
+		Rsim.info("Tool config initialized:",9);
+		Rsim.info("eda: #{@eda}",9);
 	end ##}}}
 	## processEnvVars, the field indicates the env value that shall be set
 	## in checkEnvValues, but for special vars such as paths shall be furthor
@@ -53,6 +56,15 @@ class UserInterface
 		Rsim.info("ENV-STEM(#{@stem})",6);
 		@entries=@entries.split(';');
 		Rsim.info("ENV-RSIM_ROOT(#{@entries})",6);
+		@eda=ENV['RSIM_EDA'].to_sym if ENV['RSIM_EDA'];
+		setupSimulatorType(ENV['RSIM_EDA']);
+	end ##}}}
+	## setupSimulatorType(t), process t from env and setup @eda
+	def setupSimulatorType(t) ##{{{
+		t=t.downcase.capitalize.to_sym;
+		@eda = t;return; if t and t==:Vcs or :Xceium;
+		Rsim.warning("unrecognized simulator name(#{t}), ignored") if t;
+		@eda=:Xcelium; return;
 	end ##}}}
 
 	# user optparse to setup and processing the user inputs.
