@@ -61,9 +61,12 @@ class UserInterface
 	end ##}}}
 	## setupSimulatorType(t), process t from env and setup @eda
 	def setupSimulatorType(t) ##{{{
-		t=t.downcase.capitalize.to_sym;
-		@eda = t;return; if t and t==:Vcs or :Xceium;
-		Rsim.warning("unrecognized simulator name(#{t}), ignored") if t;
+		t=t.downcase.capitalize.to_sym if t.is_a?(String);
+		if t
+			@eda = t;return if t==:Vcs or :Xcelium;
+			Rsim.warning("unrecognized simulator name(#{t}), ignored");
+		end
+		Rsim.info("setup default eda:#{@eda}",6);
 		@eda=:Xcelium; return;
 	end ##}}}
 

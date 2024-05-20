@@ -1,5 +1,5 @@
 require 'open3'
-require 'libs/exceptionbase'
+require 'lib/erh/ExceptionBase'
 module Shell ##{
 
 	@type = :bash;
@@ -74,6 +74,7 @@ module Shell ##{
 		e = "cd #{path};#{cmd}";
 		## puts "shell: #{e}";
 		out,err,st = Open3.capture3(e);
+		puts out if visible;
 		puts out if visible;
 		return [err.chomp!,st.exitstatus]
 	end ##}

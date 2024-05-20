@@ -1,6 +1,6 @@
 require 'lib/Shell'
 class Xcelium
-	@@exes{:compile=>'xmvlog',:elab=>'xmelab',:sim=>'xmsim'};
+	@@exes={:compile=>'xmvlog',:elab=>'xmelab',:sim=>'xmsim'};
 
 	attr :userOptions;
 	attr_accessor :name;
@@ -13,9 +13,9 @@ class Xcelium
 	## checkToolExistence, check if current env has specified
 	# simulator installed.
 	def checkToolExistence ##{{{
-		@@exes.each do |exe|
+		@@exes.each_pair do |key,exe|
 			results=Shell.exec("which #{exe}");
-			raise EnvException.new("cmd(#{exe}) cannot found:#{results[0]}") if results[1]!=0;
+			raise EnvException.new("eda command(#{exe}) cannot found:#{results[0]}") if results[1]!=0;
 		end
 	end ##}}}
 	## steps(t), return array of step names of given t, t can be [:build,:run]

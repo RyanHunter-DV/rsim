@@ -88,6 +88,7 @@ A global generator command is used to declare a generatorChain, with sub command
 ## default plugins
 ### build flow
 *buildflow is already built and is fine to use it.*
+
 ### compile flow
 *completed*
 ### test flow

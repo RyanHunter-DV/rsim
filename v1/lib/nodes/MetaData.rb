@@ -21,6 +21,8 @@ require 'lib/ipxact/component/MemoryMap.rb'
 require 'lib/ipxact/component/TransPort.rb'
 require 'lib/ipxact/BusDefinition.rb'
 require 'lib/ipxact/Generator.rb'
+require 'lib/ipxact/tests/TestTemplate.rb'
+require 'lib/ipxact/tests/Test.rb'
 module MetaData
 
 	@pool={

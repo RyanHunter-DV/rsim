@@ -11,6 +11,9 @@ require 'lib/threads/Dispatcher.rb'
 require 'lib/plugin/PluginManager.rb'
 require 'lib/nodes/NodeManager.rb'
 require 'lib/nodes/MetaData.rb'
+require 'lib/simulators/Simulator.rb'
+require 'lib/simulators/Vcs.rb'
+require 'lib/simulators/Xcelium.rb'
 module Rsim
 
 	@reporter;
