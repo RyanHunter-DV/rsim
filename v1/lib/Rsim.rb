@@ -22,24 +22,43 @@ module Rsim
 
 	## self.simulator, return a pre-defined simulator object.
 	def self.simulator ##{{{
-		raise ToolException.new("no simulator initialized") unless @simulator;
+		#raise ToolException.new("no simulator initialized") unless @simulator;
+		@simulator=Simulator.new(self.ui.eda) unless @simulator;
 		return @simulator;
 	end ##}}}
 
+	## self.ui, return @ui, if not exists, then create it
+	def self.ui ##{{{
+		@ui = UserInterface.new unless @ui;
+		return @ui;
+	end ##}}}
+
 	def self.pm
+		@pm=PluginManager.new() unless @pm;
 		return @pm;
 	end
 
+	## self.buildDirs, build dir for Rsim tool, the out, and log dir for tool
+	#
+	def self.buildDirs ##{{{
+		Shell.makedir self.ui.outhome,self.ui.logdir;
+	end ##}}}
+
+	## self.dp, return the Dispatcher
+	def self.dp ##{{{
+		return @dp;
+	end ##}}}
+
 	## self.init, initialization of Rsim tool.
 	def self.init; ##{{{
-
-		@ui = UserInterface.new;
-		@reporter=Reporter.new(@ui.verbo);
 		# multiple thread controll system.
-		@dp=Dispatcher.new(@ui);
-		@pm=PluginManager.new();@pm.init(@dp,@ui);
-		@nm=NodeManager.new(@ui);
-		@simulator=Simulator.new(@ui.eda);
+		@dp=Dispatcher.new(self.ui);
+		self.pm.init(@dp,self.ui);
+		@nm=NodeManager.new(self.ui);
+		Rsim.info("set to metadata: #{self.ui.outhome}",9);
+		MetaData.outhome(self.ui.outhome);
+		self.buildDirs;
+		@reporter=Reporter.new(self.ui.verbo);
 	end ##}}}
 
 	## The main entry of Rsim tool, ##{{{
@@ -77,6 +96,14 @@ module Rsim
 			puts "[RAW-I]"+msg;
 		end
 	end
+	## self.warning(msg), report warning
+	def self.warning(msg) ##{{{
+		if @reporter
+			@reporter.warning(msg);
+		else
+			puts "[RAW-W]"+msg;
+		end
+	end ##}}}
 	def self.error(msg)
 		if @reporter
 			@reporter.error(msg);

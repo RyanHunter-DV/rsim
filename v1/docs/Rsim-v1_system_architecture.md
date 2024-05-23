@@ -1,4 +1,13 @@
 Rsim-v1 system architecture
+
+# Command line options
+## execute user commands
+`-e 'build(:config)'`
+`-e 'compile(:config)'` with option skipping like: `-s build`
+`-e 'runtest(:testname)'` with optional skipping like: `-s build,compile`
+## specify user log file
+`-l logfile` to specify an extra logfile, or else will use a default one: rsim.log.
+
 # Tool executing steps
 1. process user inputs and generate executing commands.
 2. load plugins of builtin and from $RSIM_PLUGINS.

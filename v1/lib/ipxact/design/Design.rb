@@ -18,9 +18,8 @@ class Design < IpXactData
 	## initialize, 
 	# called by global design command, which will build a new Design object
 	def initialize(vlnv); ##{{{
-		puts "#{__FILE__}:(initialize) is not ready yet."
 		@hierConnects={};@interconnects={};
-		@adhocs=[];
+		@adhocs=[];@instances={};
 		super(:design)
 		setupNameId(vlnv,:vlnv);
 	end ##}}}
@@ -28,14 +27,16 @@ class Design < IpXactData
 	# component instance, before finalize, the instance command
 	# only record the vlnv name and the corresponding instance name.
 	# and in finalize, the vlnv name will be replaced to real component object.
-	def instance(vlnv,as)
-		vlnv=vlnv.to_s;as=as.to_sym;
+	def instance(vlnv,**opts)
+		raise NodeException.new("no instance specified for component(#{vlnv}) ") unless opts.has_key?(:as);
+		vlnv=vlnv.to_s;as=opts[:as].to_sym;
 		c=MetaData.find(vlnv,:component);
 		raise NodeException.new("no component(#{vlnv}) found in MetaData") unless c;
-		c.buildComponentInstance(self);
+		#TODO, tmp forget this is for what usage? c.buildComponentInstance(self);
 		@instances[as]=c;
 		self.define_singleton_method as do
-			return @instance[as];
+			# return vlnv name of the instance
+			return @instances[as];
 		end
 	end
 
@@ -61,6 +62,13 @@ class Design < IpXactData
 		@adhocs << pm;
 	end
 
+	## getInstName(vlnv), according to component's vlnv, return the instname
+	def getInstName(vlnv) ##{{{
+		@instances.each_pair do |iname,o|
+			return iname if o.vlnv==vlnv;
+		end
+		return '';
+	end ##}}}
 
 	def finalize
 		# 1. eval user nodes where added when creating.

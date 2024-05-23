@@ -4,9 +4,9 @@ class DesignConfiguration < IpXactData
 	attr :compopts;
 	attr :elabopts;
 
-	def initialize(vlnv)
+	def initialize(name)
 		super(:config);
-		setupNameId(vlnv);
+		setupNameId(name,:nameGroup);
 		@needs={};
 		@compopts=[];@elabopts=[];
 	end
@@ -18,11 +18,8 @@ class DesignConfiguration < IpXactData
 	## user node commands
 	# need, include a component which will be built.
 	# example: need design.instname => :viewname
-	def need(**pairs)
-		pairs.each_pair do |io,vname|
-			# io -> instance object, vname -> view name
-			needs[io]={:view=>vname};
-		end
+	def need(io,vname)
+		needs[io]={:view=>vname};
 	end
 	# compopt, option string directly set to compile flow
 	def compopt(*args)
@@ -47,6 +44,12 @@ class DesignConfiguration < IpXactData
 		Rsim.simulator.compopts(@compopts);
 		Rsim.simulator.elabopts(@elabopts);
 	end
+	## elaborate, building this configs
+	def elaborate ##{{{
+		needs.each_pair do |o,opts|
+			o.elaborate(self,**opts);
+		end
+	end ##}}}
 end
 
 def config(vlnv,**opts,&block)
@@ -55,6 +58,7 @@ def config(vlnv,**opts,&block)
 		p=MetaData.find(opts[:clones],:config) 
 		c.clones(p);
 	end
-	c.addUserNodes(block);
+	MetaData.register(c);
+	c.addUserNode(block);
 end
 

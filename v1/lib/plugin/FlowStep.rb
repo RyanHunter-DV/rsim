@@ -25,6 +25,12 @@ class FlowStep
 		@options=opt;
 		Rsim.info("step build with name(#{name}),opts:(#{@options})",9);
 	end ##}}}
+	## insertOptions(**opts), insert new options
+	def insertOptions(opts) ##{{{
+		opts.each_pair do |k,v|
+			@options[k]=v;
+		end
+	end ##}}}
 
 	## after(n), given the name of the step that this step
 	# will called after it.

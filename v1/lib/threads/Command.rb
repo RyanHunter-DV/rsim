@@ -32,8 +32,8 @@ class Command
 	end ##}}}
 	def exe ##{{{
 		e=@procedures[0][:exe]; t=@procedures[0][:type];
-		return e if t==:proc;
-		return self.instance_eval e if t==:extern;
+		return e;# if t==:proc;
+		#return self.instance_eval e if t==:extern;
 	end ##}}}
 	## owner(o), for internal proc executing, to specify which object
 	# will evaluate this proc.

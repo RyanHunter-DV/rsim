@@ -17,12 +17,12 @@ class Simulator
 
 	## compopts(*args), set options for compile step, if eda has no this step, then ignore it.
 	def compopts(*args) ##{{{
-		return unless @eda.steps(:compile).include?(:compile);
+		return unless @eda.steps(:build).include?(:compile);
 		@eda.addOptions(:compile,*args);
 	end ##}}}
 	## elabopts(*args), similar with the compopts
 	def elabopts(*args) ##{{{
-		return unless @eda.steps(:compile).include?(:elab);
+		return unless @eda.steps(:build).include?(:elab);
 		@eda.addOptions(:elab,*args);
 	end ##}}}
 	## simopts(*args), similar with the compopts

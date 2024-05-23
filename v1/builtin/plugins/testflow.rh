@@ -2,7 +2,7 @@ flow :testflow do
 	# api called by PluginManager: pm.runtest(**opts)
 	# opts[:config] => 'cn'
 	api 'runtest' do |**opts|
-		@plugins[:testflow].options=opts;
+		@plugins[:testflow].options(opts);
 		@plugins[:testflow].run;
 	end
 

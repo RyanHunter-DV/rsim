@@ -23,6 +23,7 @@ require 'lib/ipxact/BusDefinition.rb'
 require 'lib/ipxact/Generator.rb'
 require 'lib/ipxact/tests/TestTemplate.rb'
 require 'lib/ipxact/tests/Test.rb'
+require 'lib/Shell'
 module MetaData
 
 	@pool={
@@ -30,11 +31,19 @@ module MetaData
 		:component=>{},:design=>{},:config=>{},
 		:generatorChain=>{}
 	};
+	@outhome='';
 
+	## self.outhome, return outhome of current project
+	def self.outhome(v='') ##{{{
+		caller(1);
+		Rsim.info("metadata's outhome: (#{@outhome}),v(#{v})",9);
+		return @outhome if v=='';
+		@outhome=v;
+	end ##}}}
 	# pool: pool[<datatype>] = {<name> => <object>,...}
 	def self.register(c)
 		dt  = c.datatype;
-		name= c.id;
+		name= c.id.to_s;
 		Rsim.info("register #{name} of type #{dt}",9);
 		@pool = {} unless @pool;
 		@pool[dt]={} unless @pool.has_key?(dt);
@@ -46,6 +55,10 @@ module MetaData
 		@design = c if dt==:design;
 		return;
 	end
+	## self.configs(cn), return the registered config object of given name
+	def self.configs(cn) ##{{{
+		return self.find(cn,:config);
+	end ##}}}
 
 	# find in specifid type pool by given t, according to given name.
 	# name is a string: MetaData.find('vlnv',:component)
@@ -54,7 +67,9 @@ module MetaData
 		item=nil;
 		pool = @pool[t] if @pool.has_key?(t);
 		item=pool[name] if pool.has_key?(name);
-		raise NodeException.new("cannot find object:(#{name}) by given type: #{t}") unless item;
+		unless item
+			raise NodeException.new("cannot find object:(#{name}) by given type: #{t}\nfollowing are availables:#{pool.keys}");
+		end
 		return item;
 	end
 
@@ -100,6 +115,33 @@ module MetaData
 			o.finalize;
 		end
 	end
+	## self.buildDirs, to build common dirs:
+	# - @outhome
+	# - @outhome/components
+	# - @outhome/configs
+	# - @outhome/common
+	def self.buildDirs ##{{{
+		@out={};
+		@out[:components]=File.join(@outhome,'components');
+		@out[:configs]=File.join(@outhome,'configs');
+		@out[:common]=File.join(@outhome,'common');
+		Shell.makedir @out[:components],@out[:configs],@out[:common]
+	end ##}}}
+	## self.out(t), return out path according to given type
+	def self.out(t=nil) ##{{{
+		return @outhome unless t; # if t is nil, return the root path.
+		return @out[t.to_sym];
+	end ##}}}
+
+	## self.elaborate(cn), elaborate the given config name
+	def self.elaborate(cn) ##{{{
+		config=self.find(cn,:config);
+		raise NodeException.new("config(#{cn} not found") unless config;
+		Rsim.info("start building config #{cn}",5);
+		self.buildDirs;
+		config.elaborate;
+	end ##}}}
+
 	def self.design
 		# return the design object
 		return @design;

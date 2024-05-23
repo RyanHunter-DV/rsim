@@ -40,11 +40,12 @@ class ViewType < IpXactData
 	def language(l)
 		@language=l.to_sym;
 	end
-	def fileSet(n,&block) ##{{{
+	def fileSet(n=nil,&block) ##{{{
+		return @fileSet if n==nil;
 		raise NodeException.new("at least one file info must specified by fileSet") unless block_given?;
 		n=n.to_s;
 		fs=FileSetType.new(n,block.source_location);
-		fs.instance_eval block;
+		fs.instance_eval &block;
 		@fileSet=fs;
 	end ##}}}
 end

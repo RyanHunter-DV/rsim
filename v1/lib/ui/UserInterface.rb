@@ -9,9 +9,12 @@ class UserInterface
 
 	EnvVars={:entries=>'RSIM_ROOT',:stem=>'STEM'};
 	attr_accessor :maxJobs;
-	attr_accessor :logdir;
+	attr_accessor :logdir; # the OUT/logs dir by default
 	attr_accessor :plugins;
 	attr_accessor :verbo;
+	attr_accessor :outhome;
+	attr :execute;
+	attr :outdir;
 
 	# ENV variables
 	attr_accessor :stem;
@@ -41,8 +44,9 @@ class UserInterface
 
 	## initFields, initialize local field by default value.
 	def initFields ##{{{
-		@maxJobs=1;@logdir='.';@plugins=[];
-		@verbo=5;
+		@maxJobs=1;@logdir='logs';@plugins=[];
+		@verbo=5;@execute='';
+		@outdir='out'; #default
 		processEnvVars;
 		Rsim.info("Tool config initialized:",9);
 		Rsim.info("eda: #{@eda}",9);
@@ -76,9 +80,32 @@ class UserInterface
 			opts.on('-v','--verbo=VERBO','set verbosity for report') do |v|
 				@verbo=v.to_i;
 			end
+			opts.on('-e','--exe=COMMAND','set user execute command') do |v|
+				# examples
+				# -e 'build(:ConfigName)', to build a specific config
+				@execute=v;
+			end
+			opts.on('-o','--out=DIR','specify a new out dir instead of the default') do |v|
+				@outdir=v;
+			end
 		end.parse!
+
+		@outhome=File.join(@stem,@outdir);
+		@logdir=File.join(@outhome,@logdir);
+		Rsim.info("setting outhome: #{@outhome}",9);
 	end
 
+	## filterUserCmd(exe), filter the format like 'build(:config)' into
+	# {:api=>:build,:opts=>{:config=>'config',...}}
+	def filterUserCmd(exe) ##{{{
+		re=Regexp.new(/(\w+)\(:*(\w+)\)/);
+		md=re.match(exe.gsub(/ /,''));
+		if md
+			cmd={:api=>md[1],:opts=>{:config=>md[2].to_sym}};
+			return cmd;
+		end
+		raise NodeException.new("invalid command entered:(#{exe})");
+	end ##}}}
 
 	## commands, return a certain formatted command
 	# according to user inputs and inferring the command
@@ -86,6 +113,15 @@ class UserInterface
 	def commands; ##{{{
 		cmds=[];
 		#1.arrange flow commands
+		cmds << filterUserCmd(@execute) if @execute!='';
+		return cmds if cmds.empty?;
+		case(cmds[0][:api])
+		when 'compile'
+			insertCmd(:build,cmds);
+		when 'runtest'
+			insertCmd(:compile,cmds);
+			insertCmd(:build,cmds);
+		end
 		#2.return with the format:
 		# format: [{:api=>'build',:opts=>{:config=>:config,:b=>xxx}}]
 		return cmds;

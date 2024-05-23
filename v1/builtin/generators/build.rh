@@ -1,9 +1,22 @@
 generator 'copy' do
 	exe '/bin/cp'
-	action do |o|
-		o.fileSets.each do |src|
+	action do |o,**opts|
+		o.fileSet(opts[:view]).each do |src|
 			t=o.out;
 			cmd src,t; # cmd *opts -> %Q|#{exe}|+ %Q| |+opts.each -> @pids<<dp.emit(cmd)
+		end
+	end
+end
+generator 'link' do
+	exe '/bin/ln'
+	action do |o,**opts|
+		Rsim.info("self in link action is #{self}",9);
+		Rsim.info("o in link action is #{o}",9);
+		Rsim.info("opts in link action is #{opts}",9);
+		view=opts[:view];out=opts[:out];
+		root=o.fileSet(view).root;
+		o.fileSet(view).src[:source].each do |sn|
+			cmd '-s',File.join(root,sn),File.join(out,sn);
 		end
 	end
 end

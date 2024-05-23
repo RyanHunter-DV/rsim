@@ -7,7 +7,6 @@ class Xcelium
 	## initialize, init
 	def initialize ##{{{
 		@name='Xcelium';
-		checkToolExistence;
 		@userOptions={:compile=>[],:elab=>[],:sim=>[]};
 	end ##}}}
 	## checkToolExistence, check if current env has specified
@@ -26,6 +25,7 @@ class Xcelium
 	def steps(t) ##{{{
 		return [:compile,:elab] if t==:build;
 		return [:sim] if t==:run;
+		raise ToolException.new("invalid step type specified(#{t})");
 	end ##}}}
 	## addOptions(step,*args), add user options for specified step
 	def addOptions(step,*args) ##{{{
@@ -40,6 +40,7 @@ class Xcelium
 	## command(step), return arranged command of this tool after loading nodes
 	# step can be: :compile, :elab, :sim
 	def command(step) ##{{{
+		checkToolExistence;
 		step=step.to_sym;
 		cmd=base(step);
 		@userOptions[step].each do |opt|

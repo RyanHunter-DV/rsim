@@ -1,7 +1,7 @@
 flow :compileflow do
 	api :compile do |**opts|
 		# setup options attribute of this plugin.
-		@plugins[:compileflow].options= opts;
+		@plugins[:compileflow].options(opts);
 		## this will start executing the different steps
 		@plugins[:compileflow].run;
 	end

@@ -8,7 +8,7 @@ class PluginManager
 	attr_accessor :plugins;
 	attr :dp;
 
-	BUILT_IN = 'builtin/plugins/node.rh';
+	BUILT_INS = 'builtin/plugins/node.rh;builtin/generators/build.rh';
 	
 	## initialize(), 
 	def initialize(); ##{{{
@@ -28,9 +28,11 @@ class PluginManager
 	# TODO, detailed loading strategy need to be planned.
 	def loading(ui); ##{{{
 		fromuser = ui.plugins;
-		builtin= BUILT_IN;
-		Rsim.info("loading builtin plugin node(#{builtin})",6);
-		rhload builtin,:tool;
+		builtins= BUILT_INS.split(';');
+		builtins.each do |builtin|
+			Rsim.info("loading builtin plugin node(#{builtin})",6);
+			rhload builtin,:tool;
+		end
 		fromuser.each do |node|
 			rhload node;
 		end
@@ -40,9 +42,14 @@ class PluginManager
 	# called by Rsim.plugins.execute(ui.commands)
 	# cmds format: # [{:api=>'build',:opts=>{:config=>:config,:b=>xxx}}]
 	def execute(cmds); ##{{{
-		puts "#{__FILE__}:(execute(dispatcher)) is not ready yet."
+		Rsim.info("call execute(#{cmds})",6);
+		#puts "#{__FILE__}:(execute(dispatcher)) is not ready yet."
 		#1.cmds.each
-		#2.self.send(cmd[:api],**cmd[:opts])
+		cmds.each do |cmd|
+			#2.self.send(cmd[:api],**cmd[:opts])
+			Rsim.info("executing command(#{cmd[:api]},#{cmd[:opts]})");
+			self.send(cmd[:api],**cmd[:opts]);
+		end
 		#TODO
 	end ##}}}
 

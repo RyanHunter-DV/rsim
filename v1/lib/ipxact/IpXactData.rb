@@ -18,6 +18,13 @@ class IpXactData
 	def setupNameId(val,t=:vlnv)
 		var=%Q|@#{t}|;
 		self.instance_variable_set(var,val);
+		if t==:vlnv
+			# if is vlnv type, then need return the name
+			splitted=val.split('/');
+			self.define_singleton_method :name do
+				return splitted[2]
+			end
+		end
 		self.define_singleton_method t do
 			return self.instance_variable_get(var);
 		end

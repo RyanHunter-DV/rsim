@@ -8,8 +8,10 @@ class Component < IpXactData
 
 	attr :genConfig;
 	attr :memoryMaps;
+	attr :defaultView;
 	attr_accessor :views;
 	attr_accessor :ports;
+	attr_accessor :outhome;
 
 	## initialize, 
 	# the constructor
@@ -18,7 +20,7 @@ class Component < IpXactData
 		#@id=Vlnv.new(vlnvS);
 		setupNameId(vlnvS,:vlnv);
 		@genConfig={:generator=>nil,:options=>{}};
-		@memoryMaps={};
+		@memoryMaps={};@defaultView=nil;
 		@views={};@ports=[];
 	end ##}}}
 
@@ -129,8 +131,9 @@ class Component < IpXactData
 	def view(vn,&block) ##{{{
 		vn=vn.to_sym;
 		v=ViewType.new(vn);
-		v.instance_eval block;
+		v.instance_eval &block;
 		@views[vn]=v;
+		@defaultView=v unless @defaultView;
 	end ##}}}
 
 	##}}}
@@ -142,9 +145,27 @@ class Component < IpXactData
 		evalUserNodes(self);
 		# 2.if generator is nil, then add a default one: 'link'
 		buildDefaultGenerator if @genConfig[:generator]==nil;
+		# 3.setup dirs for component.
 	end ##}}}
 
+	## elaborate(vname), to build the config according to given generator
+	def elaborate(config,**opts) ##{{{
+		vname=opts[:view].to_sym if opts.has_key?(:view);
+		unless vname
+			Rsim.warning("no view is specified of component(#{self.vlnv}), use defaultView(#{@defaultView})"); 
+			vname=@defaultView;
+		end
+		@genConfig[:options][:view]=vname;
 
+		iname = config.design.getInstName(vlnv);
+		@genConfig[:options][:out]=File.join(MetaData.out(:components),"#{name}-#{iname}");
+		@genConfig[:generator].generate(self,@genConfig[:options]);
+	end ##}}}
+
+	## fileSet, return specific fileSets according to current view
+	def fileSet(vname) ##{{{
+		return @views[vname].fileSet;
+	end ##}}}
 
 private
 
@@ -161,5 +182,6 @@ end
 def component(vlnv,&block); ##{{{
 	c=Component.new(vlnv);
 	c.addUserNode(block);
+	#c.outhome= MetaData.outhome;
 	MetaData.register(c);
 end ##}}}

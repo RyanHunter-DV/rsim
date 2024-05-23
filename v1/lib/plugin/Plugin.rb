@@ -6,7 +6,7 @@ plugin files, such as buildflow, compileflow ...
 # require 'lib/plugin/FlowBase.rb'
 require 'lib/plugin/FlowStep.rb'
 class Plugin
-	attr_accessor :options; # options required to call different actions.
+	attr :options; # options required to call different actions.
 	# format: steps[:name] => object
 	attr :steps;
 	attr :api;
@@ -74,8 +74,7 @@ class Plugin
 				end
 				pids<<@dispatcher.emit(step.action);
 			end
-			Rsim.error("flow(#{@name}) failed") if @dispatcher.wait(*pids);
-			#TODO, raise ToolException.new("flow(#{@name} failed") if @dispatcher.wait(*pids);
+			raise ToolException.new("flow(#{@name} failed") if @dispatcher.wait(*pids)>0;
 		end
 	end ##}}}
 	# User commands for new plugin definition ##{{{
@@ -113,4 +112,11 @@ class Plugin
 	end ##}}}
 	# }}}
 
+	## options(opts), set options from api, need set to all FlowStep created
+	def options(opts) ##{{{
+		@options=opts;
+		@steps.each_value do |s|
+			s.insertOptions(@options);
+		end
+	end ##}}}
 end

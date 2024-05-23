@@ -13,10 +13,12 @@ class Dispatcher
 	attr :maxJobs;
 	attr :logdir;
 	attr :pids;
+	attr :isWaiting;
 
 	## initialize, description
 	def initialize(ui); ##{{{
 		init(:maxJobs=>ui.maxJobs,:logdir=>ui.logdir);
+		@isWaiting=false;
 	end ##}}}
 
 	## init(**opts={}), description
@@ -30,6 +32,7 @@ class Dispatcher
 	# return and record pid of subprocess.
 	def emit(cmd) ##{{{
 		p=nil;
+		raise UserException.new("emit a new thread while in waitall") if @isWaiting==true;
 		if cmd.isBuiltinCommand
 			p= -> {
 				Rsim.info("scope: #{cmd.scope.inspect}",9);
@@ -44,10 +47,13 @@ class Dispatcher
 				fh=File.open(log,'w');
 				if s.success?
 					fh.write(o);
+					fh.close;
 				else
 					fh.write(e);
+					fh.close;
+					Shell.exec("cat #{log}");
+					raise ToolException.new("cmd(#{cmd.exe}) failed");
 				end
-				fh.close;
 			};
 		end
 		pid = fork &p;
@@ -56,6 +62,18 @@ class Dispatcher
 			return pid;
 		end
 		exit 0;
+	end ##}}}
+
+	## waitall, to wait all emitted pids to be done, then return
+	def waitall ##{{{
+		@isWaiting=true;
+		@pids.each do |pid|
+			Rsim.info("waiting for #{pid}",9);
+			Process.wait(pid);
+			Rsim.info("#{pid} waited",9);
+		end
+		@pids=[]; # clear pending pids
+		@isWaiting=false;
 	end ##}}}
 
 	def wait(*pids) ##{{{
