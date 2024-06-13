@@ -1,19 +1,8 @@
 flow :buildflow do
-	api :build do |o,**opts|
-		Rsim.info("calling build with context(#{o})",6);
-		Rsim.info("calling build with options(#{opts})",6);
-		Rsim.info("plugins:#{o.plugins}",9);
-		Rsim.info("self:#{self}",9);
-		# setup options attribute of this plugin.
-		o.plugins[:buildflow].options(opts);
-		## this will start executing the different steps
-		o.plugins[:buildflow].run;
-	end
-	step 'pre_build' do
+	step 'pre_build',:phase=>0.0 do
 		#TODO, xxx
 	end
-	step 'build' do
-		after 'pre_build',:blocked=>true;
+	step 'build',:phase=>1.0 do
 		# call to run the metadata's generator chain.
 		# the step running context is in current flow.
 		action :proc do
@@ -28,9 +17,8 @@ flow :buildflow do
 			#MetaData.configs(cn).build;
 		end
 	end
-	step 'post_build' do
+	step 'post_build',:phase=>2.0 do
 		#TODO, xxx
-		after 'build',:blocked=>true;
 		# if no exe specifeid, this is a dummy step, which will not be registered into flow
 	end
 end

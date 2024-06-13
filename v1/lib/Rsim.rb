@@ -1,123 +1,64 @@
-# ----------------------------------------------------------------------------------------------
-# The very top level of the whole Rsim tool.
-# ----------------------------------------------------------------------------------------------
-
-# The LOAD_PATH of this Rsim tool is ~/rsim/v1/
-require 'lib/erh/ToolException.rb'
-require 'lib/erh/NodeException.rb'
-require 'lib/Reporter.rb'
-require 'lib/ui/UserInterface.rb'
-require 'lib/threads/Dispatcher.rb'
-require 'lib/plugin/PluginManager.rb'
-require 'lib/nodes/NodeManager.rb'
-require 'lib/nodes/MetaData.rb'
-require 'lib/simulators/Simulator.rb'
-require 'lib/simulators/Vcs.rb'
-require 'lib/simulators/Xcelium.rb'
 module Rsim
+	# TODO, description here
+	# tool top module, which has tool specific objects and apis that can be 
 
-	@reporter;
-	@simulator;
-	@ui;@dp;@pm;@nm;
+	@options=nil;
+	@reporter=nil;
+	@pm=nil;
+	@patcher=nil;
 
-	## self.simulator, return a pre-defined simulator object.
-	def self.simulator ##{{{
-		#raise ToolException.new("no simulator initialized") unless @simulator;
-		@simulator=Simulator.new(self.ui.eda) unless @simulator;
-		return @simulator;
+	# report apis #
+	## self.info, called by other components to report by info severity
+	# verbosity, according to user interface setting, if current message's verbo > than
+	# option setting, then will not been displayed.
+	def self.info(msg,verbo=5); ##{{{
+		puts "#{__FILE__}:(self.info) is not ready yet."
+	end ##}}}
+	## self.warning(msg), called by other components for warning severity
+	def self.warning(msg); ##{{{
+		puts "#{__FILE__}:(self.warning(msg)) is not ready yet."
 	end ##}}}
 
-	## self.ui, return @ui, if not exists, then create it
-	def self.ui ##{{{
-		@ui = UserInterface.new unless @ui;
-		return @ui;
+	## self.ui, return ToolOptions object if created, or create a new one and return it.
+	def self.options; ##{{{
+		@options = ToolOptions.new() unless @options;
+		return @options;
 	end ##}}}
 
-	def self.pm
-		@pm=PluginManager.new() unless @pm;
-		return @pm;
-	end
-
-	## self.buildDirs, build dir for Rsim tool, the out, and log dir for tool
-	#
-	def self.buildDirs ##{{{
-		Shell.makedir self.ui.outhome,self.ui.logdir;
-	end ##}}}
-
-	## self.dp, return the Dispatcher
-	def self.dp ##{{{
-		return @dp;
-	end ##}}}
-
-	## self.init, initialization of Rsim tool.
+	## self.init, tool initialization
 	def self.init; ##{{{
-		# multiple thread controll system.
-		@dp=Dispatcher.new(self.ui);
-		self.pm.init(@dp,self.ui);
-		@nm=NodeManager.new(self.ui);
-		Rsim.info("set to metadata: #{self.ui.outhome}",9);
-		MetaData.outhome(self.ui.outhome);
-		self.buildDirs;
-		@reporter=Reporter.new(self.ui.verbo);
+		puts "#{__FILE__}:(self.init) is not ready yet."
+		# 1.tool option initialize, 
+		# 1.1.process user command options
+		# 1.2.check and get ENV variable values.
+		# 1.3.setup default options if user not specified but can be infered by tool.
+		options= self.options;
+		# 2.report init.
+		# 2.1.set verbo threshold from user inputs.
+		@reporter = Reporter.new(options.verbo);
+		#TODO
+		
 	end ##}}}
 
-	## The main entry of Rsim tool, ##{{{
-	## self.run, 
-	# the very top run api called by the bin/rsim, this api will
-	# start the tool and collect all errors.
-	# Tool executing flow:
-	# 1. ENV check
-	# 2. loading UI, user options
-		# 1. user option check.
-		# 2. arrange user input commands.
-	# 3. load plugins
-	# 4. load nodes ➝ elaborate
-	# 5. build if has
-	# 6. compile if has
-	# 7. run if has
+	## self.patcher, return patcher for multi-thread job control, if not exists, then create a new one.
+	def self.patcher; ##{{{
+		puts "#{__FILE__}:(self.patcher) is not ready yet."
+		# @patcher = Dispatcher.new() unless @patcher;
+		# return @patcher
+	end ##}}}
+
+	## self.pm, return the @pm; if not exists @pm, then create a new one
+	def self.pm; ##{{{
+		@pm=PluginManager.new(self.patcher,self.options) unless @pm;
+		return @pm;
+	end ##}}}
+
+	## self.run, called by the tool shell, to start the main procedures
 	def self.run; ##{{{
-		begin
-			self.init;
-			MetaData.finalize; # after loading nodes, need to finalize the data base
-			@pm.execute(@ui.commands);
-		rescue EnvException => e
-			e.process;
-		rescue NodeException => e
-			e.process;
-		rescue ToolException => e
-			e.process;
-		end
+		puts "#{__FILE__}:(self.run) is not ready yet."
+		# 1.tool initialization, call init
+		self.init;
+		# 2.execute commands from self.options, the commands will be executed by PluginManager
+		self.pm.execute();
 	end ##}}}
-
-	def self.info(msg,verbo=5)
-		if @reporter
-			@reporter.info(msg,verbo);
-		else
-			puts "[RAW-I]"+msg;
-		end
-	end
-	## self.warning(msg), report warning
-	def self.warning(msg) ##{{{
-		if @reporter
-			@reporter.warning(msg);
-		else
-			puts "[RAW-W]"+msg;
-		end
-	end ##}}}
-	def self.error(msg)
-		if @reporter
-			@reporter.error(msg);
-		else
-			puts "[RAW-E] #{msg}";
-		end
-	end
-
-	## self.join(*args), join args into a full path file with absolute path
-	def self.join(*args) ##{{{
-		f=File.join(*args);
-		return File.absolute_path(f);
-	end ##}}}
-
-	##}}}
-
 end

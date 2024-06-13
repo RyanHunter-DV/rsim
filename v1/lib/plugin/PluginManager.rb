@@ -11,17 +11,10 @@ class PluginManager
 	BUILT_INS = 'builtin/plugins/node.rh;builtin/generators/build.rh';
 	
 	## initialize(), 
-	def initialize(); ##{{{
+	def initialize(patcher,options); ##{{{
 		@plugins={};
-		#init(dp,ui);
-	end ##}}}
-
-	## init(patcher), 
-	# initialize the plugin manager, such like set dispatcher,
-	# loading all plugins required.
-	def init(patcher,ui); ##{{{
 		@dp=patcher;
-		loading(ui);
+		loading(options);
 	end ##}}}
 
 	## loading(ui), loading required plugins according to ui options.
@@ -38,20 +31,30 @@ class PluginManager
 		end
 	end ##}}}
 
-	# execute all loaded plugins with available steps.
-	# called by Rsim.plugins.execute(ui.commands)
-	# cmds format: # [{:api=>'build',:opts=>{:config=>:config,:b=>xxx}}]
-	def execute(cmds); ##{{{
-		Rsim.info("call execute(#{cmds})",6);
-		#puts "#{__FILE__}:(execute(dispatcher)) is not ready yet."
-		#1.cmds.each
-		cmds.each do |cmd|
-			#2.self.send(cmd[:api],**cmd[:opts])
-			Rsim.info("executing command(#{cmd[:api]},#{cmd[:opts]})");
-			self.send(cmd[:api],**cmd[:opts]);
-		end
-		#TODO
+	#TODO, deprecated, # execute all loaded plugins with available steps.
+	#TODO, deprecated, # called by Rsim.plugins.execute(ui.commands)
+	#TODO, deprecated, # cmds format: # [{:api=>'build',:opts=>{:config=>:config,:b=>xxx}}]
+	#TODO, deprecated, def execute(cmds); ##{{{
+	#TODO, deprecated, 	Rsim.info("call execute(#{cmds})",6);
+	#TODO, deprecated, 	#puts "#{__FILE__}:(execute(dispatcher)) is not ready yet."
+	#TODO, deprecated, 	#1.cmds.each
+	#TODO, deprecated, 	cmds.each do |cmd|
+	#TODO, deprecated, 		#2.self.send(cmd[:api],**cmd[:opts])
+	#TODO, deprecated, 		Rsim.info("executing command(#{cmd[:api]},#{cmd[:opts]})");
+	#TODO, deprecated, 		self.send(cmd[:api],**cmd[:opts]);
+	#TODO, deprecated, 	end
+	#TODO, deprecated, 	#TODO
+	#TODO, deprecated, end ##}}}
+
+	## execute(plugin,*args), execute api called by other components to execute the specified
+	# plugin with given args:
+	# Rsim.pm.execute(:buildflow,:ConfigName)
+	def execute(plugin,**opts); ##{{{
+		Rsim.info("executing plugin(#{plugin}),options(#{opts})");
+		# call of plugin will call the api defined while a new plugin registered in PluginManager
+		self.send(plugin.to_sym,**opts);
 	end ##}}}
+
 
 	## register(p), 
 	# register a new loaded plugin into this plugin manager
@@ -60,11 +63,11 @@ class PluginManager
 		p.dispatcher= @dp;
 		# define api which described by the plugin obj, so that it can be easily called
 		# by the user command from: Rsim.plugins.build(:Config)...
-		Rsim.info("register plugin, api:#{p.api}",9);
+		Rsim.info("register plugin:#{p.name}",9);
 		p.container=self;
-		#return unless p.api.has_key?(:proc)
-		#block=p.api[:proc];
-		#name =p.api[:name];
+		self.define_singleton_method p.name.to_sym do |**opts|
+			p.run(**opts);
+		end
 	end ##}}}
 end
 
@@ -74,10 +77,10 @@ def flow(name,&block); ##{{{
 	np=nil;
 	Rsim.info("defining flow: #{name}",9);
 	if Rsim.pm.respond_to?(name);
-		Rsim.info("in branch 1",9);
+		Rsim.info("add new block into previously registered plugin",9);
 		np=Rsim.pm.send(name);
 	else
-		Rsim.info("in branch 2",9);
+		Rsim.info("create a new plugin object",9);
 		np = Plugin.new(name.to_s);
 		Rsim.pm.register(np);
 		Rsim.info("#{np} registered",9);

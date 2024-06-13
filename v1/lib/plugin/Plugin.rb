@@ -58,7 +58,8 @@ class Plugin
 	end ##}}}
 	## run, built-in command called by internal tool like: <flowname>.run
 	# this is the built-in entry to start running the certain flow plugin.
-	def run; ##{{{
+	def run(**opts); ##{{{
+		options(opts);
 		# 1. arrange steps # for example: step is: pre_build -> build/build2 -> post_build
 		# then arrange steps into: ['pre_build', ['build','build2'],'post_build']
 		# 2. schedule, emit and wait for all step commands
@@ -77,25 +78,25 @@ class Plugin
 			raise ToolException.new("flow(#{@name} failed") if @dispatcher.wait(*pids)>0;
 		end
 	end ##}}}
-	# User commands for new plugin definition ##{{{
-	## api(name,&block), To declare an api which will be called by internal through the API directly,
-	# this api will be the method registered in PluginManageer, so it can be called like: Rsim.plugins.<api>
-	#TODO
-	def api(name=nil,&block); ##{{{
-		Rsim.info("call api, name(#{name}),block:#{block}",9);
-		return @api if (name==nil);
-		name=name.to_sym;
-		@api[:name] = name;
-		@api[:proc] = block;
-		Rsim.info("define_singleton_method :#{name}",9);
-		Rsim.info("define_singleton_method :#{block}",9);
-		@container.define_singleton_method name do |**opts|
-			Rsim.info("block: #{block}",9);
-			#self.instance_exec {block.call(**opts)};
-			#TODO,for test opts={:test=>'1'};
-			self.instance_exec {block.call(self,opts)};
-		end
-	end ##}}}
+	#TODO, deprecated, # User commands for new plugin definition ##{{{
+	#TODO, deprecated, ## api(name,&block), To declare an api which will be called by internal through the API directly,
+	#TODO, deprecated, # this api will be the method registered in PluginManageer, so it can be called like: Rsim.plugins.<api>
+	#TODO, deprecated, #TODO
+	#TODO, deprecated, def api(name=nil,&block); ##{{{
+	#TODO, deprecated, 	Rsim.info("call api, name(#{name}),block:#{block}",9);
+	#TODO, deprecated, 	return @api if (name==nil);
+	#TODO, deprecated, 	name=name.to_sym;
+	#TODO, deprecated, 	@api[:name] = name;
+	#TODO, deprecated, 	@api[:proc] = block;
+	#TODO, deprecated, 	Rsim.info("define_singleton_method :#{name}",9);
+	#TODO, deprecated, 	Rsim.info("define_singleton_method :#{block}",9);
+	#TODO, deprecated, 	@container.define_singleton_method name do |**opts|
+	#TODO, deprecated, 		Rsim.info("block: #{block}",9);
+	#TODO, deprecated, 		#self.instance_exec {block.call(**opts)};
+	#TODO, deprecated, 		#TODO,for test opts={:test=>'1'};
+	#TODO, deprecated, 		self.instance_exec {block.call(self,opts)};
+	#TODO, deprecated, 	end
+	#TODO, deprecated, end ##}}}
 	## step(name,&block), declare a flow step for this plugin
 	#TODO
 	def step(name,&block); ##{{{
