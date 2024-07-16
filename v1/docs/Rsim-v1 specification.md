@@ -28,43 +28,149 @@ above config can tell rsim tool to build two different component instances for t
 ### build different RTL/DV files from same component
 An IP-XACT component can generate different RTL/DV files with different component instances and parameters, so the output dir shall be differentiated by the component name format: `components/componentname-instancename`. The componentname is the name of vendor/library/name/version (vlnv) set.
 
-# IP-XACT concept descriptions
-## Component
-### MemoryMaps
-Memory maps described in user nodes are used to create:
-- design register description file;
-- DV ral model register file;
-- DV ral model mem file;
 
-### Ports and interfaces in a component
-~~In protocol standard, the component port and interface are used to declare the connection of a component, this can be used to generate a verilog module top in which only has connection information. For example, by giving a file which has only instantiation information, and the component nodes that has model name, single ports and interface declaration, can generate a top module that has multiple instances. In rsim flow, we can build a generator called 'top-gen' to build such kind of modules.~~
+# Examples & usages
+[[Rsim-v1 example node descriptions]]
 
 
+# User node loading system
+This chapter depicts the system that to load project nodes (short of NLS) which contains all project required files and parameters so that can be built by different flows.
+By collecting descriptions for a project, this tool can help generate required target files, execute commands etc.
+## Loading node files hierarchically
+The NLS supports loading multiple root nodes by a given env variable: RSIM_ENTRIES, which shall be setup by bootenv before executing the rsim command.
+RSIM_ENTRIES can support setting multiple roots through a separator of ':' for loading imported projects and current project, like: `RSIM_ENTRIES=./root:./import/ips/root`
+The root node name can be changed by others like `RSIM_ENTRIES=./current_root`, the extension of the root file '.rh' is not necessary to be provided by user.
 
-# User node commands
-Chapter to describe supported commands in user nodes, the first level is top command that can be used directly in a node file.
-## command::component
+## Component features & strategies
+IP-XACT components are central places for describing a metadata object, by which can be used to:
+- generate target RTL modules with a bunch of different parameters set in DesignConfiguration.
+- generate target ENV files to test the target RTL modules.
+- Combined with component generators to build files required by simulators.
+### Component generating mechanism
+For each component, there should be a generator used to build the target component, the generator in component is a reference of the pre-defined generator tool. But can have extra options through the generator command. 
+One component can only have one generator, that means if a project like rtl/env models of that project has different generate methods, then they shall be decalred as two different components.
+Use `generator <name> do-end` to specify which generator this component will use.
+The code block will be used to set special actions while running the generator, such as option specification.
+### Component parameter mechanism
+parameters are declared in component can be set through the DesignConfiguration to build with different set of parameters.
+Parameters declared in component with a bunch of commands and a given symbol of the parameter name, such like:
+- `param=:name,<value>` command to declare a new parameter in anywhere within the component scope.
+- `paramdef?(:name)` return true if parameter defined, or else false.
+- `param(:name)` return a declared parameter of current component.
+*Use parameter in sub code block*
+While in code block description of a sub object, such as fileSet, the parameter shall be also available, example can be like:
+```ruby
+component do
+	fileSet do
+		source 'xxx'
+		source "*.#{c.param(:ext)}"
+	end
+end
+```
+A singleton method of name 'c' will be declared once a sub block is registered into current component, so that calling of c in class scope will refer to the component where the sub-block is registered.
+
+### Component memory map mechanism
+The memory map mechanism of a component can be used to generate RAL model for DV usage and the basic reg RTL file for design.
+- [ ] future: to support generate uvm_mem and memory descriptions
+Currently, the Rsim-g1 tool only supports generating register blocks. So that the memory map can have only addressBlock, which can define register data.
+```ruby
+memoryMap 'dvtm' do
+	addressBlock 'rtla',0xa0000000 do
+		register 'name',:bits=>32,:offset => xxx do
+			field 'name',:lsb=>0,:bits=>3,:type => :RW,...
+		end
+	end
+	addressBlock 'public',0xb0000... do
+		registerFile 'file'
+	end
+
+end
+memoryMap 'smn' do
+	addressBlock 'rtla',0x06000000 do
+		registerFile 'file of register, field description'
+	end
+end
+```
+For situation that a register block can have multiple different memory map space to access, then users can define memoryMap multiple times with same registers specified by the registerFile.
+The registerFile will specify the direct register descriptions same as register definitions in the node file, the file specified will be directly evaled in the addressBlock.
+
+### Component model mechanism
+The model mechanism in component used to describe the HDL design information for generating the target component files of RTL.
+#TBD 
+
+### Component ports & connections
+- [ ] what a component connection defined can be used to?
+	- [ ] used to generate top level RTL connection? by giving a source file and connection info, to generate a top component RTL which only has signal connection and module instantiations.
+	- [ ] or another way it can be used to generate port connections so that in a source file of the module, there's no necessary to declare a module name and the port connection of a component, only internal logics are required.
+Combined with a design build generator, which can support build target verilog module with automatically connections & module name declarations.
+- `busInterface <vlnv>, :as => :instname` used within a component to reference a bus definition from global.
+- `port ...`, the single port declaration for this component for all views.
+- `view <viewname>,xxx`, define a new view in which have fileSet reference and modelName, so that different model can be built by generator. If fileSet is empty, can be used to generate the shell view.
+### Building HDL model by component
+A HDL model can be automatically built through: interface information, modelName, nested component in IP-XACT, and pure logical description files in verilog syntax.
+This requires: [[#Nested component mechanism]] [[#Component model mechanism]]
+
+### Nested component mechanism
+Rsim-g1 tool will support the nested component mechanism, which is not described in standard IP-XACT protocol, but can be an enhancement of the protocol, besides, this tool should compliant to the IP-XACT standard protocol.
+To support this feature, an extra command shall be added into the component description, by which can add a sub component instance and connected with current component ports.
+*Component instance*
+instance command in a componentView can be used to instantiate a sub component in current component model, this only supports in verilog syntax and Rsim tool.
+Different componentView may have different instantiation and connection description, so this feature shall be all declared within the componentView.
+connect shall support:
+- connect a sub component instance's single port or bus with current component's single port or port of a bus or bus.
+- connect a sub component instance's port or bus to another instance's port or bus or port of a bus.
+
+
+
+
+```ruby
+component do
+	view 'name' do
+		instance 'vlnv',:as => :name0
+		instance 'vlnv',:as => :name1
+	end
+end
+```
+
+
+
+
+## Architectural definition of Component
 Describe a new component use component and a block to describe how a component is declared: `component 'vlnv' do-end`
-### generator
+### Component class
+Object to store a new declared IP-XACT component by the global 'component' command.
+**vlnv field**
+for idendification
+**initialize api**
+constructor api
+**generator api**
 Specify a pre-defined generator to build this component, the name of generator specified in a component must been declared before, or else will report 'generator not found' error.
-`generator 'name',options`
-- the options is of Hash type, specified by caller as in option=>default_value pairs.
-### param
-Command to define parameter for this component, once a component parameter is defined, it can be override at config level.
-**format**
-`param(**opts)`, each opt is specified as parameter name => default value pairs.
-For example, to declare a parameter named as 'p0' with default value '10' in a component can be like:
-`param :p0 => 10`
-
-### trans
-To declare a transactional port of the component. #TODO 
-### wire
-To declare a wire port of the component. #TODO 
-- [ ] what's the usage of a port in a component?
-### addressSpace
-Declare address space of a component while acting as a master, on how the address spaces it can access.
-#TODO , require more typical example of this feature.
-### map
+`generator 'name',*args`
+defined in component, this api will record the generator name and args string, once the build api is called by MetaData module in buildflow, then the recorded generator object will be found and executed with the given args string.
+The current component object is a built-in arg that will be passed to generator when calling its execute action.
+**build api**
+Called by MetaData or other internal objects to build target files by the defined generator object.
+**param api**
+Command api to return the value of defined parameter by giving the param name in symbol type: `param(:name)`
+**param= api**
+Command api to declare a new parameter for this component, by giving the name and value, the name arg is of symbol type: `param=(:name,value)`
+**paramdef?**
+Command api to check if the given name has been declared as the component's parameter.
+**busInterface api**
+used to declare bus interface of this component.
+Specify the interface of the component, can be used along with the port declaration in a certain component.
+*Command format*
+`busInterface busT,absT,block`
+==busT==: a reference name (vlnv) of busDefinition, which must been defined previously.
+==absT==: reference of abstractionDefinition.
+==block==: sub commands for port connection:
+`portMap <logicalPortName> => [left,right], <physicalPortName> => [left,right]`
+logical port is the port name defined in abstraction, once the port is mapped, the corresponding connection of another interface will be replaced by the physical port name.
+#TODO, will be a future feature.
+**port api**
+declare adHoc ports.
+**map api**
+declare a memory map for this component
 Declare the memory map of current component, where a master can send requests to access it. Feature of the MemoryMaps are located in [[#MemoryMaps]]
 *Command format*
 `map name block`
@@ -80,7 +186,7 @@ command used to specify how many of bits represent once the address incremented,
 ==range==: int type with unit specified in map, for example if unit is byte, then range = 10 means this addressBlock has range of 10bytes.
 ==width==: specify the bit length of each addressBlock line.
 ==block==: ruby block used to describe this addressBlock
-#### addressBlock commands
+
 `usage type`
 specify the usage of this address block, symbol or string type, can be: register/mem.
 `access type`
@@ -112,24 +218,113 @@ register 'name'...
 ...
 ```
 
-### busInterface
-Specify the interface of the component, can be used along with the port declaration in a certain component.
-*Command format*
-`busInterface busT,absT,block`
-==busT==: a reference name (vlnv) of busDefinition, which must been defined previously.
-==absT==: reference of abstractionDefinition.
-==block==: sub commands for port connection:
-`portMap <logicalPortName> => [left,right], <physicalPortName> => [left,right]`
-logical port is the port name defined in abstraction, once the port is mapped, the corresponding connection of another interface will be replaced by the physical port name.
-#TODO, will be a future feature.
-### view
+**view api**
 Command to specify a certain model view of current component. There're two type of view, one is a typical view definition, another is to declare a hierarchical component by referencing the design vlnv.
 `view <name> do - end`
 command to specify a view type object, which will create a new ViewType object and eval with the given block to define the ViewType object. detailed commands of the ViewType are in [[#ViewType object commands]]
-### fileSet
+**fileSet api**
 The command to define a fileset for this component, and will be used in different views.
 `fileSet <name>,<block>`
 This command will create a new FileSetType object and eval the block as in FileSetType object. detailed commands of FileSetType are in [[#FileSetType object commands]]
+
+### PortType class
+Object for all port types, also ports that decalred within an interface.
+
+
+## Defining interfaces & abstractions
+#TBD 
+Section to depict how a nodes been used to declare and generate bus interface and corresponding abstractions.
+Abstraction is low level definition of interface, combined with bus definition to declare a full interface descriptions.
+BusDefinition used to define a high abstract level of interface.
+Interface definition can be used to connect ports between components, by which way can help connecting pure RTL module connections easily.
+- [x] Consider to declare a bus interface type in IP-XACT that can suit both for RTL and Verify. no ocnsider
+An interface in IP-XACT is now used to connect RTL modules in different scope, through the portMap information that can automatically connect bunch of signal ports automatically, attention this is different with the SV interface. They are simple signal connections in RTL design.
+### global command bus
+This is a global node command to define a new BusInterface object, this object contains both the IP-XACT BusDefinition contents and AbstractionDefinition contents.
+*Commands supported by BusInterface*:
+While declaring the BusInterface with the global bus command, sub-commands are supported to customize the BusInterface object, with following commands:
+Details can be found in [[#BusInterface class]]
+- abstraction, used to declare an abstraction of this bus interface, one bus interface can have multiple abstractions.
+abstraction will have commands provided to describe more details, refer to: [[#BusAbstraction class]]
+- maxClients, declare the max numbers of devices this bus supported
+## Programming object & interactions description
+This section depicts objects and their actions in Ruby to achieve above features.
+### BusInterface class
+**abstraction**
+A node command, declared as Ruby method, to describe a new abstraction for current BusDefinition.
+`def abstraction(vlnv,&block)`
+- vlnv is the name of the abstraction, use string format with: 'vendor/lib/name/version'.
+- block is code block been evaled in the newly created AbstractionDefinition class.
+1. if vlnv is registered in current object (@abstractions), then raise NodeException with message
+	1. multiple definition of same abstraction is not allowed.
+2. create new AbstractionDefinition class.
+3. instance_eval block.
+4. register: @abstractions << AbstractionDefinition object.
+**maxClients**
+A node command, declared as Ruby method, to describe max masters/slaves
+`def maxClients(t,v)`
+- t is symbol which indicates the type of client, can be one of: :master,:slave
+- v is int value to set max master or slave number
+1. set to instance variable: `@maxClients[t.to_sym]=v`
+
+### BusAbstraction class
+Class used by command abstraction in a BusInterface class.
+*description for customizing an abstraction*:
+```ruby
+bus xxx do
+	abstraction 'vlnv' do
+		wire 'xxx' do
+			clock # data, address, for qualifier
+			# direction option supports :in,:out,:inout
+			# width option supports [lhs,rhs]
+			# presence => true/false
+			onSystem :direction => :in, :width => [0,2]
+			onMaster # same option with onSystem
+			onSlave # same option with onSystem
+		end
+	end
+end
+```
+
+**wire**
+Node command to describe a new wire typed port for AbstractionDefinition.
+`def wire(name,&block)`
+1. create new AbsPort with name.
+2. instance eval the block
+3. store in to current Abs (@wires << obj)
+Detailed wire port commands here: [[#PortType class]]
+
+**trans**
+Node command to describe a transactional port.
+#TBD 
+### ~~AbsPort class~~
+~~**initialize**~~
+~~constructor.~~
+~~`def initialize(name,t)`~~
+- ~~t used to specify the @portType of this class, can be :wire or :transactional~~
+- ~~name is string of name id.~~
+~~**clock**~~
+~~command to specify the port qualifier~~
+~~`def clock`: @qualifier = :clock.~~
+~~**reset**, **data**, similar as **clock**~~
+~~**onSystem**~~
+~~command to specify wire port options when in system group~~
+~~support options:~~
+- ~~presence~~
+- ~~direction~~
+- ~~width~~
+~~`def onSystem(**opts)`~~
+1. ~~`@groupOptions[:system] = opts`~~
+2. ~~#TBD~~ 
+~~**onMaster**, **onSlave**, similar with **onSystem**~~
+
+
+
+---
+backups require re-organized.
+## User node commands
+Chapter to describe supported commands in user nodes, the first level is top command that can be used directly in a node file.
+
 ## command::design
 global command to declare a design object.
 *Command format*: `design vlnv,**opts,block`
@@ -168,8 +363,7 @@ this command specifies a component instance which returns an object of that comp
 ### design
 return current design top context object, use to specify a certain component instance within the design top.
 
-## command::busDefinition
-## command::abstractionDefinition
+
 
 ## Register file commands
 Command section describe how the registers are declared through a list of commands in the register file.
@@ -192,12 +386,12 @@ Specify include files, which the flow shall build it but not added it into filel
 Specify source files that shall be built and added into filelist.
 
 
+---
 
-# Examples & usages
-[[Rsim-v1 example node descriptions]]
 
 # Report mechanism
 The first step of the tool will process UserInterface and then load the reporter, if reporter not ready, use RAW print.
+
 ## normal report
 Report info/warning called by other components
 ## error or fatal report
@@ -214,22 +408,85 @@ constructor with given options
 **info**
 report message in info severity
 `def info(msg,v=5)`
-#MARKER 
+1. if v > @maxVerbo, then return directly.
+2. format message
+3. puts formatted message.
+
 
 
 # Exception process
-- Syntax analyzing for user nodes, especifically for illegal usage of node commands.
-	- raise NodeException.new(reason,severity)
+Exception system is the only way to exit this program in abnormal way. This system will control how to process different exceptions raised by normal procedures.
+
+
+
+
+```
+- User nodes exception process.
+	- report message.
+	- exit program.
 - invalid setting or configurations when finalizing the metadata.
 	- raise NodeException.new(reason,severity)
 - invalid user options or tool options
 	- raise OptionException.new(reason,severity)
-- TBD
+```
+
+## NodeException
+Class object to process user node exceptions when loading user nodes.
+### Exception types and process description
+#TBD , details can be found in IP-XACT object definition spec.
 
 
 
+# Multi-thread system
+This chapter will depict the features, strategeis and architectural objects of the multiple thread control system (short of MTS).
+## Supported features of MTS
+The MTS is used to dispatch the multiple building commands in parallel threads. For example, while building the components that has no dependencies of different commands, then those commands can be executed in parallel. This sytem only used to receive different commands (supports internal and external two types) and executed it simultaneously and wait for both done.
+Besides, the MTS also supports monitoring the command status, the return signal of commands, or timeout monitoring.
+### Parallel dispatch
+Use 'emit' API provided by this system can directly start a sub thread for a given command. Thus can parallely dispatch multiple commands in main thread through continuously invoking the 'emit' API.
+### Timeout monitor
+Once multiple times of the 'emit' API is called in main thread, it may require to wait for all sub threads to be completed or timeout. So a timeout process will be started at the main thread, which is also waiting for the sub threads to be completed.
+When user calls an API like 'waitall', then a sub thread of `sleep TIME_OUT` will be started, and the main thread will start polling the `emitted` queue of all dispatched jobs' status are FINISHED or the TIMEOUT_FLAG is triggered, any of above status matched, the main thread will report message and start next procedures.
+If the TIMEOUT_FLAG matched, then need report timeout message, current still running threads, and then exit with raised exception (MTSE, Multi-Thread System Exception).
+### Failed execution process
+If all sub threads FINISHED, the exit status shall also been recorded, the MTS only records the exit signal, failed reasons shall be reported by the commands self.
+#TBD , can define a signal by literal meaning, like `Signal.trap("HUB") {puts "Ouch"}`
+## Architectural description
+This section briefly depicts the Ruby objects and interactions between those objects to achieve the features of MTS.
+### Dispatcher class
+The top class object of the MTS system, which will be initialized at the Rsim module, and apis can be called like: `Rsim.dp.emit...`.
+**emit**
+Multiple emit can be called at once, each call of this API will start a sub thread with given command.
+This API will return the pid of sub thread, for future process.
+`def emit(*cmds)`
+- support giving multiple commands, execute one by one: cmds.each
+- if cmd is internal type
+	- create new lambda by `p= -> {}`
+		- use cmd.scope.instance_eval cmd.exe
+- else if cmd is external type
+	- create new lambda by `p= -> {}`
+		- create cmd file according to the given path from command: `cmd.scope`
+		- execute contents in cmd file through the Shell module
+#TBD 
+**waitall**
+Waiting all current sub threads in the emitted pool, or timeout achieved.
+#TBD 
+**timeout**
+Before the call for waiting all executing threads, a timeout can be set by this API, time unit is second, for example, call of `timeout=60` will set timeout of the dispatcher to be 60 seconds.
+**getSignal**
+This will start a timeout thread and wait for given pid exit and then return the signal of the exit status, or timeout reached.
+### Command class
+The ruby class which store the commands to be executed by the dispatcher.
+**scope**
+For external command, this is the executing path of the command; while for internal command, the scope is an object where the execution will be happened (calling the scope.instance_eval ...)
+It can be set through `cmd.scope=...`, or get by `cmd.scope`
+**exe**
+The execution for command,
+- for internal commands, the exe can be a code block of type Proc, or executing string, the dispatcher shall be able to recognize it and doing eval with different code format.
+- for external commands, this is the ral command string containing executor and options.
 
-# Plugin system description
+
+# Plugin system
 This section depicts the plugin system, its feature, usage and object descriptions.
 The plugin system used by Rsim tool to load different flows and generators for building and running the IC projects.
 It support built-in plugins (buildflow, compileflow, testflow etc) and user customized plugins.
@@ -321,3 +578,15 @@ API called by plugin to execute one step, to start all actions parallelly.
 
 
 
+
+
+# Main tool execution
+## Rsim
+The module of a global Rsim tool, called by the rsim executor, by which can init and run the rsim tool.
+**Rsim.info**
+API to call reporter's formatted print, for debug or normal printing.
+**Rsim.run**
+API to start Rsim tool
+**def self.run**
+1. call self.init to initialize the tool information.
+2. #TBD 

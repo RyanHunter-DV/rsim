@@ -15,7 +15,7 @@ class Command
 	def initialize(s); ##{{{
 		@scope = s;
 		# format:
-		# [{:proc=>xxx,:type=>:string/:proc},{}]
+		# [{:proc=>xxx,:type=>:internal/:external},{}]
 		@procedures=[];
 	end ##}}}
 	# :proc->internal cmd, :extern->call open.capture3
@@ -49,7 +49,7 @@ class Command
 	# return if the given command is of type :proc
 	def isBuiltinCommand; ##{{{
 		return false if @procedures.empty?;
-		return true if @procedures[0][:type]==:proc;
+		return true if @procedures[0][:type]==:internal;
 		return false;
 	end ##}}}
 end

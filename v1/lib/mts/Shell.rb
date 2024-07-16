@@ -76,7 +76,7 @@ module Shell ##{
 		out,err,st = Open3.capture3(e);
 		puts out if visible;
 		puts out if visible;
-		return [err.chomp!,st.exitstatus]
+		return [out,err.chomp!,st.exitstatus]
 	end ##}
 
 	# generate a specified file, 

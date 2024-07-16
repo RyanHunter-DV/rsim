@@ -1,0 +1,30 @@
+bus 'arm.com/amba/axi4/1.0' do
+	maxClients :master, 16
+	maxClients :slave, 16
+	abstraction 'rh/rsim_example/axi4_rtl/1.0' do
+		wire 'aclk' do
+			clock
+			onMaster :direction => :in, :width=>[0,0],:presence=>true
+			onSlave  :direction => :in, :width=>[0,0],:presence=>true
+		end
+		wire 'aresetn' do
+			reset
+			onMaster :direction => :in, :width=>[0,0],:presence=>true
+			onSlave  :direction => :in, :width=>[0,0],:presence=>true
+		end
+		channels = ['aw','ar']
+		channels.each do |chnl|
+			wire chnl+'addr' do
+				onMaster :direction => :out, :width=>[]
+			end
+		end
+	end
+	abstraction 'rh/rsim_example/axi4_dv/1.0' do
+		#TODO
+		wire 'aclk' do
+			clock
+			onMaster :direction => :in, :width=>[0,0],:presence=>true
+			onSlave  :direction => :in, :width=>[0,0],:presence=>true
+		end
+	end
+end

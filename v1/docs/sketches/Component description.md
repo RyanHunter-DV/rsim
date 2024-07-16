@@ -1,3 +1,46 @@
+sketches:
+```ruby
+component 'vl/unit/1.0' do
+
+	fileSet :rtl do
+		source '*.v'
+		source '...'
+	end
+	fileSet :env do
+		source 'unit_env_pkg.sv'
+		source 'unit_seqlib_pkg.sv'
+		source 'unit_tb.sv'
+		source 'unit_test_pkg.sv'
+	end
+	view :rtl do
+		fileSet 'rtl'
+	end
+	view :env do
+		fileSet 'env'
+	end
+end
+component 'vl/tbEnv/1.0' do
+	fileSet :env do
+		source 'unit_tbEnv_pkg.sv'
+		source 'unit_tb.sv'
+	end
+end
+design 'vlnv' do
+	instance 'vl/unit/1.0' :unit
+	instance 'vl/unit/1.0' :unit2
+end
+config 'vlnv' do
+	need design.unit, :rtl
+	need design.unit, :env
+	need design.unit2, :rtl
+	need design.unit2, :env
+	design.unit2.config xxxx
+	design.unit.config xxx
+end
+```
+
+
+
 # Component description
 #reference/dv/ipxact/component 
 
@@ -133,3 +176,6 @@ backup line
 - memoryMaps, bound of [[memoryMap of components|memoryMap]], #question , more details of memoryMap structure?
 - [[model of component]], specifies different views, ports and model based parameters of the component.
 - 
+
+
+

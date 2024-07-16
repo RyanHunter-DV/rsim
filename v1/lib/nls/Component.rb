@@ -13,6 +13,8 @@ class Component < IpXactData
 	attr_accessor :ports;
 	attr_accessor :outhome;
 
+	attr :parameters;
+
 	## initialize, 
 	# the constructor
 	def initialize(vlnvS); ##{{{
@@ -22,6 +24,7 @@ class Component < IpXactData
 		@genConfig={:generator=>nil,:options=>{}};
 		@memoryMaps={};@defaultView=nil;
 		@views={};@ports=[];
+		@parameters={};
 	end ##}}}
 
 	## -- Supported commands for user nodes ##{{{
@@ -31,12 +34,10 @@ class Component < IpXactData
 	def generator(name=nil,**opts); ##{{{
 		#puts "#{__FILE__}:(generator(name)) is not ready yet."
 		return @genConfig[:generator] unless name;
-		g=MetaData.find(name,:generatorChain);
-		raise NodeException.new("Generator #{name} not defined") unless g;
 		if @genConfig[:generator]!=nil
 			puts "warning message, TODO"
 		end
-		@genConfig[:generator]= g;
+		@genConfig[:generator]= name;
 		@genConfig[:options]=opts unless opts.empty?;
 	end ##}}}
 	def buildDefaultGenerator
@@ -62,6 +63,24 @@ class Component < IpXactData
 		end
 	end ##}}}
 
+	## param(n), return the defined parameter value by given name in symbol format
+	def param(n); ##{{{
+		n=n.to_sym;
+		raise NodeException.new("param(#{n}) of component(#{vlnv}) been used before declared") unless @parameters.has_key?(n);
+		return @parameters[n];
+	end ##}}}
+	## param=(n,v), declare a new parameter with default value
+	def param=(n,v); ##{{{
+		n=n.to_sym;
+		@parameters[n]= v;
+	end ##}}}
+	## paramdef?(n), return true if has param named as n, or else return false
+	def paramdef?(n); ##{{{
+		n=n.to_sym;
+		return true if @parameters.has_key?(n);
+		return false;
+	end ##}}}
+
 
 	# example of trans command
 	# trans <name>,<initative> do - end
@@ -73,18 +92,20 @@ class Component < IpXactData
 	# 	transType :uvm_analysis_imp, 'path/filename'
 	# 	connection :max => 1, :min => 1
 	# end
-	def trans(name,initiative,&block) ##{{{
-		#TODO
-		p=TransPort.new(name,initiative);
-		p.instance_eval &block;
-		@ports<< p;
-	end ##}}}
+	#TODO, to be deleted,def trans(name,initiative,&block) ##{{{
+	#TODO, to be deleted,	#TODO
+	#TODO, to be deleted,	p=TransPort.new(name,initiative);
+	#TODO, to be deleted,	p.instance_eval &block;
+	#TODO, to be deleted,	@ports<< p;
+	#TODO, to be deleted,end ##}}}
 
 	# example of wire command for wire ports
-	# wire 'name',:in,:left => int,:right => int # :in, :out, :inout, :phantom
-	def wire(name,direction,**opts) ##{{{
+	# wire 'name',:in,:width=>[msb,lsb] # :in, :out, :inout, :phantom
+	def port(name,direction,t=:wire,**opts) ##{{{
 		#TODO WirePort.new will set the portType to :wire.
-		p=WirePort.new(name,direction,opts);
+		p=PortType.new(name,t);
+		# set attributes for default group, which is for a single port.
+		p.onDefault(:direction=>direction,**opts);
 		p.parent(self);
 		@ports<< p;
 	end ##}}}
@@ -166,6 +187,15 @@ class Component < IpXactData
 	def fileSet(vname) ##{{{
 		return @views[vname].fileSet;
 	end ##}}}
+
+
+	## build, called by other internal objects to start building this component by the specified generator
+	def build; ##{{{
+		g=MetaData.find(@genConfig[:generator],:generatorChain);
+		raise NodeException.new("Generator #{name} not defined") unless g;
+		g.execute(self,@genConfig[:options]);
+	end ##}}}
+
 
 private
 

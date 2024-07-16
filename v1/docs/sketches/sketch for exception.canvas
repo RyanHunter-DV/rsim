@@ -1,0 +1,6 @@
+{
+	"nodes":[
+		{"id":"03c52d5d407a9a40","x":-419,"y":-344,"width":499,"height":124,"type":"text","text":"begin\n\tloadUserNodes\nrescue NodeException => e\nend"}
+	],
+	"edges":[]
+}
