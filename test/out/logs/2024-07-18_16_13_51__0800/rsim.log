@@ -1,0 +1,6 @@
+(I)[2024-07-18 16:13:51 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:55:in `info']Logger initialized
+(I)[2024-07-18 16:13:51 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:55:in `info']Start loading nodes ...
+(I)[2024-07-18 16:13:51 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:55:in `info']get entries from ui: ./root.rh
+(I)[2024-07-18 16:13:51 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:55:in `info']get splitted entries:(["./root.rh"])
+(I)[2024-07-18 16:13:51 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:55:in `info']calling rhload
+(I)[2024-07-18 16:13:51 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:55:in `info']getting file direct path(./root.rh)

@@ -1,0 +1,28 @@
+# This is a build GeneratorChain will be loaded by Rsim by default.
+generatorChain :build do
+	# example in component:
+	# generator 'copy', :fileSet=>[list], :target=>xxx
+	# the build flow's build_component step will call the generators
+	generator :copy do
+		Rsim.info("TEST, run generator with printing commands");
+		@exe = '/bin/cp';
+		@options[:sources].each do |s|
+			cmd = %Q|#{@exe} #{s} #{@options[:outhome]}|;
+			#TODO, tmp for test mode.
+			puts cmd;
+		end
+	end
+	generator :link do
+	end
+
+	step :build_component do
+		config=MetaData.find(@options[:config],:DesignConfiguration);
+		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
+		config.components.each do |c|
+			g = c.generator;
+			opts={:sources=>c.fileSets,:outhome=>c.outhome};
+			opts.merge!(c.generatorOptions);
+			self.send(c.generator,opts);
+		end
+	end
+end

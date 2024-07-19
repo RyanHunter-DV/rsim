@@ -1,0 +1,21 @@
+#! /usr/bin/env ruby
+# the main rsim shell is in $root/bin dir, which has no version contained information,
+# but the default main shell will choose latest version of the tool by default.
+#TODO, version = 'latest';
+# using test version: gen1
+$version = 'gen1';
+$RSIM_ROOT=File.absolute_path(File.dirname(File.dirname(__FILE__)));
+$LOAD_PATH << $RSIM_ROOT;
+$LOAD_PATH << File.join($RSIM_ROOT,$version);
+
+_os = RUBY_PLATFORM;
+
+$OS=:Linux;
+$OS=:Windows if /-mingw-/=~_os;
+
+$TAG = :develop;
+
+puts $LOAD_PATH;
+
+require "lib/Rsim.rb";
+Rsim.run;

@@ -1,0 +1,12 @@
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:49:in `init']Logger initialized
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:25:in `run']Start loading nodes ...
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:16:in `loading']get entries from ui: ./root.rh
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:18:in `loading']get splitted entries:(["./root.rh"])
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:26:in `rhload']calling rhload
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:40:in `rhload']getting file direct path(./root.rh)
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:42:in `rhload']direct load by given path
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/test/root.rh:1:in `<top (required)>']loading src node
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:26:in `rhload']calling rhload
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']getting parent path for rhload(.)
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:36:in `rhload']file loaded (D:/Projects/rsim/test/src/node.rh)
+(I)[2024-07-18 16:19:40 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:44:in `rhload']file loaded (./root.rh)

@@ -1,0 +1,12 @@
+require 'lib/eda/Simulator.rb'
+generatorChain :compile do
+	step :compile do
+		config=MetaData.find(@options[:config],:DesignConfiguration);
+		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
+		eda = Simulator.new(@options[:eda]);
+		eda.parseNodeString(config.strings[:compileOptions]);
+		puts eda.command; #TODO, just to print cmd.
+	end
+	step :elaborate, :after=>:compile do
+	end
+end

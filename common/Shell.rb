@@ -1,5 +1,5 @@
 require 'open3'
-require 'lib/erh/ExceptionBase'
+require 'common/ExceptionBase'
 module Shell ##{
 
 	@type = :bash;
@@ -44,13 +44,24 @@ module Shell ##{
 		return rtns;
 	end ##}
 
+	## self.updatePathFormat(p), description
+	def self.updatePathFormat(p,t=:Windows); ##{{{
+		return p.gsub(/\//,'\\') if t==:Windows;
+		return p if t==:Linux;
+	end ##}}}
+
 	## support multiple paths as args
 	def self.makedir *paths ##{
 		paths.each do |p|
-			next if Dir.exists?(p);
+			next if Dir.exist?(p);
+			p=self.updatePathFormat(p,$OS);
 			cmd = "mkdir #{p}";
-			out,err,st = Open3.capture3(cmd);
-			return [err,st.exitstatus] if st.exitstatus!=0;
+			if $OS==:Windows
+				system(cmd);
+			else
+				out,err,st = Open3.capture3(cmd);
+				return [err,st.exitstatus] if st.exitstatus!=0;
+			end
 		end
 		return ['',0];
 	end ##}
@@ -58,7 +69,7 @@ module Shell ##{
 	def self.createDir d ##{
 		pd = File.dirname(d);
 		self.createDir(pd) unless Dir.exists?(pd);
-		self.makedir d;
+		rst = self.makedir d;
 		return;
 	end ##}
 
@@ -88,6 +99,7 @@ module Shell ##{
 		##puts "DEBUG, contents: #{cnts}"
 		case (t)
 		when :file
+			#self.exec("touch #{n}") unless File.exist?(n);
 			fh = File.open(n,'w');
 			cnts.each do |l|
 				fh.write(l+"\n");
@@ -135,6 +147,23 @@ module Shell ##{
 	# return absolute path file, even if only 1 file found, shall return an array.
 	def self.search(r,p) ##{{{
 		return self.find(r,p);
+	end ##}}}
+
+	## self.buildFileRecursively(f), according to given file or dir, to build it recursive,
+	# that means if the file/dir's parent dir not exists, it will also been built.
+	def self.buildFileRecursively(f); ##{{{
+		_fp=f; dirs=[];
+		return if File.exist?(_fp);
+		while true
+			_fp = File.dirname(_fp);
+			dirs << _fp;
+			break if (Dir.exist?(_fp));
+		end 
+		dirs.reverse!;
+		Rsim.info("Building dirs: #{dirs}",9,:DISPLAY);
+		rst = self.makedir *dirs;
+		Rsim.fatal("makedir failed due to(#{rst[0]})") if rst[1]!=0;
+		self.buildfile(f);
 	end ##}}}
 end ##}
 
