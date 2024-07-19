@@ -24,6 +24,9 @@ module Rsim
 			self.init;
 			Rsim.info("Start loading nodes ...",9);
 			MetaData.loading(@ui.entries);
+			@ui.commands.each do |command|
+				self.instance_eval command;
+			end
 		rescue FatalE => e
 			e.process();
 		rescue NodeE => e

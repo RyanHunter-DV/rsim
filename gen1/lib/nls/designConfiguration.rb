@@ -91,5 +91,4 @@ def config(id,opts={},&block); ##{{{
 	end
 	c.addParent(parent) if parent!=nil;
 	c.addNodes(block.source_location,block);
-
 end ##}}}

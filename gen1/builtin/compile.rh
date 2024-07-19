@@ -1,5 +1,8 @@
 require 'lib/eda/Simulator.rb'
 generatorChain :compile do
+	prechain :build do
+		# "-e build(@options[:config])"
+	end
 	step :compile do
 		config=MetaData.find(@options[:config],:DesignConfiguration);
 		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;

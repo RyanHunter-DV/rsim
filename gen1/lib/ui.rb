@@ -70,6 +70,7 @@ class UserInterface ##{{{
 			opts.on('-e','--exe=COMMAND','set user execute command') do |v|
 				# examples
 				# -e 'build(:ConfigName)', to build a specific config
+				# -e 'compile(:ConfigName)'
 				@execute=v;
 			end
 			opts.on('-o','--out=DIR','specify a new out dir instead of the default') do |v|
@@ -94,5 +95,14 @@ class UserInterface ##{{{
 	# this env variable is critical env, which must exists.
 	def entries; ##{{{
 		return @envs['RSIM_ENTRIES']
+	end ##}}}
+
+	## commands, arrange current ui attributes and return
+	# suitable commands to be executed in Rsim scope.
+	def commands; ##{{{
+		puts "#{__FILE__}:(commands) is not ready yet."
+		# build is always required for any other commands unless
+		# it's been skipped.
+		executes << build unless skipped?(:build);
 	end ##}}}
 end ##}}}
