@@ -8,11 +8,18 @@ require 'lib/nls/Step.rb'
 class GeneratorChain < IpXactData ##{{{
 
 	attr :steps;
+	attr :options;
+	attr :prechains;
+	attr :postchains;
+	attr_accessor :format;
 
 	## initialize(id), description
 	def initialize(id); ##{{{
 		super(id);
 		@steps=[];
+		@options={};
+		@format=[];
+		@prechains={};@postchains={};
 	end ##}}}
 
 	## generator(id,&block), 
@@ -30,7 +37,6 @@ class GeneratorChain < IpXactData ##{{{
 	## injectSteps(s,after,before), 
 	#
 	def injectSteps(s,after,before); ##{{{
-		puts "#{__FILE__}:(injectSteps(s,after,before)) is not ready yet."
 		if after==nil and before==nil
 			@steps << s;
 			return;
@@ -54,6 +60,7 @@ class GeneratorChain < IpXactData ##{{{
 
 	## stepRegistered(name), description
 	def stepRegistered(name); ##{{{
+		name=name.to_s;
 		@steps.each_with_index do |s,index|
 			return index if s.id==name;
 		end
@@ -88,11 +95,67 @@ class GeneratorChain < IpXactData ##{{{
 		injectSteps(s,a,b);
 	end ##}}}
 
+	## formatOptions(cmd), 
+	# format the cmd like: build(:Config) to
+	# :config=>'Config' ...
+	def formatOptions(arg); ##{{{
+		Rsim.info("Formatting arg(#{arg})",9)
+		args=arg.split(' *, *');
+		Rsim.info("args(#{args})",9);
+		opts={};
+		raise FatalE.new("the GeneratorChain(#{@id}) has no option formatted!") if @format.empty?;
+		args.each_with_index do |a,i|
+			break if i>=@format.length;
+			Rsim.info("formatting arg(#{a}) of position(#{i})",9)
+			opts[@format[i].to_sym]= a;
+		end
+		return opts;
+	end ##}}}
+
+	## runChain(api,args), run generator chain through MetaData,
+	# like calling -e by user
+	def runChain(api,args); ##{{{
+		#puts "#{__FILE__}:(runChain(api,args)) is not ready yet."
+		a=self.instance_eval args;
+		cmd={
+			:api => api,
+			:args=> a,
+			:skipped=>[]
+		}
+		MetaData.instance_eval %Q|#{cmd[:api]}(#{cmd})|;
+	end ##}}}
+
+	## prechain(api,args), 
+	# store into @prechains
+	def prechain(api,args); ##{{{
+		Rsim.info("set prechain(#{api}),args(#{args})",9);
+		@prechains[api.to_s]=args;
+	end ##}}}
+	## postchain(api,args), similar as prechain
+	def postchain(api,args); ##{{{
+		@postchains[api.to_s]=args;
+	end ##}}}
+
 	## execute, the common API called by command options like: build(:Config)
 	# options are all coming from the UI object.
-	def execute(*opts); ##{{{
-		@steps.each_pair do |name,s|
-			s.run(opts);
+	def execute(opts={}); ##{{{
+		Rsim.info("execute generator chain (#{@id})",9)
+		@options = formatOptions(opts[:args]);
+		# skip can only skip dependent chains, not the steps.
+		skips=[];
+		skips=opts[:skipped] if opts.has_key?(:skipped);
+		@prechains.each_pair do |p,args|
+			p=p.to_s;
+			next if skips.include?(p);
+			runChain(p,args);
+		end
+		@steps.each do |s|
+			s.run(@options);
+		end
+		@postchains.each_pair do |p,args|
+			p=p.to_s;
+			next if skips.include?(p);
+			runChain(p,args);
 		end
 	end ##}}}
 end ##}}}
@@ -112,6 +175,10 @@ def generatorChain(id,&block); ##{{{
 
 	gc.instance_eval(&block);
 	MetaData.register(gc,:GeneratorChain) if isNew;
+	MetaData.define_singleton_method id.to_sym do |opts={}|
+		Rsim.info("calling api(#{id}),args(#{opts})",9)
+		gc.execute(opts);
+	end
 end ##}}}
 
 # example to declare a generator chain

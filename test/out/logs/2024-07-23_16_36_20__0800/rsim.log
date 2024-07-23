@@ -1,0 +1,21 @@
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:62:in `init']Logger initialized
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:25:in `run']Start loading nodes ...
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:88:in `register']register object(#<GeneratorChain:0x00000147ed7eb4a0>) with id(build) into GeneratorChain
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:27:in `loading']get entries from ui: ./root.rh
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:29:in `loading']get splitted entries:(["./root.rh"])
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(./root.rh)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/test/root.rh:1:in `<top (required)>']loading src node
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:38:in `rhload']getting parent path for rhload(.)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:42:in `rhload']file loaded (D:/Projects/rsim/test/src/node.rh)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (./root.rh)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/ui.rb:124:in `command']return cmds: ({:api=>:build, :args=>":TestConfig", :skipped=>[]})
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:153:in `block in generatorChain']calling api(build),args({:api=>:build, :args=>":TestConfig", :skipped=>[]})
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:118:in `execute']execute generator chain (build)
+(I)[2024-07-23 16:36:20 +0800][D:/Projects/rsim/gen1/lib/nls/Step.rb:18:in `run']run step(build_component) with options {}

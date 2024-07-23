@@ -24,14 +24,24 @@ module Rsim
 			self.init;
 			Rsim.info("Start loading nodes ...",9);
 			MetaData.loading(@ui.entries);
-			@ui.commands.each do |command|
-				self.instance_eval command;
-			end
+			cmd=@ui.command;
+			MetaData.instance_eval %Q|#{cmd[:api]}(#{cmd})|;
+			#@ui.commands.each do |command|
+			#	MetaData.instance_eval command;
+			#end
 		rescue FatalE => e
 			e.process();
 		rescue NodeE => e
 			e.process();
+		rescue UIE => e
+			e.process();
 		end
+	end ##}}}
+	## self.ui, return @ui
+	def self.ui; ##{{{
+		#puts "#{__FILE__}:(self.ui) is not ready yet."
+		raise FatalE.new("ui not initialized before calling it") unless @ui;
+		return @ui;
 	end ##}}}
 	## self.exit(sig), to exit the Rsim tool
 	def self.exit(sig); ##{{{
@@ -54,16 +64,16 @@ module Rsim
 
 	# report message through Rsim ##{{{
 	## sefl.info(msg,verbo=5,actions=[]), description
-	def self.info(msg,verbo=5,actions=[]); ##{{{
-		@reporter.info(msg,verbo,actions);
+	def self.info(msg,verbo=5,actions=[],depth=0); ##{{{
+		@reporter.info(msg,verbo,actions,depth+1);
 	end ##}}}
 	## self.error(msg,actions=[]), description
-	def self.error(msg,actions=[]); ##{{{
-		@reporter.error(msg,actions);
+	def self.error(msg,actions=[],depth=0); ##{{{
+		@reporter.error(msg,actions,depth+1);
 	end ##}}}
 	## self.fatal(msg,actions=[]), description
-	def self.fatal(msg,actions=[]); ##{{{
-		@reporter.fatal(msg,actions);
+	def self.fatal(msg,actions=[],depth=0); ##{{{
+		@reporter.fatal(msg,actions,depth+1);
 	end ##}}}
 	##}}}
 end

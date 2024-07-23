@@ -3,8 +3,9 @@
 NodeLoader, the main LNS top, stores all loaded data, such as generators, components etc.
 """
 require 'lib/nls/generatorChain.rb'
+require 'lib/nls/designConfiguration.rb'
 class NodeLoader ##{{{
-	BUILTINs = ['builtin/build.rh'];
+	BUILTINs = ['builtin/build.rh','builtin/compile.rh'];
 	
 	## initialize, description
 	def initialize; ##{{{
@@ -12,11 +13,14 @@ class NodeLoader ##{{{
 
 	## loadBuiltins, load ubiltin components
 	def loadBuiltins; ##{{{
+		Rsim.info("Start loading builtin components ... ...");
 		BUILTINs.each do |p|
 			p=File.join($RSIM_ROOT,$version,p)
 			raise NodeE.new("builtin(#{p}) not exists") unless File.exist?(p);
+			Rsim.info("loading #{p}");
 			rhload p,from: :raw;
 		end
+		Rsim.info("loading builtin components done");
 	end ##}}}
 
 	## loading(entries), loading according to the given entries, with format:

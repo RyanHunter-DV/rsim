@@ -1,5 +1,6 @@
 # This is a build GeneratorChain will be loaded by Rsim by default.
 generatorChain :build do
+	@format= [:config]; # option format
 	# example in component:
 	# generator 'copy', :fileSet=>[list], :target=>xxx
 	# the build flow's build_component step will call the generators
@@ -10,19 +11,26 @@ generatorChain :build do
 			cmd = %Q|#{@exe} #{s} #{@options[:outhome]}|;
 			#TODO, tmp for test mode.
 			puts cmd;
+			# for copy, the file name will not changed.
+			t=File.join(@options[:outhome],File.basename(s));
+			c.fileSets[:target].addToFilelist();
 		end
 	end
 	generator :link do
 	end
 
 	step :build_component do
+		raise FatalE.new("illegal option(#{@options}) passed to build_component step") unless @options.has_key?(:config);
 		config=MetaData.find(@options[:config],:DesignConfiguration);
 		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
 		config.components.each do |c|
 			g = c.generator;
-			opts={:sources=>c.fileSets,:outhome=>c.outhome};
+			opts={:sources=>c.fileSets[:source],:outhome=>c.outhome,:component=>c};
 			opts.merge!(c.generatorOptions);
 			self.send(c.generator,opts);
 		end
+	end
+	step :build_fileset do
+		# TODO, step to build fileSets for certain config
 	end
 end

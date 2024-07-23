@@ -1,0 +1,13 @@
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:62:in `init']Logger initialized
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:25:in `run']Start loading nodes ...
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:15:in `loadBuiltins']Start loading builtin components ... ...
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:19:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/build.rh
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:88:in `register']register object(#<GeneratorChain:0x000001dd6c2eaf68>) with id(build) into GeneratorChain
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:19:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/compile.rh
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(D:/Projects/rsim/gen1/builtin/compile.rh)
+(I)[2024-07-23 17:25:24 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path

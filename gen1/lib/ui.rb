@@ -3,11 +3,14 @@
 UserInterface, description
 """
 require 'optparse'
+require 'lib/exceptions.rb'
 class UserInterface ##{{{
 	attr :maxJobs; # maximum parallel jobs the tool can issue.
 	attr :envs;
 	attr :outs;
 	attr :execute;
+	attr :skips;
+	attr :lsf;
 
 	attr_accessor :maxVerbo;
 	## initialize, description
@@ -55,6 +58,8 @@ class UserInterface ##{{{
 		};
 		@maxVerbo=5;
 		@maxJobs=1;
+		@skips=[];
+		@lsf=false;
 	end ##}}}
 	## updateOutHome(n), description
 	def updateOutHome(n); ##{{{
@@ -71,10 +76,17 @@ class UserInterface ##{{{
 				# examples
 				# -e 'build(:ConfigName)', to build a specific config
 				# -e 'compile(:ConfigName)'
+				# -e 'runtest(:suite=>:testname)'
 				@execute=v;
+			end
+			opts.on('-s','--skip=COMMAND','skip certain chain') do |v|
+				@skips << v;
 			end
 			opts.on('-o','--out=DIR','specify a new out dir instead of the default') do |v|
 				@outs[:root]= updateOutHome(v);
+			end
+			opts.on('-L','--lsf','specify running with lsf') do |v|
+				@lsf=true;
 			end
 		end.parse!
 	end ##}}}
@@ -99,10 +111,27 @@ class UserInterface ##{{{
 
 	## commands, arrange current ui attributes and return
 	# suitable commands to be executed in Rsim scope.
-	def commands; ##{{{
-		puts "#{__FILE__}:(commands) is not ready yet."
+	def command; ##{{{
 		# build is always required for any other commands unless
 		# it's been skipped.
-		executes << build unless skipped?(:build);
+		# return command format: build(:config=>:Config)
+		# :skipped=>[a,b,c,...]
+		# :exe=>'e'
+		cmds={:api=>nil,:args=>'',:skipped=>nil};
+		md = /(\w+)\((.*)\)/.match(@execute);
+		if md
+			cmds[:api] = md[1].to_sym;
+			cmds[:args]= md[2];
+			cmds[:skipped] =@skips;
+		else
+			raise UIE.new("illegal eval commands entered")
+		end
+		Rsim.info("return cmds: (#{cmds})",9);
+		return cmds;
+	end ##}}}
+	## lsfenv?, return true if current is running in lsf, else return false
+	def lsfenv?; ##{{{
+		#puts "#{__FILE__}:(lsfenv?) is not ready yet."
+		return @lsf;
 	end ##}}}
 end ##}}}

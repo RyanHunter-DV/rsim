@@ -25,6 +25,7 @@ class DesignConfiguration < IpXactData##{{{
 	# array of component objects that required to be built.
 	attr_accessor :needs;
 	attr_accessor :strings;
+	#TODO, current in @needs, attr_accessor :components; # stores components that are needed.
 
 
 	## initialize(id), description
@@ -35,11 +36,17 @@ class DesignConfiguration < IpXactData##{{{
 		@simulator=:vcs; # default
 		# all config strings are stored.
 		@strings={
-			:compileOptions  => '',
-			:elaborateOptions=> ''
+			:compileOptions  => [],
+			:elaborateOptions=> []
 		};
 		@parent=nil;
 		@nodes=[];
+		##@components=[];
+	end ##}}}
+	## components, return needs
+	def components; ##{{{
+		#puts "#{__FILE__}:(components) is not ready yet."
+		return @needs;
 	end ##}}}
 	## addParent(p), add parent config object for this config
 	def addParent(p); ##{{{
@@ -65,22 +72,23 @@ class DesignConfiguration < IpXactData##{{{
 		@needs << o;
 	end ##}}}
 	## simulator(n), specify simulator by name
-	def simulator(n); ##{{{
+	def simulator(n=nil); ##{{{
+		return @simulator unless n;
 		@simulator=n.to_sym;
 	end ##}}}
 	## compopt(s), add config string for compile.
 	def compopt(s); ##{{{
-		@strings[:compileOptions] += " #{s}";
+		@strings[:compileOptions] << s;
 	end ##}}}
 	## elabopt(s), description
 	def elabopt(s); ##{{{
-		@strings[:elaborateOptions] += " #{s}";
+		@strings[:elaborateOptions] << s;
 	end ##}}}
 end ##}}}
 
 ## config(id,opts={},&block), 
 def config(id,opts={},&block); ##{{{
-	puts "#{__FILE__}:(config(id,opts={},&block)) is not ready yet."
+	#puts "#{__FILE__}:(config(id,opts={},&block)) is not ready yet."
 	c=MetaData.find(id,:DesignConfiguration);
 	c=DesignConfiguration.new(id) if c==nil;
 	parent=nil;
@@ -91,4 +99,5 @@ def config(id,opts={},&block); ##{{{
 	end
 	c.addParent(parent) if parent!=nil;
 	c.addNodes(block.source_location,block);
+	MetaData.register(c,:DesignConfiguration);
 end ##}}}

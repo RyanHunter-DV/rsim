@@ -1,0 +1,1 @@
+folder stores all eda related objects, such as the Simulator, that can parse Rsim based options and commands into specific EDA format.

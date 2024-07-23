@@ -167,8 +167,8 @@ class Reporter ##{{{
 	end ##}}}
 
 	## fatal(msg,actions=[]), report with fatal severity
-	def fatal(msg,actions=[]); ##{{{
-		pos=caller(1)[0];
+	def fatal(msg,actions=[],depth=0); ##{{{
+		pos=caller(depth+1)[0];
 		m=Message.new(msg,pos,:fatal);
 		actions=[actions] unless actions.is_a?(Array);
 		m.actions= actions unless actions.empty?;
@@ -179,8 +179,8 @@ class Reporter ##{{{
 		
 	end ##}}}
 	## error(msg,actions=[]), description
-	def error(msg,actions=[]); ##{{{
-		pos=caller(1)[0];
+	def error(msg,actions=[],depth=0); ##{{{
+		pos=caller(depth+1)[0];
 		m=Message.new(msg,pos,:error);
 		actions=[actions] unless actions.is_a?(Array);
 		m.actions= actions unless actions.empty?;
@@ -202,8 +202,8 @@ class Reporter ##{{{
 	## 	1. action.to_s.downcase.to_sym!
 	## 	2. call self.send(action,m.formatted)
 	## info(msg,verbo=5), display info severity message
-	def info(msg,verbo=5,actions=[]); ##{{{
-		pos=caller(2)[0];
+	def info(msg,verbo=5,actions=[],depth=0); ##{{{
+		pos=caller(depth+1)[0];
 		return if exceedVerboLimit(verbo);
 		m=Message.new(msg,pos,:info);
 		actions=[actions] unless actions.is_a?(Array);

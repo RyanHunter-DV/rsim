@@ -1,15 +1,23 @@
 require 'lib/eda/Simulator.rb'
 generatorChain :compile do
-	prechain :build do
-		# "-e build(@options[:config])"
-	end
+	prechain :build,"@options[:config]"
+	#prechain :build do
+	#	# "-e build(@options[:config])"
+	#end
+
+	@format= [:config];
 	step :compile do
 		config=MetaData.find(@options[:config],:DesignConfiguration);
 		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
-		eda = Simulator.new(@options[:eda]);
+		eda = Simulator.new(config.simulator,:compile);
 		eda.parseNodeString(config.strings[:compileOptions]);
-		puts eda.command; #TODO, just to print cmd.
+		puts eda.command; #TODO, just to print cmd, need build commands actually.
 	end
 	step :elaborate, :after=>:compile do
+		config=MetaData.find(@options[:config],:DesignConfiguration);
+		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
+		eda = Simulator.new(config.simulator,:elaborate);
+		eda.parseNodeString(config.strings[:elaborateOptions]);
+		puts eda.command; #TODO, just to print cmd.
 	end
 end
