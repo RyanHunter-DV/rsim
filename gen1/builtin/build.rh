@@ -6,17 +6,44 @@ generatorChain :build do
 	# the build flow's build_component step will call the generators
 	generator :copy do
 		Rsim.info("TEST, run generator with printing commands");
-		@exe = '/bin/cp';
-		@options[:sources].each do |s|
-			cmd = %Q|#{@exe} #{s} #{@options[:outhome]}|;
-			#TODO, tmp for test mode.
-			puts cmd;
-			# for copy, the file name will not changed.
-			t=File.join(@options[:outhome],File.basename(s));
-			c.fileSets[:target].addToFilelist();
+		if $OS==:Windows
+			exe('copy');
+		else
+			exe('cp');
 		end
+		tfs = FileSet.new(:build_by_copy,@options[:outhome]);
+		# :sources coming from FileSet.source, which is an array with Hash element:
+		# [:filelist=>true/false,:name=>'fullpaht']
+		# the copy generator will copy all source files into target place,
+		# even the source is not in filelist.
+		@options[:filesets].each_pair do |fsid,fs|
+			#s=item[:name];
+			fs.sources(:file).each do |s|
+				cmd = %Q|#{@exe} #{s} #{@options[:outhome]}|;
+				Rsim.info("print copy cmd:(#{cmd})");
+				if $OS==:Windows
+					Shell.copy s,@options[:outhome];
+				else
+					Shell.exec cmd;
+				end
+				# for copy, the file name will not changed.
+				raise NodeE.new("File not exists for copy(#{s})") unless File.exist?(s);
+				t=File.join(@options[:outhome],File.basename(s));
+				tfs.source(t);
+			end
+		end
+		@options[:component].fileSets[:target][:build_by_copy]=tfs;
+		Rsim.info("current build_by_copy fileSet:(#{tfs})")
 	end
 	generator :link do
+	end
+
+	step :finalize do
+		raise FatalE.new("illegal option(#{@options}) passed to build_component step") unless @options.has_key?(:config);
+		config=MetaData.find(@options[:config],:DesignConfiguration);
+		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
+		Rsim.info("finalizing target config(#{@options[:config]})");
+		config.finalize;
 	end
 
 	step :build_component do
@@ -24,13 +51,24 @@ generatorChain :build do
 		config=MetaData.find(@options[:config],:DesignConfiguration);
 		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
 		config.components.each do |c|
+			Rsim.info("Building component #{c.id} ... ...",9)
 			g = c.generator;
-			opts={:sources=>c.fileSets[:source],:outhome=>c.outhome,:component=>c};
+			opts={:filesets=>c.fileSets[:source],:outhome=>c.outhome,:component=>c.type};
 			opts.merge!(c.generatorOptions);
-			self.send(c.generator,opts);
+			generate(c.type.generator,opts);
 		end
 	end
-	step :build_fileset do
-		# TODO, step to build fileSets for certain config
-	end
+	#TODO, move to compile.rh step :build_fileset, :after => :build_component do
+	#TODO, move to compile.rh 	raise FatalE.new("illegal option(#{@options}) passed to build_component step") unless @options.has_key?(:config);
+	#TODO, move to compile.rh 	config=MetaData.find(@options[:config],:DesignConfiguration);
+	#TODO, move to compile.rh 	raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
+	#TODO, move to compile.rh 	# before building the filelist, need build the config dir firstly.
+	#TODO, move to compile.rh 	Shell.buildDirRecursively(config.outhome);
+	#TODO, move to compile.rh 	config.components.each do |c|
+	#TODO, move to compile.rh 		c.fileSets[:target].each_pair do |fsid,fs|
+	#TODO, move to compile.rh 			#fs.addSearchPath(config.filelist,config.simulator);
+	#TODO, move to compile.rh 			fs.appendIntoFilelist(config.filelist,config.simulator);
+	#TODO, move to compile.rh 		end
+	#TODO, move to compile.rh 	end
+	#TODO, move to compile.rh end
 end

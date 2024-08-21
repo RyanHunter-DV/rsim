@@ -9,8 +9,8 @@ module MetaData
 	@registered={
 		:Component=>{},
 		:GeneratorChain=>{},
-		:Design=>{},
-		:DesignConfiguration=>{}
+		:DesignConfiguration=>{},
+		:Design=>nil,
 	};
 
 	## fileExists(f), description
@@ -77,15 +77,27 @@ module MetaData
 	## self.find(id,type), to find registered IP-XACT components by given type
 	# if not found, then return nil
 	def self.find(id,type); ##{{{
-		id=id.to_s;type=type.to_sym;
-		found = self.findObjectInPool(id,@registered[type]);
+		id=id.to_s;type=type.to_sym;found=nil;
+		if type==:Design
+			found=@registered[:Design];
+		else
+			found = self.findObjectInPool(id,@registered[type]);
+		end
 		return found;
+	end ##}}}
+	## self.design, return design
+	def self.design; ##{{{
+		return @registered[:Design];
 	end ##}}}
 
 	## self.register(o,type), description
 	def self.register(o,type); ##{{{
 		id=o.id;type=type.to_sym;
 		Rsim.info("register object(#{o}) with id(#{id}) into #{type}",9);
-		@registered[type][id]=o;
+		if type==:Design
+			@registered[type]=o;
+		else
+			@registered[type][id]=o;
+		end
 	end ##}}}
 end

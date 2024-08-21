@@ -4,6 +4,8 @@ NodeLoader, the main LNS top, stores all loaded data, such as generators, compon
 """
 require 'lib/nls/generatorChain.rb'
 require 'lib/nls/designConfiguration.rb'
+require 'lib/nls/component.rb'
+require 'lib/nls/design.rb'
 class NodeLoader ##{{{
 	BUILTINs = ['builtin/build.rh','builtin/compile.rh'];
 	

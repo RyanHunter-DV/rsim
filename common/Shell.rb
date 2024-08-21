@@ -75,19 +75,27 @@ module Shell ##{
 
 	def self.copy s,t ##{
 		tdir = File.dirname(t);
-		self.createDir(tdir);
-		cmd = "cp #{s} #{t}";
+		if $OS==:Windows
+			cmd = "copy #{s} #{t}";
+			cmd.gsub!(/\//,'\\')
+			Rsim.info("copy cmd in windows: #{cmd}",9);
+		else
+			self.createDir(tdir);
+			cmd = "cp #{s} #{t}";
+		end
 		out,err,st = Open3.capture3(cmd);
 		return [err,st.exitstatus];
 	end ##}
 
-	def self.exec cmd,path='./',visible=true ##{
+	def self.exec cmd,path='./',visible=true,out=false ##{
 		e = "cd #{path};#{cmd}";
 		## puts "shell: #{e}";
 		out,err,st = Open3.capture3(e);
 		puts out if visible;
 		puts out if visible;
-		return [err.chomp!,st.exitstatus]
+		rtn=[err.chomp!,st.exitstatus];
+		rtn << out if out==true;
+		return rtn;
 	end ##}
 
 	# generate a specified file, 
@@ -109,6 +117,15 @@ module Shell ##{
 			$stderr.puts "Error, not support type(#{t})"
 		end
 	end ##}
+	## self.injectLines(fn,cnts), inject contents into fn
+	# currently supports only to inject at the end of the file
+	def self.injectLines(fn,cnts); ##{{{
+		#puts "#{__FILE__}:(self.injectLines(fn,cnts)) is not ready yet."
+		fh=File.open(fn,'a');
+		cnts.each do |line|
+			fh.write("#{line}\n");
+		end
+	end ##}}}
 	# api to build a file with fn->the specified filename,
 	# *items, items can be multiple arraies, or stringline. like:
 	# cmdshell.buildfile('test',['aline','line2'],['line3'],'line4'...
@@ -164,6 +181,21 @@ module Shell ##{
 		rst = self.makedir *dirs;
 		Rsim.fatal("makedir failed due to(#{rst[0]})") if rst[1]!=0;
 		self.buildfile(f);
+	end ##}}}
+	## self.buildDirRecursively(d), description
+	def self.buildDirRecursively(d); ##{{{
+		dirs=[];
+		return if Dir.exist?(d);
+		dirs << d;
+		while true
+			d = File.dirname(d);
+			dirs << d;
+			break if (Dir.exist?(d));
+		end 
+		dirs.reverse!;
+		Rsim.info("Building dirs: #{dirs}",9,:DISPLAY);
+		rst = self.makedir *dirs;
+		Rsim.fatal("makedir failed due to(#{rst[0]})") if rst[1]!=0;
 	end ##}}}
 end ##}
 

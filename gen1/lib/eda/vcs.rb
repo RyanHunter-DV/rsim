@@ -16,6 +16,7 @@ class Eda ##{{{
 		'filelist' => '-f <>',
 		'timescale'=> '+timescale+<>',
 		'64'       => '-full64',
+		'incdir'   => '+incdir+<>',
 	}
 
 	## initialize(step), description
@@ -39,6 +40,13 @@ class Eda ##{{{
 		puts "#{__FILE__}:(prefixOfLsf) is not ready yet."
 		
 	end ##}}}
+	## translate(opt,value), translate given value with specified opt id to
+	# current simulator's option format
+	def translate(opt,value); ##{{{
+		opt=opt.to_s;
+		raise FatalE.new("unrecognized option(#{opt})") unless FORMATS.has_key?(opt);
+		return FORMATS[opt].sub(/\<\>/,value);
+	end ##}}}
 	## formatted(k,v), format the input string into given step type, and return true, or else return false.
 	# str=[], will be like: 
 	# ['64'] or
@@ -49,7 +57,7 @@ class Eda ##{{{
 			if fk==str[0]
 				fv=FORMATS[fk];
 				if str.length>1
-					@options[step.to_sym] << fv.sub(/\<\>/,v);
+					@options[step.to_sym] << fv.sub(/\<\>/,fv);
 				else
 					@options[step.to_sym] << fv;
 				end

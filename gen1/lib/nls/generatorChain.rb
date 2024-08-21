@@ -21,6 +21,11 @@ class GeneratorChain < IpXactData ##{{{
 		@format=[];
 		@prechains={};@postchains={};
 	end ##}}}
+	## buildComponentDir(path), description
+	def buildComponentDir(path); ##{{{
+		# build component path hierarchically.
+		Shell.buildDirRecursively(path);
+	end ##}}}
 
 	## generator(id,&block), 
 	# declare a new generator for this GC.
@@ -30,6 +35,7 @@ class GeneratorChain < IpXactData ##{{{
 		#2. define_singleton_method with generator id
 		# method will be called like: <method>(**opts)
 		self.define_singleton_method id.to_sym do |opts|
+			buildComponentDir(opts[:outhome]);
 			g.run(opts);
 		end
 	end ##}}}
@@ -91,7 +97,7 @@ class GeneratorChain < IpXactData ##{{{
 		a=nil;b=nil;
 		a=opts[:after]  if opts.has_key?(:after);
 		b=opts[:before] if opts.has_key?(:before);
-		s=Step.new(name,&block); #TODO
+		s=Step.new(name,self,&block); #TODO
 		injectSteps(s,a,b);
 	end ##}}}
 

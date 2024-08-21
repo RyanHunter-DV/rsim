@@ -1,18 +1,23 @@
 component :TestComponent do
 	# automatically generate vlnv with some tool configurations.
-	view :rtl do
-		fileSet :local_rtlfs # reference from component.
-	end
 	fileSet :import_rtlfs do
+		includes 'test3.v','test2.v'
 		source 'test2/test0.v'
 	end
 	fileSet :local_rtlfs do
 		source 'test/test0.v'
 	end
+	view :rtl do
+		fileSet :local_rtlfs # reference from component.
+	end
 	generator :copy
 end
 
+design :TestDesign do
+	component :TestComponent, :as => :u_tc
+end
 
 
 config :TestConfig do
+	need design.u_tc
 end

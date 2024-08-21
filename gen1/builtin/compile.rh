@@ -6,7 +6,23 @@ generatorChain :compile do
 	#end
 
 	@format= [:config];
-	step :compile do
+
+	step :build_fileset do
+		raise FatalE.new("illegal option(#{@options}) passed to build_component step") unless @options.has_key?(:config);
+		config=MetaData.find(@options[:config],:DesignConfiguration);
+		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
+		# before building the filelist, need build the config dir firstly.
+		Shell.buildDirRecursively(config.outhome);
+		eda = Simulator.new(config.simulator,:compile);
+		config.components.each do |c|
+			c.fileSets[:target].each_pair do |fsid,fs|
+				#fs.addSearchPath(config.filelist,config.simulator);
+				fs.appendIntoFilelist(config.filelist,eda);
+			end
+		end
+	end
+
+	step :compile, :after => :build_fileset do
 		config=MetaData.find(@options[:config],:DesignConfiguration);
 		raise FatalE.new("config #{@options[:config]} not exists") if config==nil;
 		eda = Simulator.new(config.simulator,:compile);

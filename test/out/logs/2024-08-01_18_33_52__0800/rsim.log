@@ -1,0 +1,77 @@
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:62:in `init']Logger initialized
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:25:in `run']Start loading nodes ...
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:18:in `loadBuiltins']Start loading builtin components ... ...
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:22:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/build.rh
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:96:in `register']register object(#<GeneratorChain:0x0000017bd67d0f70>) with id(build) into GeneratorChain
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:22:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/compile.rh
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(D:/Projects/rsim/gen1/builtin/compile.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:137:in `prechain']set prechain(build),args(@options[:config])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:54:in `injectSteps']registering compile after build_fileset
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:54:in `injectSteps']registering elaborate after compile
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:96:in `register']register object(#<GeneratorChain:0x0000017bd1aba740>) with id(compile) into GeneratorChain
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/compile.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:25:in `loadBuiltins']loading builtin components done
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:33:in `loading']get entries from ui: ./root.rh
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:35:in `loading']get splitted entries:(["./root.rh"])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:46:in `rhload']getting file direct path(./root.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:48:in `rhload']direct load by given path
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/test/root.rh:1:in `<top (required)>']loading src node
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:32:in `rhload']calling rhload
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:38:in `rhload']getting parent path for rhload(.)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:96:in `register']register object(#<Component:0x0000017bd1ab7ae0>) with id(TestComponent) into Component
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:96:in `register']register object(#<Design:0x0000017bd685d1a0>) with id(TestDesign) into Design
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:96:in `register']register object(#<DesignConfiguration:0x0000017bd1ab7540>) with id(TestConfig) into DesignConfiguration
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:42:in `rhload']file loaded (D:/Projects/rsim/test/src/node.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (./root.rh)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/ui.rb:129:in `command']return cmds: ({:api=>:build, :args=>"TestConfig", :skipped=>[]})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:185:in `block in generatorChain']calling api(build),args({:api=>:build, :args=>"TestConfig", :skipped=>[]})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:148:in `execute']execute generator chain (build)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:108:in `formatOptions']Formatting arg(TestConfig)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:110:in `formatOptions']args(["TestConfig"])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/generatorChain.rb:115:in `block in formatOptions']formatting arg(TestConfig) of position(0)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/Step.rb:25:in `run']run step(finalize) with options ({:config=>"TestConfig"})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:45:in `block (2 levels) in <top (required)>']finalizing target config(TestConfig)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/IpXactData.rb:27:in `block in finalize']Finalizing node(["D:/Projects/rsim/test/src/node.rh", 16]) in object(TestDesign)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/design.rb:26:in `component']defining method in design:(u_tc)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/IpXactData.rb:27:in `block in finalize']Finalizing node(["D:/Projects/rsim/test/src/node.rh", 21]) in object(TestConfig)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/designConfiguration.rb:58:in `components']return components: ([#<ComponentInstance:0x0000017bd6859618 @name="u_tc", @componentObject=#<Component:0x0000017bd1ab7ae0 @id="TestComponent", @nodes=[[["D:/Projects/rsim/test/src/node.rh", 1], #<Proc:0x0000017bd685d6a0 D:/Projects/rsim/test/src/node.rh:1>]], @generator=nil, @fileSets={:source=>{}, :target=>{}}, @views={}, @as={"u_tc"=>#<ComponentInstance:0x0000017bd6859618 ...>}>>])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/IpXactData.rb:27:in `block in finalize']Finalizing node(["D:/Projects/rsim/test/src/node.rh", 1]) in object(TestComponent)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:20:in `initialize']loc(["D:/Projects/rsim/test/src/node.rh", 3])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:58:in `block in source']inserting source file,f: test2/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:60:in `block in source']inserting source file,full: D:/Projects/rsim/test/src/test2/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:20:in `initialize']loc(["D:/Projects/rsim/test/src/node.rh", 7])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:58:in `block in source']inserting source file,f: test/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:60:in `block in source']inserting source file,full: D:/Projects/rsim/test/src/test/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/Step.rb:25:in `run']run step(build_component) with options ({:config=>"TestConfig"})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/designConfiguration.rb:58:in `components']return components: ([#<ComponentInstance:0x0000017bd6859618 @name="u_tc", @componentObject=#<Component:0x0000017bd1ab7ae0 @id="TestComponent", @nodes=[[["D:/Projects/rsim/test/src/node.rh", 1], #<Proc:0x0000017bd685d6a0 D:/Projects/rsim/test/src/node.rh:1>]], @generator=:copy, @fileSets={:source=>{"import_rtlfs"=>#<FileSet:0x0000017bd1ab6370 @id="import_rtlfs", @nodes=[], @source=[{:filelist=>false, :name=>"D:/Projects/rsim/test/src/test3.v"}, {:filelist=>false, :name=>"D:/Projects/rsim/test/src/test2.v"}, {:filelist=>true, :name=>"D:/Projects/rsim/test/src/test2/test0.v"}], @incdir=["D:/Projects/rsim/test/src", "D:/Projects/rsim/test/src/test2"], @root="D:/Projects/rsim/test/src">, "local_rtlfs"=>#<FileSet:0x0000017bd1ab58d0 @id="local_rtlfs", @nodes=[], @source=[{:filelist=>true, :name=>"D:/Projects/rsim/test/src/test/test0.v"}], @incdir=["D:/Projects/rsim/test/src/test"], @root="D:/Projects/rsim/test/src">}, :target=>{}}, @views={}, @as={"u_tc"=>#<ComponentInstance:0x0000017bd6859618 ...>}>>])
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:54:in `block (3 levels) in <top (required)>']Building component TestComponent ... ...
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:8:in `block (2 levels) in <top (required)>']TEST, run generator with printing commands
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:20:in `initialize']loc(D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>false, :name=>"D:/Projects/rsim/test/src/test3.v"})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>false, :name=>"D:/Projects/rsim/test/src/test2.v"})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>true, :name=>"D:/Projects/rsim/test/src/test2/test0.v"})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test3.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/common/Shell.rb:81:in `copy']copy cmd in windows: copy D:\Projects\rsim\test\src\test3.v D:\Projects\rsim\test\out\components\TestComponent-u_tc
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:58:in `block in source']inserting source file,f: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test3.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:60:in `block in source']inserting source file,full: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test3.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test2.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/common/Shell.rb:81:in `copy']copy cmd in windows: copy D:\Projects\rsim\test\src\test2.v D:\Projects\rsim\test\out\components\TestComponent-u_tc
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:58:in `block in source']inserting source file,f: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test2.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:60:in `block in source']inserting source file,full: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test2.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test2/test0.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/common/Shell.rb:81:in `copy']copy cmd in windows: copy D:\Projects\rsim\test\src\test2\test0.v D:\Projects\rsim\test\out\components\TestComponent-u_tc
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:58:in `block in source']inserting source file,f: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:60:in `block in source']inserting source file,full: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>true, :name=>"D:/Projects/rsim/test/src/test/test0.v"})
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test/test0.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/common/Shell.rb:81:in `copy']copy cmd in windows: copy D:\Projects\rsim\test\src\test\test0.v D:\Projects\rsim\test\out\components\TestComponent-u_tc
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:58:in `block in source']inserting source file,f: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:60:in `block in source']inserting source file,full: D:/Projects/rsim/test/out/components/TestComponent-u_tc/test0.v
+(I)[2024-08-01 18:33:52 +0800][D:/Projects/rsim/gen1/builtin/build.rh:36:in `block (2 levels) in <top (required)>']current build_by_copy fileSet:(#<FileSet:0x0000017bd1ab4930>)

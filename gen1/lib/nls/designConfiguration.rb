@@ -19,14 +19,15 @@ class DesignConfiguration < IpXactData##{{{
 	attr :design;
 	attr :simulator;
 	attr :parent;
-	# format of nodes=[[loc,block],[loc,block]];
-	attr :nodes;
+	attr :outhome;
 
 	# array of component objects that required to be built.
 	attr_accessor :needs;
 	attr_accessor :strings;
 	#TODO, current in @needs, attr_accessor :components; # stores components that are needed.
 
+	# name of filelist
+	attr_accessor :filelist;
 
 	## initialize(id), description
 	def initialize(id); ##{{{
@@ -40,31 +41,37 @@ class DesignConfiguration < IpXactData##{{{
 			:elaborateOptions=> []
 		};
 		@parent=nil;
-		@nodes=[];
+		@filelist=File.join(self.outhome(Rsim.ui.outhome),'filelist.f');
 		##@components=[];
+	end ##}}}
+	## outhome, return the home dir of current config, format will be:
+	# <OUT>/configs/<id>
+	# out arg is the out dir of the current project.
+	def outhome(out=nil); ##{{{
+		return @outhome unless out;
+		@outhome= File.join(out,'configs',@id);
+		return @outhome;
 	end ##}}}
 	## components, return needs
 	def components; ##{{{
 		#puts "#{__FILE__}:(components) is not ready yet."
+		Rsim.info("return components: (#{@needs})",9);
 		return @needs;
 	end ##}}}
 	## addParent(p), add parent config object for this config
 	def addParent(p); ##{{{
 		@parent=p;
 	end ##}}}
-	## addNodes(loc,n), add user nodes to current config and will be
-	# evaled when calling finalize
-	def addNodes(loc,n); ##{{{
-		@nodes << [loc,n];
-	end ##}}}
 
 	## design(vlnv), api called by config nodes, find and get object from MetaData, this
 	# shall be called only at finalize stage that all nodes are loaded.
-	def design(vlnv=nil); ##{{{
-		return @design if vlnv==nil;
-		de=MetaData.find(vlnv,:Design);
-		raise NodeE.new("design(#{vlnv}) not found, check if correctly declared") unless de;
-		@design= de;
+	# there's only one design in a project
+	def design; ##{{{
+		unless @design
+			@design=MetaData.design;
+			raise NodeE.new("design not found, check if correctly declared") unless @design;
+		end
+		return @design;
 	end ##}}}
 
 	## need(o), object directly from design
@@ -83,6 +90,16 @@ class DesignConfiguration < IpXactData##{{{
 	## elabopt(s), description
 	def elabopt(s); ##{{{
 		@strings[:elaborateOptions] << s;
+	end ##}}}
+	## finalize, to finalize the config, which need first to finalize
+	# the design, then config, then components
+	alias self_finalize finalize;
+	def finalize; ##{{{
+		self.design.finalize;
+		self_finalize;
+		self.components.each do |c|
+			c.finalize;
+		end
 	end ##}}}
 end ##}}}
 

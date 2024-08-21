@@ -6,11 +6,18 @@ require 'lib/nls/IpXactData.rb'
 class Step < IpXactData ##{{{
 	attr :action;
 	attr :options;
+	attr :chain;
 	## initialize(id,&block), description
-	def initialize(id,&block); ##{{{
+	def initialize(id,p,&block); ##{{{
 		super(id);
 		@action = block;
 		@options={};
+		@chain=p;
+	end ##}}}
+
+	## generate(g,opts), run generator
+	def generate(g,opts); ##{{{
+		@chain.send(g,opts);
 	end ##}}}
 
 	## run(**opts), description
