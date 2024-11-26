@@ -1,3 +1,0 @@
-rhload 'rtl/node'
-rhload 'verif/node'
-rhload 'ipxact/node'

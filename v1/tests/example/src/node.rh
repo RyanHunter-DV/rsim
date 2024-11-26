@@ -1,2 +1,0 @@
-rhload 'rtl/node'
-rhload 'tests/node'

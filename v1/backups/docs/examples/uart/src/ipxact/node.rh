@@ -1,3 +1,0 @@
-rhload 'interface/node'
-rhload 'design/node'
-rhload 'config/node'

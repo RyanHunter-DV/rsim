@@ -1,1 +1,0 @@
-IP-XACT protocol supported.
