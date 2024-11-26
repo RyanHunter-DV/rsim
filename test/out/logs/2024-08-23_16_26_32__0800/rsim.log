@@ -1,0 +1,12 @@
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:62:in `init']Logger initialized
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:18:in `loadBuiltins']Start loading builtin components ... ...
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:22:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/build.rh
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:22:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/compile.rh
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/compile.rh)
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:25:in `loadBuiltins']loading builtin components done
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:42:in `rhload']file loaded (D:/Projects/rsim/test/src/node.rh)
+(I)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (./root.rh)
+(E)[2024-08-23 16:26:32 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:37:in `rescue in run']illegal eval commands entered
+Source position:
+D:/Projects/rsim/gen1/lib/ui.rb:127:in `new'

@@ -1,0 +1,23 @@
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/Rsim.rb:62:in `init']Logger initialized
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:18:in `loadBuiltins']Start loading builtin components ... ...
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:22:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/build.rh
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/build.rh)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:22:in `block in loadBuiltins']loading D:/Projects/rsim/gen1/builtin/compile.rh
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (D:/Projects/rsim/gen1/builtin/compile.rh)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/NodeLoader.rb:25:in `loadBuiltins']loading builtin components done
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:42:in `rhload']file loaded (D:/Projects/rsim/test/src/node.rh)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/MetaData.rb:50:in `rhload']file loaded (./root.rh)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:45:in `block (2 levels) in <top (required)>']finalizing target config(TestConfig)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/IpXactData.rb:27:in `block in finalize']Finalizing node(["D:/Projects/rsim/test/src/node.rh", 16]) in object(TestDesign)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/IpXactData.rb:27:in `block in finalize']Finalizing node(["D:/Projects/rsim/test/src/node.rh", 21]) in object(TestConfig)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/IpXactData.rb:27:in `block in finalize']Finalizing node(["D:/Projects/rsim/test/src/node.rh", 1]) in object(TestComponent)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:8:in `block (2 levels) in <top (required)>']TEST, run generator with printing commands
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>false, :name=>"D:/Projects/rsim/test/src/test3.v"})
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>false, :name=>"D:/Projects/rsim/test/src/test2.v"})
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>true, :name=>"D:/Projects/rsim/test/src/test2/test0.v"})
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test3.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test2.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test2/test0.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/lib/nls/fileSet.rb:32:in `block in sources']getting sources, file info:({:filelist=>true, :name=>"D:/Projects/rsim/test/src/test/test0.v"})
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:23:in `block (4 levels) in <top (required)>']print copy cmd:(copy D:/Projects/rsim/test/src/test/test0.v D:/Projects/rsim/test/out/components/TestComponent-u_tc)
+(I)[2024-08-23 16:29:31 +0800][D:/Projects/rsim/gen1/builtin/build.rh:36:in `block (2 levels) in <top (required)>']current build_by_copy fileSet:(#<FileSet:0x000002a77f76be60>)
