@@ -48,12 +48,7 @@ In building flow, the tool will first translate information given with `config, 
 **Build component xmls**
 According source component information, to build component xml, detailed specifications are located in: 
 #TBD [Component node](node/Component%20node.md)
-Now supports concepts of:
-- VLNV identifier.
-- busInterfaces, reference to a pre-defined bus.
-- memoryMaps, specify slave memory or register space of this component.
-- addressSpace, specify addressable space of the component as a master, usually used by ENV component to config ENV or UVC.
-- model, specify views, ports and modelParameters for a parameter.
+
 **Build design xml**
 Detailed specification in <Design node/>
 Now supports concepts of:
@@ -122,7 +117,7 @@ Called by the App module, will start running flows according to the configure sy
 The flow is the plugin manager, call run of the flow with given command, will first check if the command exists or not, if flow not exists, then will first to load the flow, and then call run of that flow.
 ### FlowManager
 Control and load the different user flows, while called by the run API, it will first check if corresponding flow is loaded or not, if not, need load first, then call the loaded flow's run with options.
-## App
+## Rsim
 The application module, which is the core running panel to initialize all above systems such as the UI, Configuration, Executor etc.
 1. init all systems.
 2. call Rsim Executor to run program.
@@ -157,10 +152,16 @@ The system shall be able to:
 
 
 # Plugins
-## Node loading flow
-## Build flow
-## Simulation flow
+## Node loading flow: nodeflow
+All node commands will be declared within the NodeFlow, so loading nodes shall be within this flow scope, and also, it requires a new object (module DataBase) to store all node information, so the flow shall declare a new object.
 
+**component command**
+command used to create a new component object which has compatible information for IP-XACT protocol.
+
+## Build flow: buildflow
+
+## Simulation flow
+- [ ] need consider: the name of simulation flow, and how to skip compile while running the flow? maybe the step can also be skipped? such as compile step, sim step?
 
 
 

@@ -1,0 +1,7 @@
+reg 'name3',0x8 do
+	field 'namef','RO',0,1,0
+	field 'namef2','RW',1,1,0
+end
+reg 'name4',0xc do
+	field 'namef','RO',0,1,0
+end

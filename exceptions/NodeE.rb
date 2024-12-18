@@ -1,0 +1,1 @@
+# exceptions while reading the node files, or which has syntax or other issues related to node file.

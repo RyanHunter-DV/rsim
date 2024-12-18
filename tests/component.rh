@@ -1,0 +1,119 @@
+component 'RH/rtl/ExampleComponent/1.0' do ##{{{
+	# standalone component port.
+	#:in/:out/:inout, port direction
+	wire 'name',:in,3,0
+	# multiple wire ...
+	view :rtl do ##{{{
+		fileSet 'rtl';
+	end ##}}}
+	view :shell do ##{{{
+		fileSet 'shell'
+	end ##}}}
+	fileSet 'shell' do ##{{{
+		root "#{$ENV['OUT']}/build"
+		verilog 'shell_top.v'
+	end ##}}}
+	fileSet 'rtl' do ##{{{
+		# root path to store files in below, if not specified, will use
+		# the current component's path
+		root 'RootPathOfFilesListedBelow'
+		# specify verilog formatted file, not added to filelist by the
+		# second option, by default is true
+		verilog 'file.v', :filelist=>false
+		# custom source files which will be used by generator or others, not
+		# standard HDL files, filelist options is false by default
+		custom 'user.src',:filelist=>false
+		# standard TB file, by default will be in filelist.
+		sv 'test.sv'
+	end ##}}}
+	regblock 'block name' do ##{{{
+		base 0x0000
+		reg 'name',0x00 do ##{{{
+			# id,access type, bit offset, bit width, reset value
+			field 'name','RW',0,3,0
+			field 'name2','RW',4,2,1
+			#...
+		end ##}}}
+		reg 'name2',0x4 do ##{{{
+			#...
+		end ##}}}
+		regFile 'file...' # same format as in reg description.
+	end ##}}}
+	#TODO, specify component generator
+	#TODO, one generator is called to generate one file of the component, so a component
+	# may have multiple generators in same group, if generator has ordering requirement, can
+	# specify the generator with different phase.
+	generator 'link' do ##{{{
+		group 'method-link'
+		phase 0.0;
+		# exe will declare the path and command format protocol.
+		# <xxx> will be replaced by parameter
+		#TODO, require container, and outhome as the target place
+		parameter 'symbol' => '-s'
+		# will be executed as '/bin/ln -s #{fn} #{container.home}'
+		#TODO
+		exe '/bin/ln <symbol> <src> <tar>';
+	end ##}}}
+	generator 'copy' do ##{{{
+		group 'method-copy' # picked up by generator chain selector.
+		phase 0.0;
+		exe '/bin/cp <src> <tar>';
+	end ##}}}
+end ##}}}
+
+component 'RH/tb/ExampleComponent/1.0' do ##{{{
+	fileSet 'tb' do ##{{{
+		sv 'tb_top.sv',:filelist=>true
+	end ##}}}
+end ##}}}
+
+
+component 'Rh/rtl/fifo/1.0' do
+	# fixing compile issues.
+	view :rtl do
+		fileSet 'fifo_rtl'
+	end
+	fileSet 'fifo_rtl' do
+		root '.'
+		verilog 'fifo_core.v','fifo_top.v',:filelist=>true
+		verilog 'lib/fifo_reg.v'
+		verilog 'lib/std//stdcell.v'
+	end
+	wire 'clki',:in,:type=>:clock;
+	wire 'rstn',:in,:type=>:reset;
+	wire 'din',:in,31,0,:type=>:data;
+	wire 'dout',:out,31,0,:type=>:data;
+	wire 'push',:in,:type=>:data;
+	wire 'pop',:in,:type=>:data;
+	regblock 'control_reg' do
+		base 0x0000
+		reg 'name',0x00 do
+			# id,access type, bit offset, bit width, reset value
+			field 'name','RW',0,3,0
+			field 'name2','RW',4,2,1
+			#...
+		end
+		reg 'name2',0x4 do
+			field 'namef','RO',0,1,0
+		end
+		regFile 'file.reg' # same format as in reg description.
+	end
+	generator 'link' do
+		group 'method-link'
+		phase 0.0;
+		# exe will declare the path and command format protocol.
+		# <xxx> will be replaced by parameter
+		#TODO, require container, and outhome as the target place
+		parameter 'target' => 'out' # default, replaced by config
+		parameter 'symbol' => '-s'
+		#TODO
+		# source and target flag are built-in flags used to specify how to
+		# give the source and target file to the generator executor.
+		exe '/bin/ln <symbol> <source> <target>';
+	end
+	generator 'copy' do
+		group 'method-copy' # picked up by generator chain selector.
+		phase 0.0;
+		exe '/bin/cp <source> <target>';
+	end
+end

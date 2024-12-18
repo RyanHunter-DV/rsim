@@ -1,0 +1,56 @@
+#require 'node/ipxact/IpxData.rb'
+require 'ipxact/Port.rb'
+"""
+# Object description:
+WirePort, declare the Wire typed port information
+"""
+class WirePort < Port ##{{{
+	attr :direction;
+	attr_accessor :rsb;
+	attr_accessor :lsb;
+
+	attr :wiretype;
+	## initialize(name), description
+	def initialize(name); ##{{{
+		#puts "#{__FILE__}:start initialize(name) ..."
+		super(name,:wire);
+		# :in, :out, :inout, :net (default)
+		@direction = :net;
+		@rsb=0;@lsb=0;
+	end ##}}}
+
+	## set(**opts), set options
+	def set(**opts); ##{{{
+		#puts "#{__FILE__}:start set(**opts) ..."
+		opts[:rsb]=0 unless opts.has_key?(:rsb);
+		opts[:lsb]=0 unless opts.has_key?(:lsb);
+		opts[:type]=:data unless opts.has_key?(:type);
+
+		direction(opts[:direction]);
+		width(opts[:rsb],opts[:lsb]);
+		@wiretype=opts[:type];
+	end ##}}}
+	## display, print internal database
+	def display; ##{{{
+		#puts "#{__FILE__}:start display ..."
+		puts "type: WirePort"
+		puts "- id: #{id}";
+		puts "- direction: #{@direction}";
+		puts "- vector: [#{@rsb}:#{@lsb}]";
+		puts "- wiretype: #{@wiretype}";
+	end ##}}}
+
+private
+	## direction(d=nil), get or set the port direction
+	def direction(d=nil); ##{{{
+		#puts "#{__FILE__}:start direction(d=nil) ..."
+		return @direction unless d;
+		@direction = d;
+	end ##}}}
+	## width(rsb,lsb), set width
+	def width(rsb,lsb); ##{{{
+		#puts "#{__FILE__}:start width(rsb,lsb) ..."
+		@rsb=rsb;@lsb=lsb;
+	end ##}}}
+
+end ##}}}
