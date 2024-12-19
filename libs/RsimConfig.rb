@@ -35,6 +35,7 @@ class RsimConfig ##{{{
 		ps=[];
 		ps << File.join(self.toolhome,'plugins');
 		ps << File.join(self.toolhome,'plugins','node');
+		ps << File.join(self.toolhome,'plugins','build');
 		return ps;
 		
 	end ##}}}

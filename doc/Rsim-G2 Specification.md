@@ -158,7 +158,34 @@ All node commands will be declared within the NodeFlow, so loading nodes shall b
 **component command**
 command used to create a new component object which has compatible information for IP-XACT protocol.
 
-## Build flow: buildflow
+## Build flow
+The build flow will do elaboration for all loaded node first, and then start building both for files and folders according to specified config.
+### Step: elaborate
+- [ ] what does elaborate do?
+
+to elaborate loaded nodes:
+1. call DataBase.elaborate
+2. overwriting configs to available component instance in certain design
+3. a config requires elaborate to setting parameters to components, component generators etc  to component instance .
+4. elaborate components directly need by config
+	1. elaborating nested components, a component may not directly need by config, but indirectly need by a component.
+- [ ] add need command in Component, that a component vlnv shall be need by the current component. Attention that the nested component may require the instance component name? or this feature is not necessary, need think again.
+
+### Step: buildComponent
+1. build common out dirs:
+	1. `out[:home],out[:components],out[:configs]`
+2. build specific components, build the dirs of all components required by this config.
+3. arrange the generator chain.
+4. call generator chain with multiple jobs management.
+5. build ral model by ral flow. #TBD 
+
+### Step: buildInterface
+1. the interface definitions.
+
+### Step: buildConfig
+1. build config dirs
+2. build XML database, not support in current generation.
+
 
 ## Simulation flow
 - [ ] need consider: the name of simulation flow, and how to skip compile while running the flow? maybe the step can also be skipped? such as compile step, sim step?

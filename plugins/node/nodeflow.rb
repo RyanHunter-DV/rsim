@@ -7,7 +7,7 @@ flow :nodeflow do ##{{{
 	command :component do |name,opts={},block| ##{{{
 		Rsim.info("command: component(#{name},#{opts},#{block})",9)
 		c=Component.new(name,opts);
-		c.add(block);
+		c.instance_eval &block;
 		DataBase.register(c,:component);
 	end ##}}}
 	command :design do |name,opts={},block|
@@ -93,7 +93,7 @@ def rhload(fname,visible=false)
 		## puts "DEBUG, load: #{f}";
 		#load f;
 		fh=File.open(f,'r');
-		Rsim.loadContext.instance_eval fh.readlines().join("\n");
+		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
 		puts "file #{File.absolute_path(f)} processed" if visible==true;
 	elsif Rsim.os.fileExists?(fname)
@@ -105,7 +105,7 @@ def rhload(fname,visible=false)
 		## puts "DEBUG, load: #{File.absolute_path(fname)}";
 		#load fname;
 		fh=File.open(fname,'r');
-		Rsim.loadContext.instance_eval fh.readlines().join("\n");
+		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
 		Rsim.info("file #{File.absolute_path(fname)} processed",1) if visible;
 	else
@@ -121,7 +121,7 @@ def rhload(fname,visible=false)
 				## puts "DEBUG, load: #{full}";
 				#load full;
 				fh=File.open(full,'r');
-				Rsim.loadContext.instance_eval fh.readlines().join("\n");
+				Rsim.loadContext.instance_eval fh.readlines().join("");
 				fh.close;
 				Rsim.info("file #{File.absolute_path(full)} processed",1) if visible;
 				loaded=true;break;

@@ -26,11 +26,12 @@ class FileSet < IpxData ##{{{
 		#puts "#{__FILE__}:start root(r) ..."
 		d= eval %Q|"#{r}"|;
 		@root=File.absolute_path(d);
-		#TODO
+		Rsim.info("getting root: #{@root}",9);
 	end ##}}}
 	## verilog(*fs), specify verilog language based source files
 	def verilog(*fs,**opts); ##{{{
 		#puts "#{__FILE__}:start verilog(*fs) ..."
+		Rsim.info("getting fs(#{fs}),opts(#{opts})",9);
 		opts[:filelist]=true unless opts.has_key?(:filelist);
 		@sources[:verilog]=[] unless @sources.has_key?(:verilog);
 		@includes[:verilog]=[] unless @includes.has_key?(:verilog);

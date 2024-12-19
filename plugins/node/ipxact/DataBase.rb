@@ -1,5 +1,6 @@
 module DataBase
 
+	#@pool={:component=>{id=>object,...},...}
 	@pool={};
 
 	## self.register(), description
@@ -12,7 +13,7 @@ module DataBase
 	end ##}}}
 
 	## find(n,t), description
-	def find(n,t); ##{{{
+	def self.find(n,t); ##{{{
 		#puts "#{__FILE__}:start find(n,t) ..."
 		n=n.to_s;t=t.to_sym;
 		unless @pool.has_key?(t)
@@ -23,5 +24,16 @@ module DataBase
 		end
 		Rsim.info("find #{t}::#{n} in ipxact DataBase",5);
 		return @pool[t][n];
+	end ##}}}
+
+
+	## self.elaborate, description
+	def self.elaborate; ##{{{
+		# to elaborate the loaded nodes
+		@pool.each_value do |os|
+			os.each_value do |o|
+				o.elaborate
+			end
+		end
 	end ##}}}
 end

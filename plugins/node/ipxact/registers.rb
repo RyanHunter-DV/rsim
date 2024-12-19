@@ -60,13 +60,12 @@ private
 	# 2.read file contents
 	# 3.self.instance_eval
 	def parseRegFile(fn); ##{{{
-		puts "#{__FILE__}:start parseRegFile(fn) ..."
 		fn=File.join(@__c__.root,fn);
 		if Rsim.os.fileExists?(fn)
 			codes=Rsim.os.readfile(fn);
 			self.instance_eval codes.join("\n");
 		else
-			puts "ERROR, file not exists #{fn}"
+			Rsim.exception(NodeE,:reason=>"register file not exists #{fn}")
 			#TODO, wait for execption Rsim.exception(NodeE,:reason => "register file #{fn} not exists");
 		end
 	end ##}}}
@@ -129,7 +128,7 @@ class RegisterField < IpxData ##{{{
 	
 	## initialize(name,acc,off,bits,v), description
 	def initialize(name,acc,off,bits,v); ##{{{
-		puts "#{__FILE__}:start initialize(name,acc,off,bits,v) ..."
+		#puts "#{__FILE__}:start initialize(name,acc,off,bits,v) ..."
 		super(:id=>name);
 		access(acc);
 		offset(off);

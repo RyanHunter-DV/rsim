@@ -10,12 +10,14 @@ component 'RH/rtl/ExampleComponent/1.0' do ##{{{
 		fileSet 'shell'
 	end ##}}}
 	fileSet 'shell' do ##{{{
-		root "#{$ENV['OUT']}/build"
+		#Rsim.info("setup shell fileSet",8)
+		root "#{ENV['OUT']}/build"
 		verilog 'shell_top.v'
 	end ##}}}
 	fileSet 'rtl' do ##{{{
 		# root path to store files in below, if not specified, will use
 		# the current component's path
+		Rsim.info("setup rtl fileSet",8)
 		root 'RootPathOfFilesListedBelow'
 		# specify verilog formatted file, not added to filelist by the
 		# second option, by default is true
@@ -37,7 +39,7 @@ component 'RH/rtl/ExampleComponent/1.0' do ##{{{
 		reg 'name2',0x4 do ##{{{
 			#...
 		end ##}}}
-		regFile 'file...' # same format as in reg description.
+		#TODO, regFile 'file...' # same format as in reg description.
 	end ##}}}
 	#TODO, specify component generator
 	#TODO, one generator is called to generate one file of the component, so a component
