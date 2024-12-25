@@ -44,6 +44,7 @@ module JobM
 			#self.anchor.clear(pid); anchor can only build by sub process.
 			self.slots.registerRunningProcess(pid);
 			self.anchor.registerRunningProcess(pid,job);
+			return pid;
 		else
 			puts "Error, mult-threads not ready."
 			# #TODO, use multiple thread to thrown the job

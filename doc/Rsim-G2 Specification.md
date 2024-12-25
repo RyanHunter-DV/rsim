@@ -145,6 +145,7 @@ The basic class object derived by all other flow plugins, this object will defin
 
 ## Job control system
 The job control system is the bottom level of threads control system, by which can easily control running jobs both of system commands and internal tool procedures.
+Details: [[MultipleJobControl]]
 The system shall be able to:
 1. wait for complete.
 2. kill the thread.
@@ -161,8 +162,9 @@ j.dispatch() # if j.blockers[xxx], need check current ongoing status in JobM.
 ```
 
 
-### Job control with generator chain
-After elaborating, the tool will pick up all required generators and build commands into `out/logs/current/*.exe`, then according to the chain settings, all non-blocking phases can be thrown to job slots, and for blocking phases, after precedent jobs returned, then can those jobs being thrown.
+
+
+
 
 # Plugins
 ## Node loading flow: nodeflow
@@ -190,8 +192,37 @@ to elaborate loaded nodes:
 2. build specific components, build the dirs of all components required by this config.
 3. arrange the generator chain.
 4. call generator chain with multiple jobs management.
-	1. Details in [Job control system](#Job%20control%20system)
+	1. Details in [[#Job control with generator chain]]
 5. build ral model by ral flow. #TBD 
+
+#### Job control with generator chain
+After elaborating, the tool will pick up all required generators and build commands into `out/components/<component-inst>/*.exe`, then according to the chain settings, all non-blocking phases can be thrown to job slots, and for blocking phases, after precedent jobs returned, then can those jobs being thrown.
+1. in buildComponent step, to create a GeneratorChain object
+2. get generator object according to the config's need component instances.
+3. arrange generators by giving phases
+4. set generators' parameters, such as the source path, out path etc.
+5. call generator chain's start action from the minimal phase.
+```ruby
+chain.build # build commands of each required generator into target path
+# *.cmd
+#
+phases.each do |p|
+	pool=[]
+	generators.each do |g|
+		if g.phase==p
+			j=Job.new(%Q|source #{g.path}/#{g.commandName}|);
+			j.dispatch;
+			pool<<j;
+		end
+	end
+	pool.each do |j|
+		j.wait;
+	end
+end
+```
+- [ ] How about multiple file building?
+for example, a link generator required all source files to be linked to target, then how to get the source files from the component settings? through componentInstance.view.fileSet
+#TODO the componentInstance's view attribute is the required view, it is not same as in Component object, in Component object, the view will be all declared views of a component.
 
 ### Step: buildInterface
 1. the interface definitions.

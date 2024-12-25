@@ -48,7 +48,7 @@ class Job ##{{{
 		when :system
 			#opts={:path=>path};
 			@__opts__[:path] = path;
-			@__exe__ = @__anchor__+%Q| "#{@__exe__}" #{path}|;
+			@__exe__ = @__anchor__+%Q| '#{@__exe__}' #{path}|;
 		else
 			puts "error,other job type not ready."
 			#TODO
@@ -58,7 +58,7 @@ class Job ##{{{
 	end ##}}}
 	## path, return the path option for system typed job
 	def path; ##{{{
-		return @__opts__[:path] or nil;
+		return @__opts__[:path];
 	end ##}}}
 
 	## type, description

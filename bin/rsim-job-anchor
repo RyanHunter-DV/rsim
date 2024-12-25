@@ -10,7 +10,7 @@ $anchors = ["RUNNING","COMPLETE","KILLED"]
 def buildAnchor(path,pid,name); ##{{{
 	$anchors.each do |a|
 		fn=File.join(path,"#{a}.#{pid}");
-		system("rm -f #{fn}") if File.exists(fn);
+		system("rm -f #{fn}") if File.exists?(fn);
 	end
 	fn=File.join(path,"#{name}.#{pid}");
 	fh=File.open(fn,'w');

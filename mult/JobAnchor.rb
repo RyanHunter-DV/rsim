@@ -4,7 +4,7 @@ JobAnchor, description
 """
 class JobAnchor ##{{{
 
-	attr __jobs__;
+	attr :__jobs__;
 
 	## initialize, description
 	def initialize; ##{{{
@@ -17,7 +17,7 @@ class JobAnchor ##{{{
 		# return if given pid's anchor is completed
 		if @__jobs__.has_key?(pid)
 			fn=File.join(@__jobs__[pid].path,"COMPLETE.#{pid}")
-			return true if File.exists(fn);
+			return true if File.exists?(fn);
 		end
 		return false;
 	end ##}}}
