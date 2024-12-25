@@ -69,7 +69,7 @@ Now supports concepts of:
 
 
 # Tool architecture
-![](../../../05-MiscAttatchments/Pasted%20image%2020241202191705.png)
+![[Pasted image 20241129170408.png]]
 <center>Tool execute flow</center>
 
 ## UI system
@@ -150,6 +150,19 @@ The system shall be able to:
 2. kill the thread.
 3. get exit status while completed.
 
+```ruby
+## example codes
+cmds.each do |cmd|
+j=Job.new(:proc,cmd) # support proc or command string: :proc, :system, :string
+j.command ...
+j.settings ...
+j.dispatch() # if j.blockers[xxx], need check current ongoing status in JobM.
+
+```
+
+
+### Job control with generator chain
+After elaborating, the tool will pick up all required generators and build commands into `out/logs/current/*.exe`, then according to the chain settings, all non-blocking phases can be thrown to job slots, and for blocking phases, after precedent jobs returned, then can those jobs being thrown.
 
 # Plugins
 ## Node loading flow: nodeflow
@@ -177,6 +190,7 @@ to elaborate loaded nodes:
 2. build specific components, build the dirs of all components required by this config.
 3. arrange the generator chain.
 4. call generator chain with multiple jobs management.
+	1. Details in [Job control system](#Job%20control%20system)
 5. build ral model by ral flow. #TBD 
 
 ### Step: buildInterface
@@ -225,7 +239,7 @@ plugin features:
 # Step
 Step concept is used for multiple process control, each step is the least step to execute, such as build a certain component xml, called like: `step.action('componenta.elaborate')`
 RsimExe can allocate multiple steps and call in parallel.
-#MARKER how to define a step? need consider:
+#TBD how to define a step? need consider:
 >#TODO, need add management methods, such like ways that can:
 		# kill threads by manually.
 		# get return information, such as success or failed.
