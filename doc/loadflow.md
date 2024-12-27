@@ -1,0 +1,1 @@
+loading nodes, store user node descriptions, but will not do object finding actions, for example, the fileSet reference in a view is only the name of the referenced file, but will not find the real fileSet object in DataBase, this action will do during the elaborate step in buildflow.

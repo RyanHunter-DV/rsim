@@ -15,11 +15,12 @@ design 'Rh/rtl/IpDesignExample/1.0' do ##{{{
 	# dv.dut_bus returns the BusInterface object.
 	# dv is the ComponentInstance object which need to build the interface information so that calling the
 	# dv.dut_bus can get the dut_bus object of component.
-	connect :bus, dv.dut_bus=>rtl.bus do ##{{{
+	connect :bus, 'dv.dut_bus'=>'rtl.bus' do ##{{{
 		# TODO, port connection
+		#TODO, portnameA.connect portnameB;
 	end ##}}}
 	# for adhoc connection
-	connect :adhoc, dv.dut_clk=>rtl.clki, dv.dut_rst=>rtl.rstn;
+	connect :adhoc, 'dv.dut_clk'=>'rtl.clki', 'dv.dut_rst'=>'rtl.rstn';
 	#TODO, ...
 
 	# TODO, used when the rtl is an instance of a design object, this always used by soc level who want to instance an ip's design object.

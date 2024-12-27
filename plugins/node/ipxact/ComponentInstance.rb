@@ -6,19 +6,20 @@ require 'ipxact/Component.rb'
 class ComponentInstance < Component ##{{{
 
 	attr_accessor :parent;
-	attr :__c__;
+	attr :__cn__; # component vlnv
+	attr :__c__; # component object
 	attr :__iname__; # instance name
 
 	## initialize(as,c), 
 	# as: instance name
 	# c: component object
-	def initialize(as,c,p); ##{{{
+	def initialize(as,cn,p); ##{{{
 		#puts "#{__FILE__}:start initialize(as,c) ..."
 		super(c.id,:inst=>true)
-		@__c__ = c;
+		@__cn__ = cn;
 		@__iname__= as.to_s;
 		@parent=p;
-		@__c__.instance(self);
+		#@__c__.instance(self);
 	end ##}}}
 
 	## fullname, return full hierarchical name
@@ -28,6 +29,14 @@ class ComponentInstance < Component ##{{{
 		return @__iname__;
 	end ##}}}
 
+	## elaborate, 
+	def elaborate; ##{{{
+		Rsim.info("elaborating instance of component #{@__cn__}");
+		c=DataBase.find(@__cn__,:component);
+		Rsim.exception(NodeE,:reason=>"cannot find component: #{@__cn__}") unless c;
+		c.instance(self);
+		@__c__ = c;
+	end ##}}}
 private
 
 end ##}}}

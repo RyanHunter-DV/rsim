@@ -100,7 +100,9 @@ class Component < IpxData ##{{{
 	def elaborate; ##{{{
 		#puts "#{__FILE__}:start elaborate ..."
 		#TODO, 1 find busDefinition in database and store to Component
-		
+		@pool[:busInterface].each_value do |bo|
+			bo.elaborate;
+		end
 	end ##}}}
 
 	## print, print internal component data
@@ -124,7 +126,6 @@ class Component < IpxData ##{{{
 	## instance(o), called by the component instance, to copy
 	# ipxact data information to it.
 	def instance(o); ##{{{
-		puts "#{__FILE__}:start instance(o) ..."
 		@pool.each_pair do |t,p|
 			p.each_pair do |id,info|
 				c=info[:object].copy;
@@ -139,7 +140,6 @@ class Component < IpxData ##{{{
 
 	## register(o,type), register given object into given type
 	def register(o,type,**opts); ##{{{
-		#puts "#{__FILE__}:start register(o,type) ..."
 		@pool[type] = {} unless @pool.has_key?(type);
 		@pool[type][o.id] = {:object=>o};
 		if (@__isInst__)

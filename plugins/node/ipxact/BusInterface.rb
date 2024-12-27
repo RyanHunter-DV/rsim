@@ -20,15 +20,12 @@ class BusInterface <IpxData ##{{{
 		@__pname__=nil;
 		@consumers = {};
 	end ##}}}
-
-
 	## connect(tar), used for bus connection
 	# to: target object, for bus it's BusInterface object
 	def connect(to); ##{{{
 		#puts "#{__FILE__}:start connect(tar) ..."
 		@consumers[to.fullname]=to;
 	end ##}}}
-
 	## hierarchy, set hierarchy
 	def hierarchy(p); ##{{{
 		#puts "#{__FILE__}:start hierarchy ..."
@@ -38,5 +35,12 @@ class BusInterface <IpxData ##{{{
 	def fullname; ##{{{
 		#puts "#{__FILE__}:start fullname ..."
 		return %Q|#{@__pname__}.#{id}|;
+	end ##}}}
+	## elaborate, called by hierarchical evaluating
+	def elaborate; ##{{{
+		id =@busDefinition[:id];
+		o=Database.find(id,:busDefinition);
+		Rsim.exception(NodeE,:reason=>"cannot find busDefinition #{id}") unless o;
+		@busDefinition[:object]=o;
 	end ##}}}
 end ##}}}

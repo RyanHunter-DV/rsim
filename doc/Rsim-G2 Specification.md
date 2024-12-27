@@ -19,22 +19,7 @@ The building is:
 2. use generator to build into standard HDL and DV files.
 The standard build file structure shall be like:
 ![](../../../05-MiscAttatchments/Pasted%20image%2020241129170408.png)
-### Build flow
-1. user call rsim with build options, and with given config name.
-2. the root.rh must be given in ENV variable at least one root entry is required, multiple root entries are supported by separator ','.
-3. loading node files
-	1. root node -> required nodes by `rhload` command.
-	2. next root node if has ... repeat steps 1.
-4. evaluating loaded nodes, build nodes into IP-XACT database, xml formatted files and required scripts and tools.
-	1. evaluate designConfiguration by command line.
-	2. evaluate design top and interconnection information with configurations in designConfiguration
-	3. evaluate required components, added by need command in configuration, with corresponding component parameters.
-		1. view configurations
-		2. parameter settings
-	4. evaluate generator chain, with configs.
-5. building nodes into IP-XACT database, xml formatted files and required scripts and tools (optional step)
-6. call generator chain to start generating target HDL & DV files according to the built IP-XACT database.
-	1. generator chain will also build compile and elab commands for next compiling flow.
+
 ### Easy embeding plugins
 the Rsim is a major shell that can encapsulate many third party plugins to support building the target standard HDL files.
 #TODO think how to embed any plugins into the main shell.
@@ -162,74 +147,12 @@ j.dispatch() # if j.blockers[xxx], need check current ongoing status in JobM.
 ```
 
 
-
-
-
-
 # Plugins
 ## Node loading flow: nodeflow
 All node commands will be declared within the NodeFlow, so loading nodes shall be within this flow scope, and also, it requires a new object (module DataBase) to store all node information, so the flow shall declare a new object.
 
 **component command**
 command used to create a new component object which has compatible information for IP-XACT protocol.
-
-## Build flow
-The build flow will do elaboration for all loaded node first, and then start building both for files and folders according to specified config.
-### Step: elaborate
-- [ ] what does elaborate do?
-
-to elaborate loaded nodes:
-1. call DataBase.elaborate
-2. overwriting configs to available component instance in certain design
-3. a config requires elaborate to setting parameters to components, component generators etc  to component instance .
-4. elaborate components directly need by config
-	1. elaborating nested components, a component may not directly need by config, but indirectly need by a component.
-- [ ] add need command in Component, that a component vlnv shall be need by the current component. Attention that the nested component may require the instance component name? or this feature is not necessary, need think again.
-
-### Step: buildComponent
-1. build common out dirs:
-	1. `out[:home],out[:components],out[:configs]`
-2. build specific components, build the dirs of all components required by this config.
-3. arrange the generator chain.
-4. call generator chain with multiple jobs management.
-	1. Details in [[#Job control with generator chain]]
-5. build ral model by ral flow. #TBD 
-
-#### Job control with generator chain
-After elaborating, the tool will pick up all required generators and build commands into `out/components/<component-inst>/*.exe`, then according to the chain settings, all non-blocking phases can be thrown to job slots, and for blocking phases, after precedent jobs returned, then can those jobs being thrown.
-1. in buildComponent step, to create a GeneratorChain object
-2. get generator object according to the config's need component instances.
-3. arrange generators by giving phases
-4. set generators' parameters, such as the source path, out path etc.
-5. call generator chain's start action from the minimal phase.
-```ruby
-chain.build # build commands of each required generator into target path
-# *.cmd
-#
-phases.each do |p|
-	pool=[]
-	generators.each do |g|
-		if g.phase==p
-			j=Job.new(%Q|source #{g.path}/#{g.commandName}|);
-			j.dispatch;
-			pool<<j;
-		end
-	end
-	pool.each do |j|
-		j.wait;
-	end
-end
-```
-- [ ] How about multiple file building?
-for example, a link generator required all source files to be linked to target, then how to get the source files from the component settings? through componentInstance.view.fileSet
-#TODO the componentInstance's view attribute is the required view, it is not same as in Component object, in Component object, the view will be all declared views of a component.
-
-### Step: buildInterface
-1. the interface definitions.
-
-### Step: buildConfig
-1. build config dirs
-2. build XML database, not support in current generation.
 
 
 ## Simulation flow
@@ -242,11 +165,11 @@ backups
 ## Multiple thread control
 - [ ] what kind of actions can be treated as multiple running threads?
 - [ ] how to manage multiple jobs?
-1. running simulation can be parallely executing as multiple threads and jobs.
+1. running simulation can be parallelly executing as multiple threads and jobs.
 	1. require a config to control the maximum outstanding simulation.
 2. building components or running the generator chain can be multiple threads.
 	1. no necessary to control the parallel threads, just run in parallel.
-both of above actions will call system command to run, the difference is that simultion need have a limit of maximum ongoing jobs.
+both of above actions will call system command to run, the difference is that simulation need have a limit of maximum ongoing jobs.
 details refer to:
 ## Main tool execute procedure
 1. tool init

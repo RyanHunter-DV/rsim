@@ -8,6 +8,12 @@ class Design < IpxData##{{{
 
 	attr :__pool__;
 	attr :__iname__; # instance name
+
+	#[<string: instance name>] -> ComponentInstance object
+	attr :instances;
+	# connections[:bus] = {<src> => {to0=>block,to1=>block,...},<src2>=>{to0,to2,...}}
+	# connections[:adhoc]
+	attr :connections;
 	
 	# parent design if has
 	attr_accessor :parent;
@@ -18,6 +24,8 @@ class Design < IpxData##{{{
 		super(:id=>vlnv)
 		@__iname__='design';
 		@parent=nil;
+		@instances={};
+		@connections={:bus=>{},:adhoc=>{}};
 	end ##}}}
 
 	## fullname, return full hierarchical name
@@ -29,44 +37,76 @@ class Design < IpxData##{{{
 		return h;
 	end ##}}}
 
-	# support commands
+	#============ support commands ============#
 	## instance(vlnv,**opts), 
 	# 1.search Component object in Database by given vlnv.
 	# 2.create a new ComponentInstance object and store the search Component object information.
 	# 3.build a method within this Design object so that direct instance reference can work, which will
 	# return the ComponentInstance object.
 	# 4.register the ComponentInstance into the Design object's pool
+	# vlnv, gives the component object vlnv.
+	# opts[:as], specify instance name
 	def instance(vlnv,**opts); ##{{{
-		#puts "#{__FILE__}:start instance(vlnv,**opts) ..."
-		c=DataBase.find(vlnv,:component);
-		Rsim.exception(NodeE,:reason=>"cannot find component: #{vlnv}") unless c;
 		Rsim.exception(NodeE,:reason=>"no ':as' option given for instantiating component: #{vlnv}") unless opts.has_key?(:as);
 		as=opts[:as];
-		ci=ComponentInstance.new(as,c,self);
+		ci=ComponentInstance.new(as,vlnv,self);
 		_buildInstanceReference(as,ci);
+		@instances[as.to_s] = ci;
 	end ##}}}
 
 	## connect(type,**pairs), description
-	def connect(type,**pairs); ##{{{
-		#puts "#{__FILE__}:start connect(type,**pairs) ..."
-		message = type.to_s+"Connect";
-		self.send(message,pairs);
+	def connect(type,**pairs,&block); ##{{{
+		t=type.to_sym;
+		_checkConnectType(type);
+		case(t)
+		when :bus
+			pairs.each_pair do |src,to|
+				src=src.to_s;to=to.to_s;
+				_busConnect(src,to,block);
+			end
+		when :adhoc
+			_adhocConnect(**pairs);
+		end
 	end ##}}}
 
-	## busConnect(pairs), bus connecting
-	def busConnect(pairs); ##{{{
-		#puts "#{__FILE__}:start busConnect(pairs) ..."
-		pairs.each do |o,c| # originator => consumer
-			# the originator and consumer are objects of BusInterface, which is
-			# not elaborated so which only has bus definition name stored.
-			o.connect(c);
+	## elaborate, 
+	# 1.all component instance shall be called to execute the elaborate
+	#
+	def elaborate; ##{{{
+		@instances.each_value do |ci|
+			ci.elaborate;
+		end
+		@connections.each_pair do |ct,info|
+			@info.each_pair do |src,to|
+				# message like: self.dv.dut_bus.connect
+				message=%Q|#{src}.connect|;
+				self.send(message,to);
+			end
 		end
 	end ##}}}
 
 
-
 private
+
+	## _adhocConnect(**pairs), description
+	def _adhocConnect(**pairs); ##{{{
+		pairs.each_pair do |src,to|
+			src=src.to_s;to=to.to_s;
+			@connections[:adhoc][src]=[] unless @connections[:adhoc].has_key?(src);
+			@connections[:adhoc][src] << to;
+		end
+	end ##}}}
+
+	## _busConnect(src,to,block),
+	def _busConnect(src,to,block); ##{{{
+		@connections[:bus][src]={} unless @connections[:bus].has_key?(src);
+		block=nil unless block_given?;
+		@connections[:adhoc][src][to]=block;
+	end ##}}}
+
 	## _buildInstanceReference(name,o), description
+	# let the Design object be able to invoke the component instance through
+	# the instance name like: design.instname
 	def _buildInstanceReference(name,o); ##{{{
 		#puts "#{__FILE__}:start _buildInstanceReference(name,o) ..."
 		self.define_singleton_method name.to_sym do ##{{{
@@ -74,5 +114,10 @@ private
 		end ##}}}
 	end ##}}}
 
+	## _checkConnectType(t), description
+	def _checkConnectType(t); ##{{{
+		return if t==:bus or t==:adhoc;
+		Rsim.exception(NodeE,:reason=>"unsupport bus type #{t} in design connection");
+	end ##}}}
 
 end ##}}}
