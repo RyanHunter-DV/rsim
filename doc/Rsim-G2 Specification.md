@@ -147,6 +147,28 @@ j.dispatch() # if j.blockers[xxx], need check current ongoing status in JobM.
 ```
 
 
+## Message report & log system
+All messages displayed will be recorded into logs, the log system consists of the recording log action and display action, and have following features:
+- Different severity message display, support for info, warning and error.
+- main tool message display and logging.
+- optional verbosity control to display message when the tool in different behavior, such for debug or typical running etc.
+	- controlled by user option: -v;
+- messages from third party commands will be displayed into screen as well, which is controlled by the command self.
+- third party messages will be logged into the command log.
+- debug message will report the location where it called, which will be enabled by option -d.
+- rsim.log located in work path, which logs all screen printed messages.
+- log backup
+	- if current work path exists rsim.log, then will backup it as rsim-backup.log, then start new rsim.log.
+- other logs are recorded in out/logs dir, with timestamp.
+- current links to the latest log.
+- logs recorded in out/logs dir are logs reported through the rsim tool.
+	- such as the logs from buildflow, simflow etc.
+- every flow can setup its own logger.
+log dir file description:
+```
+out/logs/<time stamp: 2024_12_30__16_24_27__0800>/
+```
+
 # Plugins
 ## Node loading flow: nodeflow
 All node commands will be declared within the NodeFlow, so loading nodes shall be within this flow scope, and also, it requires a new object (module DataBase) to store all node information, so the flow shall declare a new object.

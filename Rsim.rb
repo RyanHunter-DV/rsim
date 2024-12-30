@@ -38,10 +38,10 @@ module Rsim
 		return @report;
 	end ##}}}
 	## self.info(msg,verbo=2), description
-	def self.info(msg,verbo=2); ##{{{
+	def self.info(msg,verbo=2,depth=1); ##{{{
 		#loc=caller(1)[0];
-		callDepth=1;
-		self.report.info(msg,callDepth,verbo);
+		#callDepth=1;
+		self.report.info(msg,depth,verbo);
 	end ##}}}
 
 	## self.os, description
@@ -52,10 +52,10 @@ module Rsim
 
 	## self.init, tool initialization
 	def self.init; ##{{{
-		@pm=PluginManager.new;
 		@ui=UI.new;
 		@config=RsimConfig.new(@ui);
 		@os=OS.new(@config.ostype); # related to OS operations
+		@pm=PluginManager.new;
 		self.report.setupConfig(@config);
 	end ##}}}
 

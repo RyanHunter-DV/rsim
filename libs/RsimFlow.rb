@@ -10,12 +10,15 @@ class RsimFlow ##{{{
 	attr_accessor :currentOption;
 
 	attr :steps;
+	# each flow has its own logger file in out/logs
+	attr :logger;
 	## initialize(name), description
 	def initialize(name); ##{{{
-		#puts "#{__FILE__}:start initialize(name) ..."
 		@name = name.to_s;
 		@steps=[];
 		@currentOption=nil;
+		# 1.init logger, open file with config.outs[:logs]+<flowname>.log
+		#TODO
 	end ##}}}
 
 	## action, description
@@ -53,9 +56,14 @@ class RsimFlow ##{{{
 	def command(name,&block); ##{{{
 		#puts "#{__FILE__}:start command(name,&block) ..."
 		define_singleton_method name.to_sym do |*args,&desc| ##{{{
-			Rsim.info("setup command method #{name}, args (#{args})",9);
+			info("setup command method #{name}, args (#{args})",9);
 			self.instance_exec *args,desc,&block;
 		end ##}}}
+	end ##}}}
+	## info(msg,verbo=9,depth=1), description
+	def info(msg,verbo=9,depth=1); ##{{{
+		depth+=1;
+		Rsim.info(msg,verbo,depth);
 	end ##}}}
 	## execute(**opts), will execut the flow by given opts
 	def execute(**opts); ##{{{
@@ -65,7 +73,7 @@ class RsimFlow ##{{{
 		select = _pickupSelectedSteps(opts[:select]) if opts.has_key?(:select);
 		@steps.each do |s|
 			next if select and (not select.include?(s.name.to_sym));
-			Rsim.info("executing step #{s.name}(#{opts}) ...",5);
+			info("executing step #{s.name}(#{opts}) ...",5);
 			s.execute(self,**opts);
 		end
 	end ##}}}

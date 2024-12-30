@@ -79,6 +79,14 @@ private
 				:display=>'set max verbosity to display in this tool'
 			},
 			{
+				:name=>:out,:sflag=>'-o',:lflag=>'--out=DIRNAME',:default=>'out',
+				:display=>'set out home'
+			},
+			{
+				:name=>:debug,:sflag=>'-d',:lflag=>'--debug',:default=>false,
+				:display=>'enable debug mode for this tool'
+			},
+			{
 				:name=>:execute,:sflag=>'-e',:lflag=>'--execute=COMMAND',:default=>'',
 				:display=>%Q|set command for executing\n\texamples:\n\t\trsim -e 'buildflow(ConfigName)'\n\t\trsim -e 'runflow(SuiteName/TestName,skip=>compile)'|
 			},

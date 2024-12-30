@@ -5,7 +5,7 @@ flow :nodeflow do ##{{{
 	#define a new command for component.
 	#example: [node/examples/component.rh]
 	command :component do |name,opts={},block| ##{{{
-		Rsim.info("command: component(#{name},#{opts},#{block})",9)
+		info("command: component(#{name},#{opts},#{block})",9)
 		c=Component.new(name,opts);
 		c.instance_eval &block;
 		DataBase.register(c,:component);
@@ -44,7 +44,7 @@ flow :nodeflow do ##{{{
 			## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 			## puts "DEBUG, load: #{File.absolute_path(fname)}";
 			load fname;
-			Rsim.info("file #{File.absolute_path(fname)} processed",1) if visible;
+			info("file #{File.absolute_path(fname)} processed",1) if visible;
 		else
 			## if not exists by the path, searching with LOAD_PATH
 			## load from RUBYLIB
@@ -57,7 +57,7 @@ flow :nodeflow do ##{{{
 					## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
 					## puts "DEBUG, load: #{full}";
 					load full;
-					Rsim.info("file #{File.absolute_path(full)} processed",1) if visible;
+					info("file #{File.absolute_path(full)} processed",1) if visible;
 					loaded=true;break;
 				end
 			end
@@ -107,7 +107,7 @@ def rhload(fname,visible=false)
 		fh=File.open(fname,'r');
 		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
-		Rsim.info("file #{File.absolute_path(fname)} processed",1) if visible;
+		info("file #{File.absolute_path(fname)} processed",1) if visible;
 	else
 		## if not exists by the path, searching with LOAD_PATH
 		## load from RUBYLIB
@@ -123,7 +123,7 @@ def rhload(fname,visible=false)
 				fh=File.open(full,'r');
 				Rsim.loadContext.instance_eval fh.readlines().join("");
 				fh.close;
-				Rsim.info("file #{File.absolute_path(full)} processed",1) if visible;
+				info("file #{File.absolute_path(full)} processed",1) if visible;
 				loaded=true;break;
 			end
 		end
