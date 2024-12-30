@@ -10,7 +10,7 @@
 - compatible with XML format database.
 - Prepare for Original-G1 project
 	- *require bootenv*
-
+- different concepts can have same vlnv name.
 ## Building features
 The building flow, means all building mechanism from a manual specified source format files into standard, EDA supported HDL and TB files.
 Rsim tool generically declare a common API that let third party plugins can be invoked and generated to target files and places.

@@ -2,6 +2,13 @@ require 'ipxact/DataBase.rb' # ipxact db
 require 'ipxact/Component.rb'
 require 'ipxact/Design.rb'
 flow :nodeflow do ##{{{
+
+	# use this command to declare an abstraction
+	command :abstraction do |vlnv,opts={},block|
+		o=AbstractionDefinition.new(vlnv);
+		o.instance_eval &block;
+		DataBase.register(o,:abstraction);
+	end
 	#define a new command for component.
 	#example: [node/examples/component.rh]
 	command :component do |name,opts={},block| ##{{{

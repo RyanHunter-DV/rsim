@@ -3,6 +3,7 @@ require 'ipxact/Port.rb'
 """
 # Object description:
 WirePort, declare the Wire typed port information
+Support the port command in component and abstractionDefinition.
 """
 class WirePort < Port ##{{{
 	attr :direction;

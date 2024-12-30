@@ -28,10 +28,10 @@ elaborate sequence:
 
 
 
----
-backups
 
-### Build flow
+---
+
+### Build flow - backup
 1. user call rsim with build options, and with given config name.
 2. the root.rh must be given in ENV variable at least one root entry is required, multiple root entries are supported by separator ','.
 3. loading node files
@@ -48,7 +48,7 @@ backups
 6. call generator chain to start generating target HDL & DV files according to the built IP-XACT database.
 	1. generator chain will also build compile and elab commands for next compiling flow.
 
-## Build flow
+## Build flow - backup
 The build flow will do elaboration for all loaded node first, and then start building both for files and folders according to specified config.
 ### Step: elaborate
 - [ ] what does elaborate do?

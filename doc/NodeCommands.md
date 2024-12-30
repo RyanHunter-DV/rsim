@@ -14,9 +14,32 @@ Now supports concepts of:
 ## instance
 Command to instantiate a component data in current design, with given instance name option.
 `instance <vlnv>, :as => <instname>`
-#TODO 
 # config
-#TODO 
+typical format: `config <vlnv>, <[options => values]> <code block>`
+*options*
+- clones, config settings can be derivative from other config, now support one parent config only.
+## design
+specify the design reference, format: `design <vlnv>`
+## need
+add required component instance from design for current config.
+format: `need design.<instance name>, <view>, <[parameters => overwrite value]>`
+- view arg is required for this config.
+- parameter options can be used to overwrite the component's parameters while calling need.
+The need command arg will use direct design instance reference, so the config block may be evaluated after the elaborating done.
+## selector
+select generators, this used for components which have multiple generators, for components which have only one generator, then its not necessary to call the selector command.
+format: `selector design.<instance name>,<generator name>`
+## simulator
+specify simulator tool, can support xcelium or vcs
+format: `simulator <eda name> <code block>`
+the code block can contain commands such as compile option, elab options for the specified simulator, like:
+```ruby
+simulator :vcs, do
+	compopt '+define+XXX'
+	elabopt '-fsdb'
+end
+```
+
 # bus
 build busDefinition 
 format:
