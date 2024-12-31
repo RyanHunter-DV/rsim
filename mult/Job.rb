@@ -51,10 +51,11 @@ class Job ##{{{
 			@__exe__ = @__anchor__+%Q| '#{@__exe__}' #{path}|;
 		else
 			puts "error,other job type not ready."
+			# for :procedure type, given @__exe__ is a code block;
+			# then to execute it
 			#TODO
 		end
 		@__opts__[:pid] = JobM.execute(self,:sub=>true,:id=>@name+'-'+@id.to_s);
-		#TODO, MARKER, need consider next step after executing the job.
 	end ##}}}
 	## path, return the path option for system typed job
 	def path; ##{{{

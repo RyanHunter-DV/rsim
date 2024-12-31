@@ -39,7 +39,6 @@ module JobM
 		job.updateState(:running);
 		if job.type== :system
 			#pid=Process.spawn(job.command);
-			#TODO, cannot test in windows
 			pid=Process.spawn(job.command);
 			#self.anchor.clear(pid); anchor can only build by sub process.
 			self.slots.registerRunningProcess(pid);

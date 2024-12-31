@@ -10,7 +10,10 @@ class WirePort < Port ##{{{
 	attr_accessor :rsb;
 	attr_accessor :lsb;
 
-	attr :wiretype;
+	# qualifier: :clock, :data, :address
+	attr :__q__;
+	attr :__container__; # :abstraction, :component
+	attr :__views__;
 	## initialize(name), description
 	def initialize(name); ##{{{
 		#puts "#{__FILE__}:start initialize(name) ..."
@@ -18,6 +21,7 @@ class WirePort < Port ##{{{
 		# :in, :out, :inout, :net (default)
 		@direction = :net;
 		@rsb=0;@lsb=0;
+		@__views__={:master=>{},:slave=>{},:system=>{}};
 	end ##}}}
 
 	## set(**opts), set options
@@ -29,8 +33,31 @@ class WirePort < Port ##{{{
 
 		direction(opts[:direction]);
 		width(opts[:rsb],opts[:lsb]);
-		@wiretype=opts[:type];
+		@__q__=opts[:type];
 	end ##}}}
+	
+	## usedBy(p), set container
+	def usedBy(p); ##{{{
+		@__container__ = p;
+	end ##}}}
+	## qualifier(q), description
+	def qualifier(q); ##{{{
+		@__q__=q.to_sym;
+	end ##}}}
+	##### node commands for abstraction {
+	## onMaster(**opts), setting options for master view
+	def onMaster(**opts); ##{{{
+		m=@__views__[:master];
+		opts.each_pair do |k,v|
+			m[k]=v;
+		end
+		m[:width] = 1 unless m.has_key?(:width);
+		m[:direction] = :in unless m.has_key?(:direction);
+	end ##}}}
+	##### }
+
+
+
 	## display, print internal database
 	def display; ##{{{
 		#puts "#{__FILE__}:start display ..."
@@ -38,7 +65,7 @@ class WirePort < Port ##{{{
 		puts "- id: #{id}";
 		puts "- direction: #{@direction}";
 		puts "- vector: [#{@rsb}:#{@lsb}]";
-		puts "- wiretype: #{@wiretype}";
+		puts "- qualifier: #{@__q__}";
 	end ##}}}
 
 private

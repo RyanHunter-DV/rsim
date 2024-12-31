@@ -1,1 +1,3 @@
 To start a new job, just to create a new Job object with command, like: `j=Job.new("ls");`, then call dispatch to start executing the job, if the slots are full, it will be blocked and wait for slots completed, and then being executed.
+# Feature description
+1. support system command

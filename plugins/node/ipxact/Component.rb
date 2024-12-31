@@ -16,6 +16,9 @@ class Component < IpxData ##{{{
 	attr :pool;
 	attr :commands;
 	attr :__isInst__;
+	# generators
+	# [<vlnv>] -> object
+	attr :__generators__;
 	## initialize(name,opts={}), 
 	# name is the vlnv name, opts is options which currently are reserved.
 	def initialize(vlnv,opts={}); ##{{{
@@ -26,6 +29,7 @@ class Component < IpxData ##{{{
 		@commands=[];
 		@__isInst__=false;
 		@__isInst__=opts[:inst] if opts.has_key?(:inst);
+		@__generators__={};
 		setRoot(caller(2)[0]) unless @__isInst__;
 	end ##}}}
 
@@ -81,11 +85,12 @@ class Component < IpxData ##{{{
 		register(r,:regBlock);
 	end ##}}}
 	## generator(name,&block), 
-	def generator(name,&block); ##{{{
+	def generator(name); ##{{{
 		#puts "#{__FILE__}:start generator(name,&block) ..."
-		g=ComponentGenerator.new(name);
-		g.instance_eval &block;
-		register(g,:generator,:command=>name);
+		#g=ComponentGenerator.new(name);
+		#g.instance_eval &block;
+		#register(g,:generator,:command=>name);
+		@__generators__[name.to_s]=nil; # wait elaborate to get object
 	end ##}}}
 	## bus(vlnv,**opts,&block), specify busInterface for this component
 	def bus(vlnv,**opts,&block); ##{{{
