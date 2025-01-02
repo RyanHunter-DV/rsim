@@ -41,26 +41,6 @@ component 'RH/rtl/ExampleComponent/1.0' do ##{{{
 		end ##}}}
 		#TODO, regFile 'file...' # same format as in reg description.
 	end ##}}}
-	#TODO, specify component generator
-	#TODO, one generator is called to generate one file of the component, so a component
-	# may have multiple generators in same group, if generator has ordering requirement, can
-	# specify the generator with different phase.
-	generator 'link' do ##{{{
-		group 'method-link'
-		phase 0.0;
-		# exe will declare the path and command format protocol.
-		# <xxx> will be replaced by parameter
-		#TODO, require container, and outhome as the target place
-		parameter 'symbol' => '-s'
-		# will be executed as '/bin/ln -s #{fn} #{container.home}'
-		#TODO
-		exe '/bin/ln <symbol> <src> <tar>';
-	end ##}}}
-	generator 'copy' do ##{{{
-		group 'method-copy' # picked up by generator chain selector.
-		phase 0.0;
-		exe '/bin/cp <src> <tar>';
-	end ##}}}
 end ##}}}
 
 component 'RH/tb/ExampleComponent/1.0' do ##{{{
@@ -100,22 +80,9 @@ component 'Rh/rtl/fifo/1.0' do
 		end
 		regFile 'file.reg' # same format as in reg description.
 	end
-	generator 'link' do
-		group 'method-link'
-		phase 0.0;
-		# exe will declare the path and command format protocol.
-		# <xxx> will be replaced by parameter
-		#TODO, require container, and outhome as the target place
-		parameter 'target' => 'out' # default, replaced by config
-		parameter 'symbol' => '-s'
-		#TODO
-		# source and target flag are built-in flags used to specify how to
-		# give the source and target file to the generator executor.
-		exe '/bin/ln <symbol> <source> <target>';
+	generator 'link','build' do
+		send(:link,:src=>@sources,:root=>@root)
 	end
-	generator 'copy' do
-		group 'method-copy' # picked up by generator chain selector.
-		phase 0.0;
-		exe '/bin/cp <source> <target>';
-	end
+	#generator 'copy' do
+	#end
 end

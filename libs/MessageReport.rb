@@ -63,7 +63,7 @@ private
 		dirname=File.dirname(d);
 		Rsim.os.mkdir(d,:recursive=>true);
 		Rsim.os.rm('current',dirname) if Rsim.os.fileExists?('current',dirname);
-		Rsim.os.link(d,'current');
+		Rsim.os.link(d,File.join(dirname,'current'));
 	end ##}}}
 	## _colorCode(n), description
 	def _colorCode(n); ##{{{

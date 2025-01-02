@@ -144,7 +144,7 @@ private
 		@options[:STEM] = ENV['STEM'] if ENV.has_key?('STEM');
 
 		#TODO, test for 
-		Rsim.info("test for windows platform, set fixed env");
+		Rsim.info("test for fixed env");
 		@options[:STEM]='D:/Obsidian/Obsidian/01-Project/rsim/tests';
 		@options[:ROOT]='D:/Obsidian/Obsidian/01-Project/rsim/tests/root.rh';
 

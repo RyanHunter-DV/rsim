@@ -21,6 +21,11 @@ class Component < IpxData ##{{{
 	attr :__generators__;
 	## initialize(name,opts={}), 
 	# name is the vlnv name, opts is options which currently are reserved.
+
+	# source files from the givining fileSet with specific view,
+	# this only available after elaborate phase.
+	attr :sources;
+
 	def initialize(vlnv,opts={}); ##{{{
 		#puts "#{__FILE__}:start initialize(name,opts={}) ..."
 		super(:id=>vlnv);
@@ -31,6 +36,7 @@ class Component < IpxData ##{{{
 		@__isInst__=opts[:inst] if opts.has_key?(:inst);
 		@__generators__={};
 		setRoot(caller(2)[0]) unless @__isInst__;
+		@sources=[];
 	end ##}}}
 
 	## wire(name,direction,rsb,lsb), description
@@ -85,12 +91,13 @@ class Component < IpxData ##{{{
 		register(r,:regBlock);
 	end ##}}}
 	## generator(name,&block), 
-	def generator(name); ##{{{
-		#puts "#{__FILE__}:start generator(name,&block) ..."
-		#g=ComponentGenerator.new(name);
-		#g.instance_eval &block;
-		#register(g,:generator,:command=>name);
-		@__generators__[name.to_s]=nil; # wait elaborate to get object
+	def generator(name,group,&block); ##{{{
+		# store the generator reference name and group name
+		ge=GeneratorExecutor.new(name,group);
+		@__generators__[name.to_s]=[ge,block]; # wait elaborate to get object
+		self.define_singleton_method name.to_sym do |**args|##{{{
+			ge.sendArgs(**args);
+		end ##}}}
 	end ##}}}
 	## bus(vlnv,**opts,&block), specify busInterface for this component
 	def bus(vlnv,**opts,&block); ##{{{
@@ -107,6 +114,15 @@ class Component < IpxData ##{{{
 		#TODO, 1 find busDefinition in database and store to Component
 		@pool[:busInterface].each_value do |bo|
 			bo.elaborate;
+		end
+	end ##}}}
+
+	## finalize, description
+	def finalize; ##{{{
+		# 1.search generator blocks for specific generator
+		@__generators__.each_pair do |n,gb|
+			# 2.self.instance_eval block
+			self.instance_eval gb[1]; # gb[0] -> ge, gb[1] -> block
 		end
 	end ##}}}
 

@@ -72,8 +72,7 @@ flow :nodeflow do ##{{{
 		end
 	end
 	# the flow that support loading IP-XACT compatible nodes.
-	step :loading do ##{{{
-		# TODO, need define a new command for flow.
+	generator :loading do ##{{{
 		Rsim.loadContext self;
 		option[:entries].each do |e|
 			rhload e;

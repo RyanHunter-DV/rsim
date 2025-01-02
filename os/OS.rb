@@ -62,6 +62,7 @@ class OS ##{{{
 	end ##}}}
 	## link(src,tar), link src with target name
 	def link(src,tar); ##{{{
+		File.unlink(tar) if File.symlink?(tar);
 		File.symlink(src,tar);
 	end ##}}}
 

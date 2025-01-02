@@ -3,7 +3,7 @@
 RsimFlow, 
 The base object for user inheritance.
 """
-require 'libs/FlowStep.rb'
+require 'libs/Generator.rb'
 class RsimFlow ##{{{
 
 	attr_accessor :name; # string type
@@ -12,11 +12,13 @@ class RsimFlow ##{{{
 	attr :steps;
 	# each flow has its own logger file in out/logs
 	attr :logger;
+	attr :jobs;
 	## initialize(name), description
 	def initialize(name); ##{{{
 		@name = name.to_s;
 		@steps=[];
 		@currentOption=nil;
+		@jobs={};
 		# 1.init logger, open file with config.outs[:logs]+<flowname>.log
 		#TODO
 	end ##}}}
@@ -26,30 +28,19 @@ class RsimFlow ##{{{
 		return @currentOption;
 	end ##}}}
 	
-	## step, 
-	# command to define a new step of this flow, example:
-	#step :name, do
-	#	group :groupname
-	#	action do
-	#		Shell.cmd(...,...);
-	#	end
-	#end
-	def step(name,**opts,&block); ##{{{
-		#puts "#{__FILE__}:start step ..."
-		s=FlowStep.new(name);
-		s.action(block);
-		register(s); # register step
+	## generator(name,&block), 
+	# generator command in the chain
+	# define a new generator, with given generator commands, to setup parameters, phases, actions etc.
+	def generator(name,&block); ##{{{
+		g=Generator.new(name);
+		g.instance_eval &block;
+		register(g);
 	end ##}}}
 
 	## register(step), register the step into local @steps hash, if has no group
 	# report error.
 	def register(step); ##{{{
-		#puts "#{__FILE__}:start register(step) ..."
-		# if no group, return nil
-		#TODO, why need group?, Rsim.report.error("step(#{step.name} has no group declared !)") unless step.group; 
-		#TODO, why need group?, @steps[step.group]=[] unless @steps.has_key?(step.group);
-		#TODO, why need group?, @steps[step.group]<<step;
-		@steps << step;
+		@steps[step.name] = step;
 	end ##}}}
 	## command(name,&block), define a new command(API) for
 	# the newly created flow.
@@ -67,24 +58,31 @@ class RsimFlow ##{{{
 	end ##}}}
 	## execute(**opts), will execut the flow by given opts
 	def execute(**opts); ##{{{
-		#puts "#{__FILE__}:start execute(**opts) ..."
-		select = nil;
-		#select = opts[:select] if opts.has_key?(:select);
-		select = _pickupSelectedSteps(opts[:select]) if opts.has_key?(:select);
-		@steps.each do |s|
-			next if select and (not select.include?(s.name.to_sym));
-			info("executing step #{s.name}(#{opts}) ...",5);
-			s.execute(self,**opts);
+		selected = [];
+		# 1. select generators of this group
+		selected = @steps;
+		# 2.run generators
+		selected.each do |ge|
+			if ge.jobtype==:procedure
+				ge.context.instance_eval ge.action;
+			else
+				# :system jobtype
+				j=Job.new(ge.jobtype,ge.execute);
+				ge.precedences.each do |pre|
+					@jobs[pre].wait if @jobs.has_key?(pre);
+				end
+				j.dispatch;
+				@jobs[ge.name] = j;
+			end
+		end
+	end ##}}}
+	## select(g), select generator name
+	def select(*as); ##{{{
+		as.each do |a|
+			@steps<<a;
 		end
 	end ##}}}
 private
-	## _pickupSelectedSteps(s), description
-	def _pickupSelectedSteps(s); ##{{{
-		#puts "#{__FILE__}:start _pickupSelectedSteps(s) ..."
-		return [s.to_sym] if s.is_a?(String);
-		return [s] if s.is_a?(Symbol);
-		return s;
-	end ##}}}
 end ##}}}
 
 
@@ -93,8 +91,10 @@ end ##}}}
 # the new created flow will be registered to the Rsim.pm scope, by defining
 # a method within the plugin manager.
 def flow(name,&block); ##{{{
-	#puts "#{__FILE__}:start flow(name,&block) ..."
-	f=RsimFlow.new(name);
+	f=DataBase.find(name,:generatorChain,false);
+	if f==nil
+		f=RsimFlow.new(name);
+		DataBase.register(f,:generatorChain);
+	end
 	f.instance_eval &block;
-	Rsim.pm.register(f);
 end ##}}}

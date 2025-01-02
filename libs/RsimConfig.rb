@@ -10,6 +10,7 @@ class RsimConfig ##{{{
 	attr_accessor :toolhome;
 	attr_accessor :executeFlows;
 	attr_accessor :outs;
+	attr_accessor :stem;
 
 	attr :__ui__;
 	## initialize, description
@@ -17,6 +18,7 @@ class RsimConfig ##{{{
 		#puts "#{__FILE__}:start initialize ..."
 		@__ui__ = ui;
 		_initToolHome;
+		_initStem;
 		_initOSType;
 		_initMaxVerbo(ui.options[:verbosity])
 		_initExecuteFlows;
@@ -53,6 +55,10 @@ private
 			@ostype=:Linux;
 		end
 	end ##}}}
+	## _initStem, get stem options from ui
+	def _initStem; ##{{{
+		@stem=File.absolute_path(@__ui__.options[:STEM]);
+	end ##}}}
 	## _timestamp, format the current time with following rule:
 	# ' ' translated to '__',
 	# '-' or ':' translated to '_'
@@ -71,7 +77,7 @@ private
 	# 4.outs[:component] -> root dir of components
 	def _initoutDirs; ##{{{
 		@outs={};
-		@outs[:root]=File.join(@toolhome,@__ui__.options[:out]);
+		@outs[:root]=File.join(@stem.,@__ui__.options[:out]);
 		tf=_timestamp();
 		@outs[:logs]=File.join(@outs[:root],'logs',tf)
 		#TODO, config, component paths

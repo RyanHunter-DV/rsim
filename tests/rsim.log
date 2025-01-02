@@ -8,6 +8,6 @@
 [[42mI-7[0m] splitted entry ["D:/Obsidian/Obsidian/01-Project/rsim/tests/root.rh"]
 [[42mI-8[0m] executeFlows loaded ({"nodeflow"=>{:entries=>["D:/Obsidian/Obsidian/01-Project/rsim/tests/root.rh"]}, "buildflow"=>{:config=>"TestConfig"}})
 [[42mI-9[0m] setup max verbosity 9
-[[42mI-10[0m] setup log dirs: D:/Obsidian/Obsidian/01-Project/rsim/out/logs/2024_12_30__17_59_07__0800
+[[42mI-10[0m] setup log dirs: D:/Obsidian/Obsidian/01-Project/rsim/out/logs/2025_01_02__18_45_15__0800
 [[42mI-11[0m] get user interrupt signal: 2
 [[42mI-12[0m] get user interrupt signal: 2

@@ -8,11 +8,17 @@ flow :buildflow do ##{{{
 	#2.define a method with the given generator name.
 	generator :elaborate do ##{{{
 		#TODO, step to elaborating the loaded nodes by calling the DataBase module's elaborate method.
-		blocking # indicates this generator must be executed in serial, need wait  one the job is dispatched
+		phase 0.0 # indicates this generator must be executed in serial, need wait  one the job is dispatched
 		action do
 			DataBase.elaborate;
 		end
 	end ##}}}
+	generator :finalize do
+		phase 1.0
+		action do
+			DataBase.finalize
+		end
+	end
 
 	# to generate commands for building components
 	#TODO
@@ -25,24 +31,15 @@ flow :buildflow do ##{{{
 	#end ##}}}
 	generator :link do
 		parameter :src => [], :tar => ''
-		phase 0.0
-		exe '/bin/ln'
-		action do
+		phase 2.0
+		#exe '/bin/ln'
+		action '/bin/ln' do
 			@src.each do |s|
 				basename=File.basename(s);
 				t=File.join(@tar,basename)
 				command %Q|#{@exec} -s #{s} #{t}|;
 			end
 		end
-	end
-
-	# select arg is string or symbol which will be used to send to the generator chain like:
-	# self.send(:elaborate)
-	select :elaborate
-	select :finalize
-	@config.needs.each do |c|
-		# c is ComponentInstance
-		select c.generator
 	end
 
 end ##}}}

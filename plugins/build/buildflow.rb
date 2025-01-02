@@ -1,17 +1,40 @@
 flow :buildflow do ##{{{
 
-	step :elaborate do ##{{{
+	generator :elaborate do ##{{{
 		#TODO, step to elaborating the loaded nodes by calling the DataBase module's elaborate method.
-		DataBase.elaborate;
+		action do
+			DataBase.elaborate;
+		end
+	end ##}}}
+	generator :finalize do ##{{{
+		action do
+			DataBase.finalize;
+		end
 	end ##}}}
 
-	# to generate commands for building components
-	#TODO
-	step :buildComponents do ##{{{
-		#1.build component root dir, out[:components] -> out/components
-		#2.build component instance based on given config.
-		#2.1.config.needs.each -> o.build TODO, component instance requires build method.
-		#2.2.build component dir first, out/components/<component name>-<instance name>
-		#2.3.write the generate command according to given generator.
+	generator :link do ##{{{
+		#parameter :src => [], :tar => ''
+		phase 2.0
+		action '/bin/ln' do
+			args(:src).each do |s|
+				basename=File.basename(s);
+				t=File.join(args(:tar),basename)
+				command %Q|#{@exec} -s #{s} #{t}|;
+			end
+		end
 	end ##}}}
+	generator :copy do ##{{{
+		#parameter :src => [], :tar => ''
+		phase 2.0
+		action '/bin/cp' do
+			args(:src).each do |s|
+				basename=File.basename(s);
+				t=File.join(args(:tar),basename)
+				command %Q|#{@exec} #{s} #{t}|;
+			end
+		end
+	end ##}}}
+
+	#TODO, return needed build generators in a config, return GeneratorExecutor in array format.
+	select @config.generators[:buildflow]
 end ##}}}
