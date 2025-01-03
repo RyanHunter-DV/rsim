@@ -5,13 +5,13 @@ This example page has busDefinition and abstractionDefinition examples listed.
 standard interface can be used for dv or design, so I will declare a busDefinition or abstractionDefinition in interface lib and which can be used by projects, like:
 ```ruby
 # interfaces/src/amba/node.rh
-bus 'RH/interfaces/axi4/1.0' do
+bus 'rh/interfaces/axi4/1.0' do
 	maxMasters 16
 	maxSlaves 16
 end
-abstraction 'RH/interfaces/axi4/1.0' do ##{{{
-	bus 'RH/interfaces/axi4/1.0'
-	param :ADDR_WIDTH=>32,:DATA_WIDTH=>32
+abstraction 'rh/interfaces/axi4/1.0' do ##{{{
+	bus 'rh/interfaces/axi4/1.0'
+	parameter :ADDR_WIDTH=>32,:DATA_WIDTH=>32
 	wire 'ACLK', :clock do
 		onSystem :direction=>:in
 		onMaster :direction=>:in

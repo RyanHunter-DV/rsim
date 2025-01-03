@@ -36,6 +36,11 @@ class Design < IpxData##{{{
 		h+=@__iname__;
 		return h;
 	end ##}}}
+	## mapping(&block), for register and memory mapping command
+	#TODO,
+	def mapping(&block); ##{{{
+		#TODO, not ready yet.
+	end ##}}}
 
 	#============ support commands ============#
 	## instance(vlnv,**opts), 
@@ -51,6 +56,7 @@ class Design < IpxData##{{{
 		as=opts[:as];
 		ci=ComponentInstance.new(as,vlnv,self);
 		_buildInstanceReference(as,ci);
+		Rsim.info("building component instance #{vlnv} -> #{as}",9);
 		@instances[as.to_s] = ci;
 	end ##}}}
 
@@ -73,14 +79,24 @@ class Design < IpxData##{{{
 	# 1.all component instance shall be called to execute the elaborate
 	#
 	def elaborate; ##{{{
-		@instances.each_value do |ci|
+		evalNodes;
+		@instances.each_pair do |name,ci|
+			Rsim.info("elaborate instance #{name}",9)
 			ci.elaborate;
 		end
 		@connections.each_pair do |ct,info|
-			@info.each_pair do |src,to|
+			Rsim.info("elaborate #{ct} connections");
+			info.each_pair do |src,tos|
 				# message like: self.dv.dut_bus.connect
-				message=%Q|#{src}.connect|;
-				self.send(message,to);
+				#message=%Q|#{src}.connect|;
+				splitted = src.split('.');
+				c= self;
+				splitted.each do |s|
+					c=c.send(s.to_sym);
+				end
+				tos.each_pair do |to,b|
+					c.send(:connect,to,b);
+				end
 			end
 		end
 	end ##}}}
@@ -99,9 +115,10 @@ private
 
 	## _busConnect(src,to,block),
 	def _busConnect(src,to,block); ##{{{
-		@connections[:bus][src]={} unless @connections[:bus].has_key?(src);
+		bCnt=@connections[:bus];
+		bCnt[src]={} unless bCnt.has_key?(src);
 		block=nil unless block_given?;
-		@connections[:adhoc][src][to]=block;
+		bCnt[src][to]=block;
 	end ##}}}
 
 	## _buildInstanceReference(name,o), description

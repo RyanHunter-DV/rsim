@@ -4,6 +4,7 @@ require 'ipxact/FileSet.rb'
 require 'ipxact/Generator.rb'
 require 'ipxact/WirePort.rb'
 require 'ipxact/registers.rb'
+require 'ipxact/BusInterface.rb'
 
 """
 # Object description:
@@ -26,7 +27,7 @@ class Component < IpxData ##{{{
 	# this only available after elaborate phase.
 	attr :sources;
 
-	def initialize(vlnv,opts={}); ##{{{
+	def initialize(vlnv,opts={},sloc); ##{{{
 		#puts "#{__FILE__}:start initialize(name,opts={}) ..."
 		super(:id=>vlnv);
 		@pool={};
@@ -35,7 +36,6 @@ class Component < IpxData ##{{{
 		@__isInst__=false;
 		@__isInst__=opts[:inst] if opts.has_key?(:inst);
 		@__generators__={};
-		setRoot(caller(2)[0]) unless @__isInst__;
 		@sources=[];
 	end ##}}}
 
@@ -104,7 +104,7 @@ class Component < IpxData ##{{{
 		#puts "#{__FILE__}:start bus(vlnv,**opts,&block) ..."
 		Rsim.exception(NodeE,:reason=>"require bus instance name") unless opts.has_key?(:as);
 		b=BusInterface.new(opts[:as],vlnv);
-		b.instance_eval &block; # execute setting information for busInterface.
+		b.instance_eval &block if block_given?; # execute setting information for busInterface.
 		register(b,:busInterface,:command=>opts[:as]);
 	end ##}}}
 
@@ -112,8 +112,12 @@ class Component < IpxData ##{{{
 	def elaborate; ##{{{
 		#puts "#{__FILE__}:start elaborate ..."
 		#TODO, 1 find busDefinition in database and store to Component
-		@pool[:busInterface].each_value do |bo|
-			bo.elaborate;
+		@pool.each_pair do |t,os|
+			os.each_value do |info|
+				bo=info[:object];
+				Rsim.info("elaborate #{t}: #{bo.id}");
+				bo.elaborate;
+			end
 		end
 	end ##}}}
 
@@ -149,7 +153,7 @@ class Component < IpxData ##{{{
 	def instance(o); ##{{{
 		@pool.each_pair do |t,p|
 			p.each_pair do |id,info|
-				c=info[:object].copy;
+				c=info[:object];
 				opts={};
 				opts[:command]=info[:command] if info.has_key?(:command);
 				opts[:hierarchy] = o.fullname;
@@ -187,12 +191,5 @@ private
 		self.define_singleton_method c do ##{{{
 			return o;
 		end ##}}}
-	end ##}}}
-
-	## setRoot(stack), to get the root path from stack info
-	def setRoot(stack); ##{{{
-		#puts "#{__FILE__}:start setRoot(stack) ..."
-		splitted = stack.split(/:/);
-		@root=File.dirname(File.absolute_path(splitted[0]));
 	end ##}}}
 end ##}}}

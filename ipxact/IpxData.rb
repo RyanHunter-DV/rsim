@@ -25,9 +25,14 @@ class IpxData ##{{{
 		#puts "#{__FILE__}:start add(block) ..."
 		@__evals__ << {:loc=>block.source_location,:proc=>block};
 	end ##}}}
-
+	## evalNodes, description
+	def evalNodes; ##{{{
+		@__evals__.each do |e|
+			self.instance_eval &e[:proc]
+		end
+	end ##}}}
 	## elaborate, description
 	def elaborate; ##{{{
-		Rsim.report.error("elaborate not available for #{@id}");
+		Rsim.info("nothing to do with #{@id}")
 	end ##}}}
 end ##}}}

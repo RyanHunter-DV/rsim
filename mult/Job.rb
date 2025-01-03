@@ -2,6 +2,7 @@
 # Object description:
 Job, job object been thrown into JobManager
 """
+require 'mult/JobM.rb'
 class Job ##{{{
 
 	attr_accessor :id; # unique identifier of the job, is of int type

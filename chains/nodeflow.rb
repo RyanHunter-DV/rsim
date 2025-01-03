@@ -1,8 +1,16 @@
 require 'ipxact/DataBase.rb' # ipxact db
 require 'ipxact/Component.rb'
 require 'ipxact/Design.rb'
+require 'ipxact/BusDefinition.rb'
+require 'ipxact/Abstraction.rb'
 flow :nodeflow do ##{{{
 
+	# command to describe a busDefinition
+	command :bus do |vlnv,opts={},block|
+		o=BusDefinition.new(vlnv);
+		o.instance_eval &block;
+		DataBase.register(o,:busDefinition);
+	end
 	# use this command to declare an abstraction
 	command :abstraction do |vlnv,opts={},block|
 		o=AbstractionDefinition.new(vlnv);
@@ -14,6 +22,7 @@ flow :nodeflow do ##{{{
 	command :component do |name,opts={},block| ##{{{
 		info("command: component(#{name},#{opts},#{block})",9)
 		c=Component.new(name,opts);
+		c.root=File.absolute_path(File.dirname(Rsim.loadingNode));
 		c.instance_eval &block;
 		DataBase.register(c,:component);
 	end ##}}}
@@ -72,9 +81,10 @@ flow :nodeflow do ##{{{
 		end
 	end
 	# the flow that support loading IP-XACT compatible nodes.
-	generator :loading do ##{{{
+	generator :loading,:selected=>true do ##{{{
 		action do
 			Rsim.loadContext self;
+			Rsim.info("load context: #{Rsim.loadContext}")
 			option[:entries].each do |e|
 				rhload e;
 			end
@@ -101,6 +111,7 @@ def rhload(fname,visible=false)
 		## puts "DEBUG, load: #{f}";
 		#load f;
 		fh=File.open(f,'r');
+		Rsim.loadingNode fh;
 		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
 		puts "file #{File.absolute_path(f)} processed" if visible==true;
@@ -113,6 +124,7 @@ def rhload(fname,visible=false)
 		## puts "DEBUG, load: #{File.absolute_path(fname)}";
 		#load fname;
 		fh=File.open(fname,'r');
+		Rsim.loadingNode fh;
 		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
 		info("file #{File.absolute_path(fname)} processed",1) if visible;
@@ -129,6 +141,7 @@ def rhload(fname,visible=false)
 				## puts "DEBUG, load: #{full}";
 				#load full;
 				fh=File.open(full,'r');
+				Rsim.loadingNode fh;
 				Rsim.loadContext.instance_eval fh.readlines().join("");
 				fh.close;
 				info("file #{File.absolute_path(full)} processed",1) if visible;

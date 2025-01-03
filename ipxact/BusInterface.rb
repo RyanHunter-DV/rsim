@@ -6,7 +6,7 @@ require 'ipxact/IpxData.rb'
 class BusInterface <IpxData ##{{{
 	# [:object] -> BusDefinition object after elaborate
 	# [:id] -> BusDefinition id description
-	attr :busDefinition;
+	attr :__abs__;
 
 	attr :__pname__; # parent name, like: a.b.c
 
@@ -16,15 +16,15 @@ class BusInterface <IpxData ##{{{
 	def initialize(id,ref); ##{{{
 		#puts "#{__FILE__}:start initialize(id) ..."
 		super(:id=>id);
-		@busDefinition={:id=>ref,:object=>nil};
+		@__abs__=ref.to_s;
 		@__pname__=nil;
 		@consumers = {};
 	end ##}}}
-	## connect(tar), used for bus connection
-	# to: target object, for bus it's BusInterface object
-	def connect(to); ##{{{
-		#puts "#{__FILE__}:start connect(tar) ..."
-		@consumers[to.fullname]=to;
+	## connect(to,block), used for bus connection
+	# tn: target object name, for bus it's BusInterface object
+	# block: contains port mapping information.
+	def connect(tn,block); ##{{{
+		@consumers[tn]=block;
 	end ##}}}
 	## hierarchy, set hierarchy
 	def hierarchy(p); ##{{{
@@ -38,9 +38,8 @@ class BusInterface <IpxData ##{{{
 	end ##}}}
 	## elaborate, called by hierarchical evaluating
 	def elaborate; ##{{{
-		id =@busDefinition[:id];
-		o=Database.find(id,:busDefinition);
-		Rsim.exception(NodeE,:reason=>"cannot find busDefinition #{id}") unless o;
-		@busDefinition[:object]=o;
+		id =@__abs__;
+		@__abs__=DataBase.find(id,:busDefinition);
+		#Rsim.exception(NodeE,:reason=>"cannot find busDefinition #{id}") unless o;
 	end ##}}}
 end ##}}}

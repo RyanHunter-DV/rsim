@@ -23,7 +23,7 @@ class Generator ##{{{
 		#puts "#{__FILE__}:start initialize(name) ..."
 		@group=nil;
 		@name=n.to_s;
-		@actions={};
+		@actions=[];
 		@__cmds__=[]; # command lines will be built to command file.
 		@root='';
 		@exec='';

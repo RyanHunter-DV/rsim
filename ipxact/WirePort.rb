@@ -54,6 +54,22 @@ class WirePort < Port ##{{{
 		m[:width] = 1 unless m.has_key?(:width);
 		m[:direction] = :in unless m.has_key?(:direction);
 	end ##}}}
+	def onSlave(**opts); ##{{{
+		m=@__views__[:slave];
+		opts.each_pair do |k,v|
+			m[k]=v;
+		end
+		m[:width] = 1 unless m.has_key?(:width);
+		m[:direction] = :in unless m.has_key?(:direction);
+	end ##}}}
+	def onSystem(**opts); ##{{{
+		m=@__views__[:system];
+		opts.each_pair do |k,v|
+			m[k]=v;
+		end
+		m[:width] = 1 unless m.has_key?(:width);
+		m[:direction] = :in unless m.has_key?(:direction);
+	end ##}}}
 	##### }
 
 

@@ -15,7 +15,7 @@ class ComponentInstance < Component ##{{{
 	# c: component object
 	def initialize(as,cn,p); ##{{{
 		#puts "#{__FILE__}:start initialize(as,c) ..."
-		super(c.id,:inst=>true)
+		super(cn,:inst=>true)
 		@__cn__ = cn;
 		@__iname__= as.to_s;
 		@parent=p;

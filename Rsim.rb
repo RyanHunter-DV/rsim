@@ -8,7 +8,9 @@ module Rsim
 
 	@os=nil; @pm=nil; @config=nil;
 	@report=nil;
-	@loadContext=nil;
+
+	@loadContext=nil; # current loading context
+	@node=nil; # current loading node file
 
 	FINTERNAL = 1;
 
@@ -17,6 +19,11 @@ module Rsim
 		#puts "#{__FILE__}:start self.loadContext(c=nil) ..."
 		return @loadContext unless o;
 		@loadContext=o;
+	end ##}}}
+	## self.loadingNode(f=nil), description
+	def self.loadingNode(f=nil); ##{{{
+		return @node unless f;
+		@node= f;
 	end ##}}}
 	## self.exception(et,**opts), raise an exception
 	# et -> the exception object

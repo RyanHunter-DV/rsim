@@ -3,6 +3,7 @@
 PluginManager, description
 """
 require 'libs/RsimFlow.rb'
+require 'ipxact/DataBase.rb'
 class PluginManager ##{{{
 	## initialize, description
 	def initialize; ##{{{
@@ -21,24 +22,13 @@ class PluginManager ##{{{
 			loading(fn);
 		end
 	end ##}}}
-	## register(flow), register flow object into current plugin manager
-	# so that by executing with given flow name, can invoke the flow registered in
-	# current manager
-	def register(flow); ##{{{
-		#puts "#{__FILE__}:start register(flow) ..."
-		message = flow.name.to_sym;
-		define_singleton_method message do |**opts| ##{{{
-			Rsim.info("execute flow, opts: #{opts}",5);
-			flow.execute(**opts);
-		end ##}}}
-	end ##}}}
 
 	## execute(flows), description
 	# executing given flows
 	def execute(flows); ##{{{
 		flows.each_pair do |fn,opts|
 			Rsim.info("sending message: #{fn}(#{opts})",5);
-			self.send(fn,**opts);
+			DataBase.send(fn,**opts);
 		end
 	end ##}}}
 

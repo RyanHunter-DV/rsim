@@ -51,9 +51,10 @@ class GeneratorExecutor ##{{{
 	def execute(ctx=nil); ##{{{
 		# if generator type is :system, eval the action block in this scope.
 		cmd='';
-		ctx=self if ctx=nil;
+		ctx=self if ctx==nil;
 		blocks(:actions).each do |a|
-			cmd= ctx.instance_eval a[1];
+			Rsim.info("execute generator #{a[0]}, context: #{ctx}");
+			cmd= ctx.instance_eval &a[1];
 		end
 		return cmd if @definition.jobtype==:system;
 	end ##}}}
@@ -72,6 +73,6 @@ class GeneratorExecutor ##{{{
 	end ##}}}
 	## blocks(t), 
 	def blocks(t,b=nil); ##{{{
-		return o.actions if t==:actions;
+		return @definition.actions if t==:actions;
 	end ##}}}
 end ##}}}

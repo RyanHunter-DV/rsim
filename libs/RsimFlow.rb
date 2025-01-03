@@ -4,25 +4,23 @@ RsimFlow,
 The base object for user inheritance.
 """
 require 'libs/Generator.rb'
+require 'libs/GeneratorExecutor.rb'
 require 'ipxact/IpxData.rb'
+require 'mult/Job.rb'
 class RsimFlow < IpxData ##{{{
-
-	#attr_accessor :name; # string type
-	attr_accessor :currentOption;
 
 	attr :steps;
 	# each flow has its own logger file in out/logs
 	attr :logger;
 	attr :jobs;
+	attr :selected; # selected steps or generators
 	## initialize(name), description
+
+	attr :__args__; # args for generator chain scope
 	def initialize(name); ##{{{
-		#@name = name.to_s;
 		super(:id=>name)
-		@steps={};
-		@currentOption=nil;
+		@steps={};@selected={};
 		@jobs={};
-		# 1.init logger, open file with config.outs[:logs]+<flowname>.log
-		#TODO
 	end ##}}}
 	## name, return the generator chain id
 	def name; ##{{{
@@ -31,7 +29,7 @@ class RsimFlow < IpxData ##{{{
 
 	## action, description
 	def option; ##{{{
-		return @currentOption;
+		return @__args__;
 	end ##}}}
 	
 	## generator(name,&block), 
@@ -48,12 +46,13 @@ class RsimFlow < IpxData ##{{{
 	# report error.
 	# store all defined generators, its been defined but may not selected.
 	def register(step,opts); ##{{{
+		selected=false;
 		if opts.has_key?(:selected)
 			selected=opts[:selected];
 			opts.delete(:selected);
-			@selected[step.name]=opts; 
 		end
 		@steps[step.name] = step;
+		@selected[step.name]=opts if selected==true;
 	end ##}}}
 	## command(name,&block), define a new command(API) for
 	# the newly created flow.
@@ -72,9 +71,11 @@ class RsimFlow < IpxData ##{{{
 	## execute(**opts), will execut the flow by given opts
 	def execute(**opts); ##{{{
 		# 1. select generators of this group
+		@__args__ = opts;
 		selected = _pickupExecutor(**opts);
 		# 2.run generators
 		selected.each do |e|
+			Rsim.info("executing generator #{e.name}",8);
 			#e.option(opts);
 			if e.jobtype==:procedure
 				#e.context.instance_eval e.action;

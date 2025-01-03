@@ -10,6 +10,13 @@ module DataBase
 		
 		@pool[t]={} unless @pool.has_key?(t);
 		@pool[t][o.id]=o;
+		if t==:generatorChain
+			message = o.id.to_sym;
+			define_singleton_method message do |**opts| ##{{{
+				Rsim.info("execute flow, opts: #{opts}",5);
+				o.execute(**opts);
+			end ##}}}
+		end
 	end ##}}}
 
 	## find(n,t), description
@@ -32,9 +39,30 @@ module DataBase
 	## self.elaborate, description
 	def self.elaborate; ##{{{
 		# to elaborate the loaded nodes
-		@pool.each_value do |os|
+		#@pool.each_pair do |t,os|
+		#	next if t==:generatorChain;
+		#	os.each_value do |o|
+		#		o.elaborate;
+		#	end
+		#end
+		self.etype(:component) if @pool.has_key?(:component);
+		self.etype(:design) if @pool.has_key?(:design);
+	end ##}}}
+	## self.etype(t), elaborate according to different ipx type
+	def self.etype(t); ##{{{
+		s=@pool[t];
+		s.each_value do |o|
+			Rsim.info("elaborating ipx #{t}:#{o.id}");
+			o.elaborate;
+		end
+	end ##}}}
+	## self.finalize, description
+	def self.finalize; ##{{{
+		@pool.each_pair do |t,os|
+			next if t==:generatorChain;
 			os.each_value do |o|
-				o.elaborate
+				Rsim.info("finalizing ipx #{t}:#{o.id}");
+				o.finalize;
 			end
 		end
 	end ##}}}

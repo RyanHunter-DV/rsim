@@ -36,5 +36,5 @@ flow :buildflow do ##{{{
 	end ##}}}
 
 	#TODO, return needed build generators in a config, return GeneratorExecutor in array format.
-	select @config.generators[:buildflow]
+	#select @config.generators[:buildflow]
 end ##}}}

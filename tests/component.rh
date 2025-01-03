@@ -1,4 +1,5 @@
-component 'RH/rtl/ExampleComponent/1.0' do ##{{{
+rhload 'bus.rh'
+component 'rh/rtl/ExampleComponent/1.0' do ##{{{
 	# standalone component port.
 	#:in/:out/:inout, port direction
 	wire 'name',:in,3,0
@@ -43,14 +44,25 @@ component 'RH/rtl/ExampleComponent/1.0' do ##{{{
 	end ##}}}
 end ##}}}
 
-component 'RH/tb/ExampleComponent/1.0' do ##{{{
+component 'rh/tb/ExampleComponent/1.0' do ##{{{
 	fileSet 'tb' do ##{{{
 		sv 'tb_top.sv',:filelist=>true
 	end ##}}}
 end ##}}}
 
 
-component 'Rh/rtl/fifo/1.0' do
+component 'rh/dv/fifo/1.0' do ##{{{
+	bus 'rh/interfaces/axi4/1.0', :as => :dut_bus
+	view :tb do ##{{{
+		fileSet 'tb'
+	end ##}}}
+	fileSet 'tb' do ##{{{
+		root '.'
+		sv 'tb.sv'
+	end ##}}}
+end ##}}}
+
+component 'rh/rtl/fifo/1.0' do
 	# fixing compile issues.
 	view :rtl do
 		fileSet 'fifo_rtl'
