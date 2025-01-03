@@ -58,6 +58,8 @@ flow :buildflow do
 end
 ```
 
+# support defining a command for items using this chain
+while declaring a new generator chain, the command method is used to define a new command for any other users to use this generator chain.
 
 
 # Ruby class description

@@ -56,7 +56,7 @@ module Rsim
 		@config=RsimConfig.new(@ui);
 		@os=OS.new(@config.ostype); # related to OS operations
 		@pm=PluginManager.new;
-		self.report.setupConfig(@config);
+		self.report.setupConfig(@config,@ui);
 	end ##}}}
 
 	## self.run, 
