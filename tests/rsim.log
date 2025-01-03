@@ -1,13 +1,16 @@
 [[42mI-0[0m] Rsim tool initializing ...
-[[42mI-1[0m] test for windows platform, set fixed env
-[[42mI-2[0m] options: execute -> buildflow(TestConfig)
-[[42mI-3[0m] options: verbosity -> 9
-[[42mI-4[0m] cmdS: buildflow(TestConfig)
-[[42mI-5[0m] get command({:name=>"buildflow", :opts=>{:config=>"TestConfig"}})
-[[42mI-6[0m] buildflow
-[[42mI-7[0m] splitted entry ["D:/Obsidian/Obsidian/01-Project/rsim/tests/root.rh"]
-[[42mI-8[0m] executeFlows loaded ({"nodeflow"=>{:entries=>["D:/Obsidian/Obsidian/01-Project/rsim/tests/root.rh"]}, "buildflow"=>{:config=>"TestConfig"}})
-[[42mI-9[0m] setup max verbosity 9
-[[42mI-10[0m] setup log dirs: D:/Obsidian/Obsidian/01-Project/rsim/out/logs/2025_01_02__18_45_15__0800
-[[42mI-11[0m] get user interrupt signal: 2
-[[42mI-12[0m] get user interrupt signal: 2
+[[42mI-1[0m] options: execute -> buildflow(TestConfig)
+[[42mI-2[0m] options: verbosity -> 9
+[[42mI-3[0m] cmdS: buildflow(TestConfig)
+[[42mI-4[0m] get command({:name=>"buildflow", :opts=>{:config=>"TestConfig"}})
+[[42mI-5[0m] buildflow
+[[42mI-6[0m] splitted entry ["./root.rh"]
+[[42mI-7[0m] executeFlows loaded ({"nodeflow"=>{:entries=>["./root.rh"]}, "buildflow"=>{:config=>"TestConfig"}})
+[[42mI-8[0m]@(/workspaces/codespaces-blank/rsim/libs/MessageReport.rb:31) setup max verbosity 9
+[[42mI-9[0m]@(/workspaces/codespaces-blank/rsim/libs/MessageReport.rb:32) setup log dirs: /workspaces/codespaces-blank/rsim/tests/out/logs/2025_01_03__02_51_35__0000
+[[42mI-10[0m]@(/workspaces/codespaces-blank/rsim/Rsim.rb:70) loading plugins ...
+[[42mI-11[0m]@(/workspaces/codespaces-blank/rsim/libs/PluginManager.rb:16) loading plugins(["nodeflow", "buildflow"]),incs(["/workspaces/codespaces-blank/rsim/chains"])
+[[42mI-12[0m]@(/workspaces/codespaces-blank/rsim/libs/PluginManager.rb:51) search file(nodeflow.rb) in path(/workspaces/codespaces-blank/rsim/chains)
+[[42mI-13[0m]@(/workspaces/codespaces-blank/rsim/libs/PluginManager.rb:55) adding(/workspaces/codespaces-blank/rsim/chains) into $LOAD_PATH
+[[42mI-14[0m]@(/workspaces/codespaces-blank/rsim/libs/PluginManager.rb:66) loading /workspaces/codespaces-blank/rsim/chains/nodeflow.rb
+[[42mI-15[0m]@(/workspaces/codespaces-blank/rsim/ipxact/DataBase.rb:27) find generatorChain::nodeflow in ipxact DataBase

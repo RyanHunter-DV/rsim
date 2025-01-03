@@ -4,9 +4,10 @@ RsimFlow,
 The base object for user inheritance.
 """
 require 'libs/Generator.rb'
-class RsimFlow ##{{{
+require 'ipxact/IpxData.rb'
+class RsimFlow < IpxData ##{{{
 
-	attr_accessor :name; # string type
+	#attr_accessor :name; # string type
 	attr_accessor :currentOption;
 
 	attr :steps;
@@ -15,12 +16,17 @@ class RsimFlow ##{{{
 	attr :jobs;
 	## initialize(name), description
 	def initialize(name); ##{{{
-		@name = name.to_s;
+		#@name = name.to_s;
+		super(name)
 		@steps=[];
 		@currentOption=nil;
 		@jobs={};
 		# 1.init logger, open file with config.outs[:logs]+<flowname>.log
 		#TODO
+	end ##}}}
+	## name, return the generator chain id
+	def name; ##{{{
+		return @id;
 	end ##}}}
 
 	## action, description

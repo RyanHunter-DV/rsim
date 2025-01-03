@@ -26,7 +26,7 @@ class MessageReport ##{{{
 	# according to given config object, setup message report settings
 	def setupConfig(c,ui); ##{{{
 		@__verbo__ = c.reportMaxVerbosity;
-		@__debug__ = c.options[:debug];
+		@__debug__ = ui.options[:debug];
 		@__configed__=true;
 		Rsim.info("setup max verbosity #{@__verbo__}",5);
 		Rsim.info("setup log dirs: #{c.outs[:logs]}",5);

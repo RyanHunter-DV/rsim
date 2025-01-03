@@ -37,9 +37,9 @@ class RsimConfig ##{{{
 		#puts "#{__FILE__}:start pluginPaths ..."
 		#TODO, testing node flow
 		ps=[];
-		ps << File.join(self.toolhome,'plugins');
-		ps << File.join(self.toolhome,'plugins','node');
-		ps << File.join(self.toolhome,'plugins','build');
+		ps << File.join(self.toolhome,'chains');
+		#ps << File.join(self.toolhome,'plugins','node');
+		#ps << File.join(self.toolhome,'plugins','build');
 		return ps;
 		
 	end ##}}}
@@ -77,7 +77,7 @@ private
 	# 4.outs[:component] -> root dir of components
 	def _initoutDirs; ##{{{
 		@outs={};
-		@outs[:root]=File.join(@stem.,@__ui__.options[:out]);
+		@outs[:root]=File.join(@stem,@__ui__.options[:out]);
 		tf=_timestamp();
 		@outs[:logs]=File.join(@outs[:root],'logs',tf)
 		#TODO, config, component paths
