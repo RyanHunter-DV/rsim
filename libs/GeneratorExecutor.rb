@@ -20,6 +20,18 @@ class GeneratorExecutor ##{{{
 		@__args__={};
 	end ##}}}
 
+	## option(opts=nil), if opts not nil, then
+	# set options into local __args__
+	# else return local __args__
+	def option(opts=nil); ##{{{
+		return @__args__ unless opts;
+		if opts
+			opts.each do |k,v|
+				@__args__[k]=v;
+			end
+		end
+	end ##}}}
+
 	## updateDefinition(o), 
 	# 1.update the @definition with given generator object
 	# 2.set parameters

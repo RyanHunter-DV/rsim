@@ -1,18 +1,18 @@
 flow :buildflow do ##{{{
 
-	generator :elaborate do ##{{{
+	generator :elaborate,:selected=>true do ##{{{
 		#TODO, step to elaborating the loaded nodes by calling the DataBase module's elaborate method.
 		action do
 			DataBase.elaborate;
 		end
 	end ##}}}
-	generator :finalize do ##{{{
+	generator :finalize,:selected=>true do ##{{{
 		action do
 			DataBase.finalize;
 		end
 	end ##}}}
 
-	generator :link do ##{{{
+	generator :link,:selected=>false do ##{{{
 		#parameter :src => [], :tar => ''
 		phase 2.0
 		action '/bin/ln' do
@@ -23,7 +23,7 @@ flow :buildflow do ##{{{
 			end
 		end
 	end ##}}}
-	generator :copy do ##{{{
+	generator :copy,:selected=>false do ##{{{
 		#parameter :src => [], :tar => ''
 		phase 2.0
 		action '/bin/cp' do

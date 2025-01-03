@@ -2,6 +2,7 @@
 # Object description:
 PluginManager, description
 """
+require 'libs/RsimFlow.rb'
 class PluginManager ##{{{
 	## initialize, description
 	def initialize; ##{{{
@@ -67,5 +68,3 @@ private
 		load fn;
 	end ##}}}
 end ##}}}
-
-require 'libs/RsimFlow.rb'

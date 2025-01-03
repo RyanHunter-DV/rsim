@@ -47,6 +47,11 @@ end
 ## built-in group names
 'build' group are for buildflow generator chain.
 
+# generator definition
+Users can use the 'generator' command within a generator chain to define a new generator.
+## options used by a generator
+In most common situations, a generator definition requires parameters from the caller, use a built-in method 'option' to get different options from the caller.
+options set while calling the chain's execute, with `**opts` args, and the chain will set all registered generators `__params__`, in generator definition, by calling the `option` method can return the internal `__params__` arg.
 
 # extra generator definition
 If users want to declare a new generator, they should reopen the declaration of the generator chain like:

@@ -17,7 +17,7 @@ class RsimFlow < IpxData ##{{{
 	## initialize(name), description
 	def initialize(name); ##{{{
 		#@name = name.to_s;
-		super(name)
+		super(:id=>name)
 		@steps=[];
 		@currentOption=nil;
 		@jobs={};
@@ -37,15 +37,22 @@ class RsimFlow < IpxData ##{{{
 	## generator(name,&block), 
 	# generator command in the chain
 	# define a new generator, with given generator commands, to setup parameters, phases, actions etc.
-	def generator(name,&block); ##{{{
-		g=Generator.new(name);
+	def generator(name,opts={},&block); ##{{{
+		# by default, the context is the chain
+		g=Generator.new(name,self);
 		g.instance_eval &block;
-		register(g);
+		register(g,opts);
 	end ##}}}
 
 	## register(step), register the step into local @steps hash, if has no group
 	# report error.
-	def register(step); ##{{{
+	# store all defined generators, its been defined but may not selected.
+	def register(step,opts); ##{{{
+		if opts.has_key?(:selected)
+			selected=opts[:selected];
+			opts.delete(:selected);
+			@selected[step.name]=opts; 
+		end
 		@steps[step.name] = step;
 	end ##}}}
 	## command(name,&block), define a new command(API) for
@@ -64,11 +71,11 @@ class RsimFlow < IpxData ##{{{
 	end ##}}}
 	## execute(**opts), will execut the flow by given opts
 	def execute(**opts); ##{{{
-		selected = [];
 		# 1. select generators of this group
-		selected = @steps;
+		selected = _pickupExecutor(**opts);
 		# 2.run generators
 		selected.each do |ge|
+			#ge.option(opts);
 			if ge.jobtype==:procedure
 				ge.context.instance_eval ge.action;
 			else
@@ -83,12 +90,25 @@ class RsimFlow < IpxData ##{{{
 		end
 	end ##}}}
 	## select(g), select generator name
-	def select(*as); ##{{{
-		as.each do |a|
-			@steps<<a;
-		end
+	# select a generator to be executed with specific args
+	# this method is similar of calling the execute command, 
+	def select(gn,**opts); ##{{{
+		@selected[gn]= opts;
 	end ##}}}
 private
+	## _pickupExecutor, 
+	# create a new generator executor if the given generator is selected
+	def _pickupExecutor(**eOpts); ##{{{
+		ges=[];
+		@selected.each_pair do |name,opts|
+			# 1.create new generator executor
+			# 2.copy key information from generator
+			# 3.setup options in selected opts
+			# 4.setup extra options from execute call.
+			#TODO
+		end
+		return ges;
+	end ##}}}
 end ##}}}
 
 
