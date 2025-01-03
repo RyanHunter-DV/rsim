@@ -55,3 +55,21 @@ end ##}}}
 ```
 For DV usage, the above node can be analyzed and used to generate interface.sv files; while for RTL usage, it can be used to build a specific module port declaration.
 - [ ] need think on how to build port declarations for a certain RTL.
+
+# bus connection
+```ruby
+component :a do
+	bus :a
+end
+component :b do
+	bus :b
+end
+design :c do
+	instance :a, :as => :ai
+	instance :b, :as => :bi
+	connect :bus, 'ai.a' => 'bi.b' do
+		portA.connect 'portB[3:2]'
+		portC.connect 
+	end
+end
+```
