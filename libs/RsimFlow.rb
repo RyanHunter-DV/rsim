@@ -18,7 +18,7 @@ class RsimFlow < IpxData ##{{{
 	def initialize(name); ##{{{
 		#@name = name.to_s;
 		super(:id=>name)
-		@steps=[];
+		@steps={};
 		@currentOption=nil;
 		@jobs={};
 		# 1.init logger, open file with config.outs[:logs]+<flowname>.log
@@ -74,18 +74,19 @@ class RsimFlow < IpxData ##{{{
 		# 1. select generators of this group
 		selected = _pickupExecutor(**opts);
 		# 2.run generators
-		selected.each do |ge|
-			#ge.option(opts);
-			if ge.jobtype==:procedure
-				ge.context.instance_eval ge.action;
+		selected.each do |e|
+			#e.option(opts);
+			if e.jobtype==:procedure
+				#e.context.instance_eval e.action;
+				e.execute(e.context);
 			else
 				# :system jobtype
-				j=Job.new(ge.jobtype,ge.execute);
-				ge.precedences.each do |pre|
+				j=Job.new(e.jobtype,e.execute);
+				e.precedences.each do |pre|
 					@jobs[pre].wait if @jobs.has_key?(pre);
 				end
 				j.dispatch;
-				@jobs[ge.name] = j;
+				@jobs[e.name] = j;
 			end
 		end
 	end ##}}}
@@ -102,10 +103,16 @@ private
 		ges=[];
 		@selected.each_pair do |name,opts|
 			# 1.create new generator executor
+			Rsim.exception(NodeE,:reason=>"generator #{name} not defined") unless @steps.has_key?(name);
 			# 2.copy key information from generator
+			e=GeneratorExecutor.new(name,@steps[name]);
 			# 3.setup options in selected opts
 			# 4.setup extra options from execute call.
-			#TODO
+			eOpts.each_pair do |k,v|
+				opts[k]=v; # if eOpts has same key with opts, will overwrite the value in opts
+			end
+			e.option(opts);
+			ges << e;
 		end
 		return ges;
 	end ##}}}

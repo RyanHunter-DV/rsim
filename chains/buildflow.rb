@@ -16,9 +16,9 @@ flow :buildflow do ##{{{
 		#parameter :src => [], :tar => ''
 		phase 2.0
 		action '/bin/ln' do
-			args(:src).each do |s|
+			option[:src].each do |s|
 				basename=File.basename(s);
-				t=File.join(args(:tar),basename)
+				t=File.join(option[:tar],basename)
 				command %Q|#{@exec} -s #{s} #{t}|;
 			end
 		end
@@ -27,9 +27,9 @@ flow :buildflow do ##{{{
 		#parameter :src => [], :tar => ''
 		phase 2.0
 		action '/bin/cp' do
-			args(:src).each do |s|
+			option[:src].each do |s|
 				basename=File.basename(s);
-				t=File.join(args(:tar),basename)
+				t=File.join(option[:tar],basename)
 				command %Q|#{@exec} #{s} #{t}|;
 			end
 		end

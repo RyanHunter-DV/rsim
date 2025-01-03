@@ -73,9 +73,11 @@ flow :nodeflow do ##{{{
 	end
 	# the flow that support loading IP-XACT compatible nodes.
 	generator :loading do ##{{{
-		Rsim.loadContext self;
-		option[:entries].each do |e|
-			rhload e;
+		action do
+			Rsim.loadContext self;
+			option[:entries].each do |e|
+				rhload e;
+			end
 		end
 	end ##}}}
 end ##}}}

@@ -4,20 +4,28 @@ GeneratorExecutor, description
 """
 class GeneratorExecutor ##{{{
 	
+	# the object of defined generator
 	attr :definition;
 
 	attr_accessor :name;
 	attr_accessor :group;
-	# context for :procedure typed action executing scope
-	attr_accessor :context;
-
 	attr :__args__;
+
 	## initialize, description
-	def initialize(n,gn); ##{{{
-		@definition=nil;
+	def initialize(n,g); ##{{{
+		@definition=g;
 		@name = n.to_s;
-		@group= gn.to_s;
 		@__args__={};
+	end ##}}}
+
+	## context, return context of definition
+	# context for :procedure typed action executing scope
+	def context; ##{{{
+		return @definition.context;
+	end ##}}}
+	## precedences, return definition's precedences
+	def precedences; ##{{{
+		return @definition.precedences;
 	end ##}}}
 
 	## option(opts=nil), if opts not nil, then
@@ -32,32 +40,20 @@ class GeneratorExecutor ##{{{
 		end
 	end ##}}}
 
-	## updateDefinition(o), 
-	# 1.update the @definition with given generator object
-	# 2.set parameters
-	def updateDefinition(o); ##{{{
-		@definition=o;
-	end ##}}}
-	## sendArgs(**args), receive args from component or other generator usage
-	def sendArgs(**args); ##{{{
-		args.each_pair do |k,v|
-			@__args__[k]=v;
-		end
-	end ##}}}
-
-	## args(t), 
+	## arg(t), 
 	# called by this class, return args sending from Ipx data, such as from Component
-	def args(t); ##{{{
+	def arg(t); ##{{{
 		return @__args__[t];
 	end ##}}}
 
 	## execute, 
 	# called by the chain, to execute the generator
-	def execute; ##{{{
+	def execute(ctx=nil); ##{{{
 		# if generator type is :system, eval the action block in this scope.
 		cmd='';
+		ctx=self if ctx=nil;
 		blocks(:actions).each do |a|
-			cmd= self.instance_eval a[1];
+			cmd= ctx.instance_eval a[1];
 		end
 		return cmd if @definition.jobtype==:system;
 	end ##}}}
