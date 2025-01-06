@@ -49,6 +49,17 @@ This flow will provide common options to organize the eda simulators to compile,
 
 # regression flow
 #TODO 
+regression flow will call like:
+
+- [ ] run with single or multiple `_when` tagged tests
+	- [ ] may includes different configs.
+- [ ] throwing test run jobs in parallel with the given max limit. `-j <max>`
+
+1. nodeflow -> buildflow -> simflow:compile
+2. simflow:run with multiple different tests.
+3. using with `_when` tag, may require to compile multiple configs.
+4. to achieve this, Rsim module may need command let the flow to call like:
+	1. `Rsim.build(config)`, `Rsim.sim(:step=>:compile)` ...
 
 # multiple job control
 #TODO 
