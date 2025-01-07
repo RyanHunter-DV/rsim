@@ -48,7 +48,7 @@ This flow will provide common options to organize the eda simulators to compile,
 - [ ] support to skip steps of this flow.
 
 # regression flow
-#TODO 
+
 regression flow will call like:
 
 - [ ] run with single or multiple `_when` tagged tests
@@ -62,6 +62,8 @@ regression flow will call like:
 	1. `Rsim.build(config)`, `Rsim.sim(:step=>:compile)` ...
 
 # multiple job control
-#TODO 
+
+- [ ] support for system command and internal process.
+	- [ ] need to know deeply about the ruby's threads control and process control.
 # message report and logging
 #TODO 
