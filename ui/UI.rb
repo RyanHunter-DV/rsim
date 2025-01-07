@@ -1,9 +1,10 @@
 """
 # Object description:
 UI, description
+this class cannot call with Rsim.report... can only call Rsim.info
 """
 require 'optparse.rb'
-class UI ##{{{
+class UI
 
 	attr_accessor :options;
 	attr_accessor :helpMessage;
@@ -13,26 +14,32 @@ class UI ##{{{
 	attr :skipflows;
 	## initialize, description
 	def initialize; ##{{{
-		#puts "#{__FILE__}:start initialize ..."
+		_initVariables;
+		_initEnvOptions;
+		_initUserOptions;
+		_parseUserOptions;
+		#TODO, help/version mode pre-process
+		#_setupUserCommands(@options[:execute]) unless @options[:execute]=='';
+	end ##}}}
+
+	## skipped?(name), return true if given flow name is skipped
+	def skipped?(name); ##{{{
+		#puts "#{__FILE__}:start skipped?(name) ..."
+		return true if @skipflows.include?(name.to_s);
+		return false;
+	end ##}}}
+
+private
+	## _initVariables, set default value and data type of this class attributes
+	def _initVariables ##{{{
 		@command=nil;
 		@options={};
 		@skipflows=[];
-		_initEnvOptions;
-		_initUserOptions;
+	end ##}}}
+
+	## _parseUserOptions, use OptionParser to parse user inputs
+	def _parseUserOptions ##{{{
 		OptionParser.new() do |opt|
-			#opt.on('-h','--help','display help message') do
-			#	@options[:help] = true;
-			#	@helpMessage = opt;
-			#end
-			#opt.on('-V') do
-			#	@options[:version] = true;
-			#end
-			#opt.on('-v','--verbo=verbosity','set max verbosity to display in this tool') do |v|
-			#	@options[:verbosity] = v;
-			#end
-			#opt.on('-e','--execute=COMMAND(opts)','specify require command to be executed') do |v|
-			#	rawcmd=v;
-			#end
 			@formats.each do |fmt|
 				block = nil;
 				if (fmt[:default].is_a?(FalseClass) or fmt[:default.is_a?(TrueClass)])
@@ -50,17 +57,8 @@ class UI ##{{{
 				opt.on(fmt[:sflag],fmt[:lflag],fmt[:display],&block);
 			end
 		end.parse!
-		#TODO, help/version mode pre-process
-		_setupUserCommands(@options[:execute]) unless @options[:execute]=='';
 	end ##}}}
 
-	## skipped?(name), return true if given flow name is skipped
-	def skipped?(name); ##{{{
-		#puts "#{__FILE__}:start skipped?(name) ..."
-		return true if @skipflows.include?(name.to_s);
-		return false;
-	end ##}}}
-private
 	## _initOptionFormat, description
 	def _initOptionFormat; ##{{{
 		#puts "#{__FILE__}:start _initOptionFormat ..."
@@ -123,7 +121,6 @@ private
 	end ##}}}
 	## _setupUserCommands, description
 	def _setupUserCommands(cmdStr); ##{{{
-		#puts "#{__FILE__}:start _setupUserCommands ..."
 		#TODO, translate input command string into ui formats.
 		# 
 		@command={:name=>'',:opts=>{}};
@@ -150,4 +147,4 @@ private
 
 		Rsim.exception(UIE,:reason=>"env not correctly set\n#{@options}") unless @options[:STEM] and @options[:ROOT];
 	end ##}}}
-end ##}}}
+end

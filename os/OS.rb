@@ -66,6 +66,14 @@ class OS ##{{{
 		File.symlink(src,tar);
 	end ##}}}
 
+	## create(t,name,path), build a new dir or file according to given
+	# name and path
+	# t is one of :dir, :file
+	# name must be given
+	# if path is not given, use default current path.
+	def create(t,name,path='.') ##{{{
+		#TODO
+	end ##}}}
 private
 	## _convertPath(org), description
 	def _convertPath(org); ##{{{

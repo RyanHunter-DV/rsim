@@ -17,7 +17,6 @@ module JobM
 	# if current free slots not meet the requirement, then
 	# need wait for jobs done.
 	def self.applySlots(v=1,job); ##{{{
-	#TODO
 		job.updateState(:waiting) if slots.free < v;
 		while slots.free < v
 			self.waitSlotsUpdate;
@@ -35,24 +34,24 @@ module JobM
 	end ##}}}
 
 	## self.execute(p,job,**opts), executing the given proc
-	def self.execute(job,**opts); ##{{{
-		job.updateState(:running);
-		if job.type== :system
-			#pid=Process.spawn(job.command);
-			pid=Process.spawn(job.command);
-			#self.anchor.clear(pid); anchor can only build by sub process.
-			self.slots.registerRunningProcess(pid);
-			self.anchor.registerRunningProcess(pid,job);
-			return pid;
-		else
-			puts "Error, mult-threads not ready."
-			# #TODO, use multiple thread to thrown the job
-			# thr=Thread.new {job.instance_eval p};
-			# job.thread= thr;
-			# thr.join;
-			# # TODO, test for thr
-		end
-	end ##}}}
+	#TODO, don't use it, def self.execute(job,**opts); ##{{{
+	#TODO, don't use it, 	job.updateState(:running);
+	#TODO, don't use it, 	if job.type== :system
+	#TODO, don't use it, 		#pid=Process.spawn(job.command);
+	#TODO, don't use it, 		pid=Process.spawn(job.command);
+	#TODO, don't use it, 		#self.anchor.clear(pid); anchor can only build by sub process.
+	#TODO, don't use it, 		self.slots.registerRunningProcess(pid);
+	#TODO, don't use it, 		self.anchor.registerRunningProcess(pid,job);
+	#TODO, don't use it, 		return pid;
+	#TODO, don't use it, 	else
+	#TODO, don't use it, 		puts "Error, mult-threads not ready."
+	#TODO, don't use it, 		# #TODO, use multiple thread to thrown the job
+	#TODO, don't use it, 		# thr=Thread.new {job.instance_eval p};
+	#TODO, don't use it, 		# job.thread= thr;
+	#TODO, don't use it, 		# thr.join;
+	#TODO, don't use it, 		# # TODO, test for thr
+	#TODO, don't use it, 	end
+	#TODO, don't use it, end ##}}}
 
 	## self.register(o), description
 	def self.register(o); ##{{{

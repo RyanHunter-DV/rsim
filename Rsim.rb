@@ -38,17 +38,19 @@ module Rsim
 	end ##}}}
 	## self.report, description
 	def self.report; ##{{{
-		#puts "#{__FILE__}:start self.report ..."
-		if @report==nil
-			@report = MessageReport.new;
-		end
-		return @report;
+		return @report unless @report==nil;
+		puts "FATAL, report not correctly initialized before using";
+		exit -1;
 	end ##}}}
 	## self.info(msg,verbo=2), description
+	# when report ready, use @report.info.
+	# when report is not ready, use puts
 	def self.info(msg,verbo=2,depth=1); ##{{{
-		#loc=caller(1)[0];
-		#callDepth=1;
-		self.report.info(msg,depth,verbo);
+		if @report
+			self.report.info(msg,depth,verbo);
+		else
+			puts "[RAW] #{msg}";
+		end
 	end ##}}}
 
 	## self.os, description
@@ -60,10 +62,8 @@ module Rsim
 	## self.init, tool initialization
 	def self.init; ##{{{
 		@ui=UI.new;
-		@config=RsimConfig.new(@ui);
-		@os=OS.new(@config.ostype); # related to OS operations
-		@pm=PluginManager.new;
-		self.report.setupConfig(@config,@ui);
+		@report = MessageReport.new(@ui);
+		@os=OS.new(@ui); # require ui inited.
 	end ##}}}
 
 	## self.run, 

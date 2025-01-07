@@ -1,7 +1,6 @@
 # Major job management
 The rsim main tool is the job management tool:
 - [ ] based on user inputs, to load required generator chains and execute it.
-	- [ ] initflow, tool initialization, help message, version message, log dirs etc.
 	- [ ] nodeflow, loading nodes for source information descriptions.
 	- [ ] buildflow, used to build files and dirs.
 	- [ ] simflow, call eda for compile, simulation etc.
