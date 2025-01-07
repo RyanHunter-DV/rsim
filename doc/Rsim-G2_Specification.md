@@ -75,6 +75,8 @@ end
 Before the ipxact can execute all different chains, the required chain definitions shall be loaded first.
 During the Rsim.init, after ui system initialized, the ipxact system's init step will require ui system's flowNames (is the execute name, the ipxact loading system will automatically add the 'flow' suffix')
 ## executing chains
-#MARKER
+Once the required chains are loaded, using a string based command with hash options can call to execute the specific chain, like:
+`ipxact.send(:build,options)`
 ## chain options while executing
-#TODO
+#TODO , detailed options support for common chains
+- 'skip', used to specify which generator step will be skipped, this option supports by all chains.
