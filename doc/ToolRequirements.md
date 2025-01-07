@@ -14,8 +14,7 @@ The rsim main tool is the job management tool:
 	- [ ] be able to skip specified steps in a generatorChain.
 		- [ ] -s 'build::prebuild,postbuild,...'
 		- [ ] -s 'build' -s 'sim::compile'
-
-
+- [ ] control-c cancelling.
 # build flow
 - [ ] build HDL files, details in: [[#build hdl files]]
 	- [ ] support building rtl files with component port/bus information.
@@ -39,7 +38,6 @@ Following are concepts and ideas that may not achived in G2 version: #TBD
 1. test building mechanism.
 	1. test node
 2. env building flow.
-
 # simulation flow
 This flow will provide common options to organize the eda simulators to compile, elaborate and sim, while also supports manual options.
 - [ ] run args from test node
@@ -48,9 +46,7 @@ This flow will provide common options to organize the eda simulators to compile,
 - [ ] support to skip steps of this flow.
 
 # regression flow
-
 regression flow will call like:
-
 - [ ] run with single or multiple `_when` tagged tests
 	- [ ] may includes different configs.
 - [ ] throwing test run jobs in parallel with the given max limit. `-j <max>`
@@ -67,3 +63,8 @@ regression flow will call like:
 	- [ ] need to know deeply about the ruby's threads control and process control.
 # message report and logging
 #TODO 
+# ip/soc easy integrating
+For embedded projects, to load a design into another design as nested component.
+- [ ] instance command in design node can support instantiate a design as a component.
+	- [ ] component instance type will be :nested or :leaf.
+- [ ] 
