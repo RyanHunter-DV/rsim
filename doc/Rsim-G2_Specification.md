@@ -78,5 +78,5 @@ During the Rsim.init, after ui system initialized, the ipxact system's init step
 Once the required chains are loaded, using a string based command with hash options can call to execute the specific chain, like:
 `ipxact.send(:build,options)`
 ## chain options while executing
-#TODO , detailed options support for common chains
+detailed options support for common chains
 - 'skip', used to specify which generator step will be skipped, this option supports by all chains.

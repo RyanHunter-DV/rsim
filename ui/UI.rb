@@ -29,6 +29,15 @@ class UI
 		return false;
 	end ##}}}
 
+	## flowStream, return a hash contains chains
+	## and corresponding options to be executed
+	## - organize chains according to -e, -s options
+	## - get target chain, and according to target chain, infer the required chains
+	## - if has skip a chain option, need remove the required default chain.
+	## - if no -e provided, then return empty hash {}, and raise a UIE exception.
+	#TODO
+	def flowStream ##{{{
+	end ##}}}
 private
 	## _initVariables, set default value and data type of this class attributes
 	def _initVariables ##{{{

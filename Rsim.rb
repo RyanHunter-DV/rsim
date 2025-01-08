@@ -1,13 +1,11 @@
 require 'libs/MessageReport.rb'
-require 'ui/entry.rb'
-require 'libs/RsimConfig.rb'
-require 'libs/PluginManager.rb'
-require 'os/entry.rb'
-require 'exceptions/entry.rb'
+require 'ui/entry'
+require 'os/entry'
+require 'exceptions/entry'
 module Rsim
 
-	@os=nil; @pm=nil; @config=nil;
-	@report=nil;
+	@os=nil;@report=nil;
+	@ipxact=nil;
 
 	@loadContext=nil; # current loading context
 	@node=nil; # current loading node file
@@ -61,9 +59,15 @@ module Rsim
 
 	## self.init, tool initialization
 	def self.init; ##{{{
+		# 1.ui processing
 		@ui=UI.new;
+		# 1.init report system
 		@report = MessageReport.new(@ui);
-		@os=OS.new(@ui); # require ui inited.
+		# 1.init os system
+		@os=OS.new(@ui);
+		# 1.init ipxact system
+		# 2.load required chains according to initialized ui.
+		@ipxact=Ipxact.new(@ui);
 	end ##}}}
 
 	## self.run, 
@@ -73,10 +77,7 @@ module Rsim
 			# 1.call self.init that can automatically initialize.
 			info("Rsim tool initializing ...",3);
 			self.init;
-			# 2.plugins dynamic loading
-			info("loading plugins ...",3);
-			self.loadPlugins;
-			info("executing commands ...",3);
+			info("executing chains ...",3);
 			self.execute;
 		rescue RsimExceptionBase => e
 			#TODO, may need more actions such for job controls etc.
@@ -90,20 +91,14 @@ module Rsim
 		end
 		return 0;
 	end ##}}}
-	## self.pm, description
-	def self.pm; ##{{{
-		return @pm;
-	end ##}}}
 	## self.execute, 
 	# execute commands by given from config, executed by the plugin manager
+	# flows={:node=>{option=>xxx,option=>xxx,...},:build=>{xxx},...}
 	def self.execute; ##{{{
-		#puts "#{__FILE__}:start self.execute ..."
-		@pm.execute(@config.executeFlows);
+		flows=@ui.flowStream;
+		flows.each_pair do |n,opts|
+			@ipxact.send(n,opts);
+		end
 	end ##}}}
 
-	## self.loadPlugins, 
-	def self.loadPlugins; ##{{{
-		#puts "#{__FILE__}:(self.loadPlugins) is not ready yet."
-		@pm.dynamicLoading(@config.requiredPlugins,@config.pluginPaths);
-	end ##}}}
 end
