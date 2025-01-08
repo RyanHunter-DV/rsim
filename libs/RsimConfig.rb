@@ -9,7 +9,6 @@ class RsimConfig ##{{{
 	attr_accessor :reportMaxVerbosity;
 	attr_accessor :toolhome;
 	attr_accessor :executeFlows;
-	attr_accessor :outs;
 	attr_accessor :stem;
 
 	attr :__ui__;
@@ -58,29 +57,6 @@ private
 	## _initStem, get stem options from ui
 	def _initStem; ##{{{
 		@stem=File.absolute_path(@__ui__.options[:STEM]);
-	end ##}}}
-	## _timestamp, format the current time with following rule:
-	# ' ' translated to '__',
-	# '-' or ':' translated to '_'
-	# '+' removed
-	def _timestamp; ##{{{
-		tf=Time.now.to_s;
-		tf.gsub!(/ /,'__');
-		tf.gsub!(/[:-]/,'_')
-		tf.gsub!(/\+/,'')
-		return tf;
-	end ##}}}
-	## _initoutDirs, 
-	# 1.outs[:root] = File.join(@toolhome,@__ui__.out)
-	# 2.outs[:logs] ...
-	# 3.outs[:config] -> root dir of config
-	# 4.outs[:component] -> root dir of components
-	def _initoutDirs; ##{{{
-		@outs={};
-		@outs[:root]=File.join(@stem,@__ui__.options[:out]);
-		tf=_timestamp();
-		@outs[:logs]=File.join(@outs[:root],'logs',tf)
-		#TODO, config, component paths
 	end ##}}}
 
 	## _initMaxVerbo(v), description

@@ -2,16 +2,15 @@
 # Object description:
 OS, description
 """
-class OS ##{{{
+class OS
 	
-	# :Linux, :Mac, :Windows
+	# :linux, :Mac, :Windows
 	attr :__sep__; # file separator
 	attr_accessor :type;
 	## initialize, description
-	def initialize(t=:Linux); ##{{{
-		#puts "#{__FILE__}:start initialize ..."
-		@type=t.to_sym;
-		@__sep__ = {:Linux=>'/',:Mac=>'/',:Windows=>'\\'};
+	def initialize(ui); ##{{{
+		@type=_getOsType;
+		@__sep__ = {:linux=>'/',:mac=>'/',:windows=>'\\'};
 	end ##}}}
 	## fileExists?(fn,path='.'), description
 	def fileExists?(fn,path=nil); ##{{{
@@ -74,6 +73,22 @@ class OS ##{{{
 	def create(t,name,path='.') ##{{{
 		#TODO
 	end ##}}}
+
+	## search(t,name,paths=[], search different types, in system
+	# if nothing found, return nil, else return first matched item,
+	# current support search file.
+	def search(t,name,paths=['.']) ##{{{
+		f=nil;found=false;
+		paths.each do |path|
+			f=File.join(path,name);
+			if File.exist?(f)
+				found=true;
+				break;
+			end
+		end
+		return f if found;
+		return nil;
+	end ##}}}
 private
 	## _convertPath(org), description
 	def _convertPath(org); ##{{{
@@ -81,7 +96,6 @@ private
 		return org.gsub(/\//,@__sep__[@type]);
 	end ##}}}
 	## _getRecursivePath(p,abs=false), 
-	
 	def _getRecursivePath(p,abs=false); ##{{{
 		top='.';
 		top='/' if abs;
@@ -93,4 +107,9 @@ private
 		end
 		return stack.reverse;
 	end ##}}}
-end ##}}}
+	## _getOsType, description
+	def _getOsType ##{{{
+		#TODO, currently support linux only
+		return :linux;
+	end ##}}}
+end

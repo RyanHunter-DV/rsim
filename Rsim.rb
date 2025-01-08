@@ -1,7 +1,8 @@
-require 'libs/MessageReport.rb'
 require 'ui/entry'
 require 'os/entry'
+require 'libs/MessageReport.rb'
 require 'exceptions/entry'
+require 'ipxact/entry'
 module Rsim
 
 	@os=nil;@report=nil;
@@ -18,11 +19,7 @@ module Rsim
 		return @loadContext unless o;
 		@loadContext=o;
 	end ##}}}
-	## self.loadingNode(f=nil), description
-	def self.loadingNode(f=nil); ##{{{
-		return @node unless f;
-		@node= f;
-	end ##}}}
+
 	## self.exception(et,**opts), raise an exception
 	# et -> the exception object
 	# opts:
@@ -38,6 +35,7 @@ module Rsim
 	def self.report; ##{{{
 		return @report unless @report==nil;
 		puts "FATAL, report not correctly initialized before using";
+		puts caller(1);
 		exit -1;
 	end ##}}}
 	## self.info(msg,verbo=2), description
@@ -57,17 +55,27 @@ module Rsim
 		return @os;
 	end ##}}}
 
+	## self.ipxact, return the ipxact object
+	def self.ipxact ##{{{
+		self.report.fatal(FINTERNAL,'ipxact referenced before initialized') unless @ipxact;
+		return @ipxact;
+	end ##}}}
+
 	## self.init, tool initialization
 	def self.init; ##{{{
 		# 1.ui processing
 		@ui=UI.new;
-		# 1.init report system
-		@report = MessageReport.new(@ui);
-		# 1.init os system
+		# 2.init os system
 		@os=OS.new(@ui);
-		# 1.init ipxact system
-		# 2.load required chains according to initialized ui.
+		info("os initialized ...");
+		# 3.init report system
+		@report = MessageReport.new(@ui);
+		info("message report initialized ...");
+		# 4.init ipxact system
 		@ipxact=Ipxact.new(@ui);
+		info("ipxact system initialized ...");
+		# 5.load required chains according to initialized ui.
+		@ipxact.loadChain;
 	end ##}}}
 
 	## self.run, 
@@ -101,4 +109,10 @@ module Rsim
 		end
 	end ##}}}
 
+	## self.loadingNode(f=nil), description
+	#TODO, set up current loading node context
+	def self.loadingNode(f=nil); ##{{{
+		return @node unless f;
+		@node= f;
+	end ##}}}
 end

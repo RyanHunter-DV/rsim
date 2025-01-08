@@ -1,4 +1,6 @@
-flow :buildflow do ##{{{
+flow :buildflow do
+
+	exe :build
 
 	generator :elaborate,:selected=>true do ##{{{
 		#TODO, step to elaborating the loaded nodes by calling the DataBase module's elaborate method.
@@ -37,4 +39,4 @@ flow :buildflow do ##{{{
 
 	#TODO, return needed build generators in a config, return GeneratorExecutor in array format.
 	#select @config.generators[:buildflow]
-end ##}}}
+end

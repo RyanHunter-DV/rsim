@@ -8,25 +8,29 @@ class UI
 
 	attr_accessor :options;
 	attr_accessor :helpMessage;
-	attr_accessor :command;
+
+	attr_accessor :toolhome;
+
+	# hash attr to store chain information
+	# [:names] => {:build=>{options},:node=>{opts},...}
+	# [:includes] => [paths]
+	# at very init, the chains is nil, need call _setupChains once use it
+	attr_accessor :chains;
+	attr_accessor :outs;
 
 	attr :formats;
+	# array to store all skips
+	# ['node','build','sim::compile','sim::elab']
 	attr :skipflows;
+	attr :__builtinChainPath__;
 	## initialize, description
 	def initialize; ##{{{
 		_initVariables;
+		_initToolOptions; # tool options like toolhome
 		_initEnvOptions;
 		_initUserOptions;
 		_parseUserOptions;
-		#TODO, help/version mode pre-process
-		#_setupUserCommands(@options[:execute]) unless @options[:execute]=='';
-	end ##}}}
-
-	## skipped?(name), return true if given flow name is skipped
-	def skipped?(name); ##{{{
-		#puts "#{__FILE__}:start skipped?(name) ..."
-		return true if @skipflows.include?(name.to_s);
-		return false;
+		_initOutDirs;
 	end ##}}}
 
 	## flowStream, return a hash contains chains
@@ -35,8 +39,39 @@ class UI
 	## - get target chain, and according to target chain, infer the required chains
 	## - if has skip a chain option, need remove the required default chain.
 	## - if no -e provided, then return empty hash {}, and raise a UIE exception.
+	# return like: flows={:node=>{option=>xxx,option=>xxx,...},:build=>{xxx},...}
 	#TODO
 	def flowStream ##{{{
+		_setupChains unless @chains;
+		return @chains[:names];
+	end ##}}}
+	## chainNames, return array of all required chain names
+	def chainNames ##{{{
+		_setupChains unless @chains;
+		return @chains[:names].keys.map{|x| x.to_s;};
+	end ##}}}
+	## chainSearchPath, return the search paths of required chains
+	# in array format.
+	def chainSearchPath ##{{{
+		_setupChains unless @chains;
+		return @chains[:includes];
+	end ##}}}
+	## skipped?(name), return true if given named chain or step is skipped
+	# example:
+	# for chain: skipped?('build')
+	# for step: skipped?('sim::compile')
+	def skipped?(name) ##{{{
+		return @skipflows.include?(name.to_s);
+	end ##}}}
+	## skipSteps(chain), return skip steps of given chain name,
+	# if not exists, return empty array
+	def skipSteps(chain) ##{{{
+		s=[];
+		chain=chain.to_s;
+		@skipflows.each do |sk|
+			s << sk.sub(/#{chain}::/,'') if /#{chain}/ =~ sk;
+		end
+		return s;
 	end ##}}}
 private
 	## _initVariables, set default value and data type of this class attributes
@@ -44,6 +79,7 @@ private
 		@command=nil;
 		@options={};
 		@skipflows=[];
+		@chains=nil; 
 	end ##}}}
 
 	## _parseUserOptions, use OptionParser to parse user inputs
@@ -54,13 +90,13 @@ private
 				if (fmt[:default].is_a?(FalseClass) or fmt[:default.is_a?(TrueClass)])
 					block = Proc.new {
 						@options[fmt[:name]] = true;
-						self.instance_eval fmt[:execute] if fmt.has_key?(:execute);
+						self.instance_eval &fmt[:execute] if fmt.has_key?(:execute);
 					};
 				else
 					block = Proc.new {|v|
 						@options[fmt[:name]] = v;
 						Rsim.info("options: #{fmt[:name]} -> #{v}",9)
-						self.instance_eval fmt[:execute] if fmt.has_key?(:execute);
+						self.instance_eval &fmt[:execute] if fmt.has_key?(:execute);
 					};
 				end
 				opt.on(fmt[:sflag],fmt[:lflag],fmt[:display],&block);
@@ -90,17 +126,34 @@ private
 				:display=>'set out home'
 			},
 			{
+				:name=>:log,:sflag=>'-l',:lflag=>'--log=LOGNAME',:default=>'rsim.log',
+				:display=>'set the main log name'
+			},
+			{
 				:name=>:debug,:sflag=>'-d',:lflag=>'--debug',:default=>false,
 				:display=>'enable debug mode for this tool'
 			},
 			{
-				:name=>:execute,:sflag=>'-e',:lflag=>'--execute=COMMAND',:default=>'',
+				:name=>:execute,:sflag=>'-e',:lflag=>'--execute=COMMAND',:default=>nil,
 				:display=>%Q|set command for executing\n\texamples:\n\t\trsim -e 'buildflow(ConfigName)'\n\t\trsim -e 'runflow(SuiteName/TestName,skip=>compile)'|
 			},
 			{
 				:name=>:skip,:sflag=>'-s',:lflag=>'--skip=FLOWNAME',:default=>'',
-				:execute => '@skipflows << @options[:skip].to_s',
-				:display=>%Q|To skip certain flow while running target execute commands|
+				#:execute => '@skipflows << @options[:skip].to_s',
+				:execute => Proc.new {
+					s= @options[:skip].to_s;
+					if /:/ =~ s
+						_addSkipSteps(s);
+					else
+						_addSkipChains(s);
+					end
+					#@skipflows << @options[:skip].to_s
+				},
+				:display => <<-DOC.gsub(/\t+\../,'')
+				..To skip certain flow while running target execute commands
+				..\t-s 'build,node' -s 'sim:compile,elab'
+				..\t-s 'build'
+				DOC
 			},
 		];
 	end ##}}}
@@ -114,8 +167,8 @@ private
 	end ##}}}
 
 	## _splitCommandName(cmdS), description
+	# -e 'compile(ConfigName)', this is to run sim::compile for certain config, #TODO
 	def _splitCommandName(cmdS); ##{{{
-		#puts "#{__FILE__}:start _splitCommandName(cmdS) ..."
 		Rsim.info("cmdS: #{cmdS}",9)
 		ptrn=Regexp.new(' *(\w+) *\((\w+)\) *');
 		md=ptrn.match(cmdS);
@@ -132,28 +185,118 @@ private
 	def _setupUserCommands(cmdStr); ##{{{
 		#TODO, translate input command string into ui formats.
 		# 
-		@command={:name=>'',:opts=>{}};
+		command={:name=>'',:opts=>{}};
 		splitted = _splitCommandName(cmdStr);
-		@command[:name]=splitted[0];
-		if @command[:name]=='buildflow'
-			@command[:opts][:config]=splitted[1];
+		command[:name]=splitted[0];
+		if command[:name]=='build'
+			command[:opts][:config]=splitted[1];
 		end
-		Rsim.info("get command(#{@command})")
+		Rsim.info("get command(#{command})")
 		#TODO, for other flows.
+		return command;
 	end ##}}}
 	## _initEnvOptions, description
 	def _initEnvOptions; ##{{{
-		#puts "#{__FILE__}:start _initEnvOptions ..."
 		@options[:ROOT] = nil; # root entry
 		@options[:ROOT] = ENV['ROOT'] if ENV.has_key?('ROOT');
-		@options[:STEM] = nil;
-		@options[:STEM] = ENV['STEM'] if ENV.has_key?('STEM');
-
-		#TODO, test for 
-		#Rsim.info("test for fixed env");
-		#@options[:STEM]='D:/Obsidian/Obsidian/01-Project/rsim/tests';
-		#@options[:ROOT]='D:/Obsidian/Obsidian/01-Project/rsim/tests/root.rh';
+		@options[:STEM] = nil; # STEM path, indicates to current project
+		@options[:STEM] = File.absolute_path(ENV['STEM']) if ENV.has_key?('STEM');
+		# $FLOW_INCS = 'patha/b;pathc/d/'
+		@options[:FLOW_INCS]=ENV['FLOW_INCS'] if ENV.has_key?('FLOW_INCS');
 
 		Rsim.exception(UIE,:reason=>"env not correctly set\n#{@options}") unless @options[:STEM] and @options[:ROOT];
+	end ##}}}
+
+	## _timestamp, format the current time with following rule:
+	# ' ' translated to '__',
+	# '-' or ':' translated to '_'
+	# '+' removed
+	def _timestamp; ##{{{
+		tf=Time.now.to_s;
+		tf.gsub!(/ /,'__');
+		tf.gsub!(/[:-]/,'_')
+		tf.gsub!(/\+/,'')
+		return tf;
+	end ##}}}
+
+	## _initOutDirs, 
+	# 1.outs[:root] = File.join(@toolhome,@__ui__.out)
+	# 2.outs[:logs] ...
+	# 3.outs[:config] -> root dir of config
+	# 4.outs[:component] -> root dir of components
+	def _initOutDirs; ##{{{
+		@outs={};
+		@outs[:root]=File.join(@options[:STEM],@options[:out]);
+		tf=_timestamp();
+		@outs[:logs]=File.join(@outs[:root],'logs',tf)
+		#TODO, config, component paths
+	end ##}}}
+	## _initToolOptions, init options/configs for tool
+	# toolhome;
+	def _initToolOptions ##{{{
+		@toolhome=File.dirname(File.dirname(File.absolute_path(__FILE__)));
+		@__builtinChainPath__ =File.join(@toolhome,'chains');
+	end ##}}}
+	## _setupChains, to setup chains according to options
+	# if no @options[:execute], raise UIE
+	def _setupChains ##{{{
+		@chains={:names=>{},:includes=>[]};
+		user =@options[:execute];
+		Rsim.exception(UIE,:reason=>'no execute command given') unless user;
+		target=_setupUserCommands(user);
+		case(target[:name])
+		when 'build'
+			_setupNode unless skipped?('node');
+			_setupBuild(target[:opts][:config]) unless skipped?('build');
+		#TODO, more
+		end
+		# setup includes
+		@chains[:includes] << @__builtinChainPath__;
+		if @options.has_key?(:FLOW_INCS)
+			sps=@options[:FLOW_INCS].split(/;/);
+			sps.each do |sp|
+				@chains[:includes] << File.absolute_path(sp);
+			end
+		end
+		puts "#{@chains}";
+	end ##}}}
+	## _parseNodeEntries, to parse the options[:ROOT]: 'aaa/b/root.rh;ccc/d/root.rh;...'
+	# into array type
+	def _parseNodeEntries ##{{{
+		return @options[:ROOT].split(/;/);
+	end ##}}}
+	## _setupNode, setup the node flow requirements, :skip options if has node step skipped
+	def _setupNode ##{{{
+		s=skipSteps('node');
+		opts={:skip=>s,:entries=>_parseNodeEntries};
+		@chains[:names][:node]=opts;
+	end ##}}}
+	## _setupBuild, setup the build flow requirements,
+	# options:
+	# :skip
+	# :config
+	def _setupBuild(cn) ##{{{
+		s=skipSteps('build');
+		opts={:skip=>s,:config=>cn};
+		@chains[:names][:build]=opts;
+	end ##}}}
+
+	## _addSkipSteps(s), pattern process the input string of skip steps and append to @skipflows
+	def _addSkipSteps(s) ##{{{
+		ptrn=Regexp.new(/(\w+):([\w,]+)/);
+		md=s.match(ptrn)
+		Rsim.exception(UIE,:reason=>"invalid skip option #{s}") unless md;
+		chain=md[1];
+		steps=md[2].split(/ *, */);
+		steps.each do |st|
+			@skipflows << chain+'::'+st;
+		end
+	end ##}}}
+	## _addSkipChains(s), pattern process the skipped chains
+	def _addSkipChains(s) ##{{{
+		chains=s.split(/ *, */);
+		chains.each do |st|
+			@skipflows<<st;
+		end
 	end ##}}}
 end

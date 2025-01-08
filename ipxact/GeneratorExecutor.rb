@@ -2,7 +2,7 @@
 # Object description:
 GeneratorExecutor, description
 """
-class GeneratorExecutor ##{{{
+class GeneratorExecutor
 	
 	# the object of defined generator
 	attr :definition;
@@ -75,4 +75,4 @@ class GeneratorExecutor ##{{{
 	def blocks(t,b=nil); ##{{{
 		return @definition.actions if t==:actions;
 	end ##}}}
-end ##}}}
+end

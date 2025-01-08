@@ -3,12 +3,44 @@ class Ipxact
 	#@pool={:component=>{id=>object,...},...}
 	attr :pool;
 
+	attr :chains;
+	attr :searchPath;
+
 	## initialize(ui), init ipxact system
 	# 1.attr init
 	# 2.load required chain definitions
 	def initialize(ui) ##{{{
 		@pool={};
-		_chainLoad(ui.<requiredChainNamesInArray>,ui.<requiredChainDefinePath>); #TODO
+		#loadChain(ui.chainNames,ui.chainSearchPath);
+		@chains=ui.chainNames;
+		@searchPath = ui.chainSearchPath;
+	end ##}}}
+	## loadChain(ns), load required chains according to given chain execute name
+	#TODO
+	def loadChain() ##{{{
+		names=@chains;
+		incs=@searchPath;
+		files=[];
+		#1.setup chain definition path
+		#2.setup chain name, execute name + 'flow'
+		names.each do |en|
+			cn=en+'flow.rb';
+			f=Rsim.os.search(:file,cn,incs);
+			#3.find file in giving path
+			if f
+				files << f;
+			else
+				Rsim.exception(
+					:UIE,
+					:reason=>"generatorChain(#{en}) not defined in search path #{incs}"
+				);
+			end
+		end
+		#4.call require
+		files.each do |file|
+			Rsim.info("loading chain #{file}");
+			require file;
+		end
 	end ##}}}
 
 	## register(), description
@@ -19,8 +51,9 @@ class Ipxact
 		@pool[t]={} unless @pool.has_key?(t);
 		@pool[t][o.id]=o;
 		if t==:generatorChain
-			message = o.id.to_sym;
-			define_singleton_method message do |**opts| ##{{{
+			message = o.exename.to_sym;
+			Rsim.info("defining single method(#{message}) of flow(#{o.id})",9);
+			define_singleton_method message do |opts={}| ##{{{
 				Rsim.info("execute flow, opts: #{opts}",5);
 				o.execute(**opts);
 			end ##}}}
@@ -75,14 +108,4 @@ class Ipxact
 		end
 	end ##}}}
 private
-	## _chainLoad(ns), load required chains according to given chain execute name
-	def _chainLoad(ns) ##{{{
-		#1.setup chain definition path
-		#2.setup chain name, execute name + 'flow'
-		#3.find file in giving path
-		#4.call require
-		ns.each do |ename|
-			cname=ename+'flow';
-		end
-	end ##}}}
 end

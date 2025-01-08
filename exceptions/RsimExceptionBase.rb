@@ -2,7 +2,7 @@
 # Object description:
 RsimExceptionBase, base exception object
 """
-class RsimExceptionBase < Exception ##{{{
+class RsimExceptionBase < Exception
 
 	attr :__eid__; # exception id
 	attr :__exit__;
@@ -14,7 +14,6 @@ class RsimExceptionBase < Exception ##{{{
 
 	## initialize, description
 	def initialize(eid,**opts); ##{{{
-		puts "#{__FILE__}:start initialize ..."
 		@__eid__=eid;
 		@reason='Unkown reason !';
 		@reason = opts[:reason] if opts.has_key?(:reason);
@@ -27,7 +26,6 @@ class RsimExceptionBase < Exception ##{{{
 
 	## type, return exception id as string
 	def type; ##{{{
-		puts "#{__FILE__}:start type ..."
 		return @__eid__;
 	end ##}}}
 
@@ -41,4 +39,4 @@ class RsimExceptionBase < Exception ##{{{
 	def stack; ##{{{
 		@__stack__;
 	end ##}}}
-end ##}}}
+end

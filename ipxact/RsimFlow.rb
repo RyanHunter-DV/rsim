@@ -3,11 +3,9 @@
 RsimFlow, 
 The base object for user inheritance.
 """
-require 'libs/Generator.rb'
-require 'libs/GeneratorExecutor.rb'
 require 'ipxact/IpxData.rb'
 require 'mult/Job.rb'
-class RsimFlow < IpxData ##{{{
+class RsimFlow < IpxData
 
 	attr :steps;
 	# each flow has its own logger file in out/logs
@@ -15,6 +13,8 @@ class RsimFlow < IpxData ##{{{
 	attr :jobs;
 	attr :selected; # selected steps or generators
 	## initialize(name), description
+
+	attr :ename;
 
 	attr :__args__; # args for generator chain scope
 	def initialize(name); ##{{{
@@ -25,6 +25,15 @@ class RsimFlow < IpxData ##{{{
 	## name, return the generator chain id
 	def name; ##{{{
 		return @id;
+	end ##}}}
+	## exename, return the execute name if set, if not, then return flow name
+	def exename ##{{{
+		return @ename if @ename;
+		return self.name;
+	end ##}}}
+	## exe(v), set execute name
+	def exe(v) ##{{{
+		@ename=v.to_s;
 	end ##}}}
 
 	## action, description
@@ -117,7 +126,7 @@ private
 		end
 		return ges;
 	end ##}}}
-end ##}}}
+end
 
 
 ## flow(name,&block), 
@@ -125,10 +134,12 @@ end ##}}}
 # the new created flow will be registered to the Rsim.pm scope, by defining
 # a method within the plugin manager.
 def flow(name,&block); ##{{{
-	f=DataBase.find(name,:generatorChain,false);
+	isNew=false;
+	f=Rsim.ipxact.find(name,:generatorChain,false);
 	if f==nil
 		f=RsimFlow.new(name);
-		DataBase.register(f,:generatorChain);
+		isNew=true;
 	end
 	f.instance_eval &block;
+	Rsim.ipxact.register(f,:generatorChain) if isNew;
 end ##}}}

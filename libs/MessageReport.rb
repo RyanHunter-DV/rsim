@@ -2,10 +2,9 @@
 # Object description:
 MessageReport, description
 """
-class MessageReport ##{{{
+class MessageReport
 
 	attr :__verbo__; # max verbosity, by default is 2
-	attr :__configed__;
 	# debug mode flag, when is true, messages will report with location
 	attr :__debug__; 
 	# logger for all information
@@ -13,25 +12,11 @@ class MessageReport ##{{{
 
 	attr_accessor :count;
 	## initialize, description
-	def initialize; ##{{{
-		#puts "#{__FILE__}:start initialize ..."
-		@__verbo__=2;
-		@__configed__=false;
-		@__debug__=false;
+	def initialize(ui); ##{{{
 		@count={:info=>0,:warning=>0,:error=>0};
-		_setupLogger('rsim.log');
+		_setupConfig(ui);
 	end ##}}}
 
-	## setupConfig(c), description
-	# according to given config object, setup message report settings
-	def setupConfig(c,ui); ##{{{
-		@__verbo__ = c.reportMaxVerbosity;
-		@__debug__ = ui.options[:debug];
-		@__configed__=true;
-		Rsim.info("setup max verbosity #{@__verbo__}",5);
-		Rsim.info("setup log dirs: #{c.outs[:logs]}",5);
-		_setupLogDir(c.outs[:logs]);
-	end ##}}}
 
 	## error(msg), description
 	def error(msg,logger=nil,color=:RED); ##{{{
@@ -41,11 +26,29 @@ class MessageReport ##{{{
 
 	## info(msg,verbo=2), description
 	def info(msg,depth,verbo=2,logger=nil,color=:GREEN); ##{{{
-		return if @__configed__ and verbo > @__verbo__;
+		return if verbo > @__verbo__;
 		m = _format(:info,msg,caller(depth+1)[0],color);
 		_print(m,logger);
 	end ##}}}
+	## fatal(sig,msg), report message with fatal severity and exit immediately with the given sig
+	def fatal(sig,msg) ##{{{
+		m=_format(:error,msg,caller(1)[0],:RED);
+		_print(m,logger);
+		exit sig;
+	end ##}}}
+
 private
+
+	## _setupConfig(c), description
+	# according to given config object, setup message report settings
+	def _setupConfig(ui); ##{{{
+		@__verbo__ = ui.options[:verbosity].to_i;
+		@__debug__ = ui.options[:debug];
+		Rsim.info("setup max verbosity #{@__verbo__}",5);
+		Rsim.info("setup log dirs: #{ui.outs[:logs]}",5);
+		_setupLogger(ui.options[:log]);
+		_setupLogDir(ui.outs[:logs]);
+	end ##}}}
 	## _setupLogger(logf), description
 	# setup the main @logger
 	# 1.check if logf exists, move to backup
@@ -90,4 +93,4 @@ private
 		puts msg;@logger.write(%Q|#{msg}\n|);
 		ulog.write(%Q|#{msg}\n|) if ulog;
 	end ##}}}
-end ##}}}
+end
