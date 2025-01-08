@@ -10,7 +10,7 @@ require 'ipxact/BusInterface.rb'
 # Object description:
 Component, ip-xact concept object.
 """
-class Component < IpxData ##{{{
+class Component < IpxData
 	attr_accessor :root; # source home of this component desc file.
 	attr_accessor :out; # out home of this component with publsihed intance
 
@@ -101,7 +101,6 @@ class Component < IpxData ##{{{
 	end ##}}}
 	## bus(vlnv,**opts,&block), specify busInterface for this component
 	def bus(vlnv,**opts,&block); ##{{{
-		#puts "#{__FILE__}:start bus(vlnv,**opts,&block) ..."
 		Rsim.exception(NodeE,:reason=>"require bus instance name") unless opts.has_key?(:as);
 		b=BusInterface.new(opts[:as],vlnv);
 		b.instance_eval &block if block_given?; # execute setting information for busInterface.
@@ -192,4 +191,4 @@ private
 			return o;
 		end ##}}}
 	end ##}}}
-end ##}}}
+end

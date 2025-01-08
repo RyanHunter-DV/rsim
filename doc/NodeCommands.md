@@ -9,6 +9,28 @@ Now supports concepts of:
 - addressSpace, specify addressable space of the component as a master, usually used by ENV component to config ENV or UVC.
 - model, specify views, ports and modelParameters for a parameter.
 
+## bus
+reference a pre-defined bus interface.
+format `bus <refname> [**options]`
+- the reference name is from abstraction definition name.
+- options:
+	- 'as' => 'name': specify the interface instance name for current component
+## wire
+specify a wire typed single port.
+format `wire <name> <direction> <rsb> <lsb> [**options]`
+- name is the port name
+- direction will be one of :in/:out/:inout
+- rsb, lsb
+## fileSet
+define a fileSet available in current component, may be referenced by different view.
+the specified file maybe not the standard hdl file, so if the file specified as into filelist, then tool need to record its target hdl filename and store to filelist.
+#TODO how to specify a corresponding target hdl file and into filelist?
+this may achieve in finalize step from build, once all are finalized, then the chosen view's fileSet's target file path shall be recorded
+
+
+
+
+
 #TODO 
 # design
 ## instance
