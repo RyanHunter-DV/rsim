@@ -3,24 +3,32 @@
 Config, 
 config ipx database
 """
-class Config <IpxData ##{{{
+class Config <IpxData
 
-	#[:buildflow]=>[], store generate executors
-	attr_accessor :needs;
-	attr_accessor :generators;
 
 	# stores the node blocks from declaring this config
 	# [:location] => Proc
 	attr :nodes;
+	# before elaborate, needs are hash of all required component name and view
+	# {<component instname>=><view name>}
+	# after elaborate, needs are the component instance name and object
+	# {<component instname>=><component inst object>}
+	attr :needs;
+	# before elaborate is reference name, after elaborate is object
+	attr :design;
 
 	## initialize
-	def initialize(vlnv); ##{{{
-		@needs=[];
-		@generators={:buildflow=>[]};
+	def initialize(vlnv,opts={}); ##{{{
+		@needs={};@design=nil;
 		@nodes={};
-		super(vlnv);
+		super(:id=>vlnv);
 	end ##}}}
 
+	## components, return all needed components
+	#TODO
+	def components ##{{{
+		
+	end ##}}}
 
 	##### node commands {
 	# config's node commands will be executed at the elaborate step, when all objects are already created.
@@ -28,39 +36,33 @@ class Config <IpxData ##{{{
 	# call the need command will actual give the necessary component instance to the config.
 	# 1.register the given object into pool that will be built.
 	# 2.select generator to certain chain.
-	def need(o); ##{{{
-		@needs << o;
+	def need(o,v=nil); ##{{{
+		@needs[o.to_s]=v;
+	end ##}}}
+	## design(r), design reference name
+	def design(r) ##{{{
+		@design=r.to_s;
 	end ##}}}
 	##### }
 
 	## elaborate, 
 	# 1.eval the node block
 	def elaborate; ##{{{
-		@nodes.each_pair do |loc,b|
-			# TODO, use loc for exception process later
-			self.instance_eval &b;
+		Rsim.exception(:NodeE,:reason=>'no design reference specified by config') unless @design;
+		n=@design;
+		@design=Rsim.ipxact.find(:design,n);
+		Rsim.exception(:NodeE,:reason=>"cannot find design ref(#{n})") unless @design;
+		os={};
+		@needs.each_pair do |name,view|
+			c=@design.send(name.to_sym);
+			Rsim.exception("instance(#{n}) of component(#{name}) not declared in design") unless c;
+			os[name]=c;
 		end
+		@needs=os;
 	end ##}}}
 
 	## finalize, 
-	# arrange the generators for different phases, such as for 'buildflow' group
 	def finalize; ##{{{
-		_assembleGenerators(:buildflow);
 	end ##}}}
 private
-	## _assembleGenerators(gn), description
-	def _assembleGenerators(group); ##{{{
-		# find generator chain definition
-		gc=DataBase.find(group);
-		# needs.each
-		@needs.each do |ci|
-			# 1.2.find generator in that chain with certain group name.
-			ge=ci.generator[group];
-			g=gc.find(ge.name);
-			Rsim.exception(NodeE,:reason=>"cannot find generator definition #{ge.name}") unless g;
-			ge.updateDefinition(g); # update definition
-			@generators[group] << ge;
-		end
-		
-	end ##}}}
-end ##}}}
+end

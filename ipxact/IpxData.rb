@@ -2,7 +2,7 @@
 # Object description:
 IpxData, base object of IP-XACT data
 """
-class IpxData ##{{{
+class IpxData
 
 	attr_accessor :id;
 	attr_accessor :elaborated;
@@ -33,6 +33,10 @@ class IpxData ##{{{
 	end ##}}}
 	## elaborate, description
 	def elaborate; ##{{{
-		Rsim.info("nothing to do with #{@id}")
+		Rsim.info("nothing to do with #{@id}",1);
 	end ##}}}
-end ##}}}
+	## finalize, description
+	def finalize ##{{{
+		Rsim.info("nothing to do with #{@id}",1);
+	end ##}}}
+end

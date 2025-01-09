@@ -6,7 +6,7 @@ maxMasters
 maxSlaves
 """
 require 'ipxact/IpxData.rb'
-class BusDefinition < IpxData ##{{{
+class BusDefinition < IpxData
 	attr :__max__;
 	## initialize(vlnv), description
 	def initialize(vlnv); ##{{{
@@ -21,4 +21,4 @@ class BusDefinition < IpxData ##{{{
 	def maxSlaves(n); ##{{{
 		@__max__[:slave]=n;
 	end ##}}}
-end ##}}}
+end

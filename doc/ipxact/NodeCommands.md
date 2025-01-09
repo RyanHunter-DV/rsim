@@ -13,9 +13,10 @@ format `bus <refname> [**options]`
 - the reference name is from abstraction definition name.
 - options:
 	- 'as' => 'name': specify the interface instance name for current component
+	- 'view' => 'view name': specify the bus will be used on master or slave;
 ## wire
 specify a wire typed single port.
-format `wire <name> <direction> <rsb> <lsb> [**options]`
+format `wire <name>, <direction>, <rsb>, <lsb>, [**options]`
 - name is the port name
 - direction will be one of :in/:out/:inout
 - rsb, lsb
@@ -24,9 +25,12 @@ define a fileSet available in current component, may be referenced by different 
 the specified file maybe not the standard hdl file, so if the file specified as into filelist, then tool need to record its target hdl filename and store to filelist.
 #TODO how to specify a corresponding target hdl file and into filelist?
 this may achieve in finalize step from build, once all are finalized, then the chosen view's fileSet's target file path shall be recorded.
+## generator
+specify reference of a generator and overwriting options.
+different view can use different generators, so the generator can only be specified after elaborate
+format `generator <generator name> [**options for generator]`
 
 
-#TODO 
 # design
 ## instance
 Command to instantiate a component data in current design, with given instance name option.
@@ -43,9 +47,6 @@ format: `need design.<instance name>, <view>, <[parameters => overwrite value]>`
 - view arg is required for this config.
 - parameter options can be used to overwrite the component's parameters while calling need.
 The need command arg will use direct design instance reference, so the config block may be evaluated after the elaborating done.
-## selector
-select generators, this used for components which have multiple generators, for components which have only one generator, then its not necessary to call the selector command.
-format: `selector design.<instance name>,<generator name>`
 ## simulator
 specify simulator tool, can support xcelium or vcs
 format: `simulator <eda name> <code block>`

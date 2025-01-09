@@ -5,22 +5,22 @@ flow :buildflow do
 	generator :elaborate,:selected=>true do ##{{{
 		#TODO, step to elaborating the loaded nodes by calling the DataBase module's elaborate method.
 		action do
-			DataBase.elaborate;
+			Rsim.ipxact.elaborate;
 		end
 	end ##}}}
 	generator :finalize,:selected=>true do ##{{{
 		action do
-			DataBase.finalize;
+			Rsim.ipxact.finalize;
 		end
 	end ##}}}
 
 	generator :link,:selected=>false do ##{{{
-		#parameter :src => [], :tar => ''
 		phase 2.0
 		action '/bin/ln' do
 			option[:src].each do |s|
 				basename=File.basename(s);
 				t=File.join(option[:tar],basename)
+				Rsim.info("generator(link) action command: #{@exec} -s #{s} #{t}");
 				command %Q|#{@exec} -s #{s} #{t}|;
 			end
 		end
@@ -37,6 +37,9 @@ flow :buildflow do
 		end
 	end ##}}}
 
-	#TODO, return needed build generators in a config, return GeneratorExecutor in array format.
-	#select @config.generators[:buildflow]
+	# need pass the config object into chain
+	# config.components is the needed components
+	#@config.components.each do |c|
+	#	select c.generator,c.generatorOptions
+	#end
 end

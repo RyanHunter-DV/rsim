@@ -2,8 +2,7 @@
 # Object description:
 FileSet, sub object of a component
 """
-require 'ipxact/IpxData.rb'
-class FileSet < IpxData ##{{{
+class FileSet < IpxData
 
 	attr :sources;
 	attr :includes; # inc dir for certain specified language files.
@@ -54,9 +53,8 @@ class FileSet < IpxData ##{{{
 		_setfiles(*fs,**opts);
 		@location=caller(1)[0] unless @location;
 	end ##}}}
-	## custom(inlist=false,*fs=[]), specify custom languaged files
-	def custom(*fs,**opts); ##{{{
-		#puts "#{__FILE__}:start custom(inlist=false,*fs=[]) ..."
+	## vs(inlist=false,*fs=[]), specify custom languaged files
+	def vs(*fs,**opts); ##{{{
 		opts[:filelist]=false unless opts.has_key?(:filelist);
 		opts[:language]=:text unless opts.has_key?(:language);
 		lan=opts[:language].to_sym;
@@ -67,25 +65,6 @@ class FileSet < IpxData ##{{{
 		@location=caller(1)[0] unless @location;
 	end ##}}}
 	## print, print data formats
-	def display; ##{{{
-		puts "type: FileSet";
-		puts "- id: #{id}";
-		puts "- root: #{@root}";
-		puts "- sources:"
-		@sources.each_pair do |l,ss|
-			puts "-- language: #{l}";
-			ss.each do |s|
-				puts "-- file: #{s}"
-			end
-		end
-		puts "- includes:"
-		@includes.each_pair do |l,ss|
-			puts "-- language: #{l}";
-			ss.each do |s|
-				puts "-- file: #{s}"
-			end
-		end
-	end ##}}}
 
 	## elaborate, 
 	# the elaborate step for fileset will do:
@@ -94,10 +73,16 @@ class FileSet < IpxData ##{{{
 	# - unique the filelist
 	def elaborate; ##{{{
 		#puts "#{__FILE__}:start elaborate ..."
-		#TODO
-		
 	end ##}}}
 
+	## source, return all available source files
+	def source ##{{{
+		r=[];
+		@sources.each_pair do |t,ss|
+			r.append(*ss);
+		end
+		return r;
+	end ##}}}
 
 private
 	## setDefaultRoot(c), according to the caller information, set the default root
@@ -125,7 +110,6 @@ private
 	# p/a//name.xxx
 	# /p//name.xx
 	def _filterPathRecursivly(f); ##{{{
-		#puts "#{__FILE__}:start _filterPathRecursivly(f) ..."
 		ps=[];
 		acc='';
 		splitted=f.split('/');
@@ -140,20 +124,19 @@ private
 	end ##}}}
 	## _setfiles(*fs,**opts), description
 	def _setfiles(*fs,**opts); ##{{{
-		#puts "#{__FILE__}:start _setfiles(*fs,**opts) ..."
 		incs=filterIncludes(*fs);
 		lan=opts[:language];
 		_inlist=opts[:filelist];
 		fs.each do |f|
 			sf={:file=>f,:fielist=>_inlist};
-			@sources[lan]<<sf;
+			@sources[lan] << sf;
 		end
 		incs.each do |f|
 			sf={:file=>f,:filelist=>_inlist}
-			@includes[lan]<<sf;
+			@includes[lan] << sf;
 		end
 		
 	end ##}}}
 
 	
-end ##}}}
+end

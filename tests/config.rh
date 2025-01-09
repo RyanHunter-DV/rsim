@@ -1,0 +1,4 @@
+config :rtlonly do
+	design 'rh/rtl/IpDesignExample/1.0'
+	need :rtl,:rtl
+end

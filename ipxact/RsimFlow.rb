@@ -103,7 +103,7 @@ class RsimFlow < IpxData
 	## select(g), select generator name
 	# select a generator to be executed with specific args
 	# this method is similar of calling the execute command, 
-	def select(gn,**opts); ##{{{
+	def select(gn,opts={}); ##{{{
 		@selected[gn]= opts;
 	end ##}}}
 private

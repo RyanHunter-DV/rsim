@@ -42,6 +42,12 @@ class Ipxact
 			require file;
 		end
 	end ##}}}
+	## select(exen,gn,**opts), select generator according to chain's execute name and generator name
+	def select(exen,gn,**opts) ##{{{
+		cn="#{exen}flow";
+		c=find(cn,:generatorChain);
+		c.select(gn,opts);
+	end ##}}}
 
 	## register(), description
 	def register(o,t); ##{{{

@@ -2,11 +2,14 @@ This page depicts details of the build flow chain.
 reference requirements: [[doc/ToolRequirements.md#build flow]]
 
 # elaborating
+- build and register all ipxact objects into the Rsim.ipxact class.
+- all references shall be elaborated with real registered object
 
 # finalizing
 - build database files into out path
 	- ruby applied code files in out path, a hash based file that stores different information, such as config, component ...
 - finalize the chosen view's fileSet with target files, which are actually used.
+- build datafile into target config's out path.
 
 ## database files
 database file is ruby based hash datainfo that can be directly loaded by other ruby based generators by: `instance_eval File.readlines(fn)`
@@ -37,3 +40,8 @@ detailed executions are in [[doc/rtl-builder]]
 
 # env building
 #TBD, currently not support yet. for env files, currently use 'link' generator
+
+# component generator steps
+Despite of the default selected generators, some of the generators will not be selected while they are declared, but will be referenced by component and been selected through components' generator commands.
+The chain provides the 'select' command to choose components' generators.
+The components' generators are the reference name of Generator after finalize step, calling select will give the name which will be searched through current chain, and stores the options from command.

@@ -1,2 +1,3 @@
 rhload 'component'
 rhload 'design'
+rhload 'config'

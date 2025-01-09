@@ -4,7 +4,7 @@ Design, description
 """
 require 'ipxact/IpxData.rb'
 require 'ipxact/ComponentInstance.rb'
-class Design < IpxData##{{{
+class Design < IpxData
 
 	attr :__pool__;
 	attr :__iname__; # instance name
@@ -137,4 +137,4 @@ private
 		Rsim.exception(NodeE,:reason=>"unsupport bus type #{t} in design connection");
 	end ##}}}
 
-end ##}}}
+end
