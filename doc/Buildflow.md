@@ -12,11 +12,12 @@ reference requirements: [[doc/ToolRequirements.md#build flow]]
 - build datafile into target config's out path.
 
 ## database files
+details in [[doc/ipxact/metadata.md]]
 database file is ruby based hash datainfo that can be directly loaded by other ruby based generators by: `instance_eval File.readlines(fn)`
 datafile example:
 ```ruby
 {
-	:ipxact => :component,
+	:type => :component,
 	:id => 'v/l/n/v',
 	:node => 'path/.../ndoe.rh',
 	:out  => 'path/.../component-instance',
