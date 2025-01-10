@@ -20,6 +20,13 @@ class OS
 		return true if File.exist?(fn);
 		return false;
 	end ##}}}
+	## exists?(t,name), the given name will be file or dir,
+	# check existance, according to t
+	def exists?(t,name) ##{{{
+		o=File;
+		o=Dir if t==:dir;
+		return o.exist?(name);
+	end ##}}}
 	def readfile(fn); ##{{{
 		#puts "#{__FILE__}:start readfile(fn) ..."
 		fh=File.open(fn,'r');
@@ -72,6 +79,14 @@ class OS
 	# if path is not given, use default current path.
 	def create(t,name,path='.') ##{{{
 		#TODO
+	end ##}}}
+	## build(fn,cnts), build file with given contents
+	def build(fn,cnts) ##{{{
+		fh=File.open(fn,'w');
+		cnts.each do |l|
+			fh.write("#{l}\n");
+		end
+		fh.close;
 	end ##}}}
 
 	## search(t,name,paths=[], search different types, in system

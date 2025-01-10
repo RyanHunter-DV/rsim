@@ -86,14 +86,9 @@ class Ipxact
 	## elaborate, description
 	def elaborate; ##{{{
 		# to elaborate the loaded nodes
-		#@pool.each_pair do |t,os|
-		#	next if t==:generatorChain;
-		#	os.each_value do |o|
-		#		o.elaborate;
-		#	end
-		#end
 		etype(:component) if @pool.has_key?(:component);
 		etype(:design) if @pool.has_key?(:design);
+		etype(:config) if @pool.has_key?(:config);
 	end ##}}}
 	## etype(t), elaborate according to different ipx type
 	def etype(t); ##{{{

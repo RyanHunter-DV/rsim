@@ -53,11 +53,12 @@ module JobM
 	#TODO, don't use it, 	end
 	#TODO, don't use it, end ##}}}
 
-	## self.register(o), description
-	def self.register(o); ##{{{
-		o.id= @@__id__;
-		@@__id__ += 1;
-	end ##}}}
+	## self.register(id,o), description
+	#def self.register(id,o); ##{{{
+	#	if id;
+	#	o.id= @@__id__;
+	#	@@__id__ += 1;
+	#end ##}}}
 
 	## slots, description
 	def self.slots; ##{{{

@@ -6,7 +6,7 @@ require 'ipxact/entry'
 module Rsim
 
 	@os=nil;@report=nil;
-	@ipxact=nil;
+	@ipxact=nil;@ui=nil;
 
 	@loadContext=nil; # current loading context
 	@node=nil; # current loading node file
@@ -59,6 +59,11 @@ module Rsim
 	def self.ipxact ##{{{
 		self.report.fatal(FINTERNAL,'ipxact referenced before initialized') unless @ipxact;
 		return @ipxact;
+	end ##}}}
+	## self.ui, description
+	def self.ui ##{{{
+		self.report.fatal(FINTERNAL,'ui referenced before initialized') unless @ui;
+		return @ui;
 	end ##}}}
 
 	## self.init, tool initialization

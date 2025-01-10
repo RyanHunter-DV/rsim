@@ -17,6 +17,8 @@ class Config <IpxData
 	# before elaborate is reference name, after elaborate is object
 	attr :design;
 
+	attr_accessor :outhome;
+
 	## initialize
 	def initialize(vlnv,opts={}); ##{{{
 		@needs={};@design=nil;
@@ -48,21 +50,29 @@ class Config <IpxData
 	## elaborate, 
 	# 1.eval the node block
 	def elaborate; ##{{{
+		Rsim.info("elaborating config #{@id} ...",3);
 		Rsim.exception(:NodeE,:reason=>'no design reference specified by config') unless @design;
 		n=@design;
-		@design=Rsim.ipxact.find(:design,n);
+		@design=Rsim.ipxact.find(n,:design);
 		Rsim.exception(:NodeE,:reason=>"cannot find design ref(#{n})") unless @design;
 		os={};
 		@needs.each_pair do |name,view|
 			c=@design.send(name.to_sym);
 			Rsim.exception("instance(#{n}) of component(#{name}) not declared in design") unless c;
+			c.selectView(view);
+			c.config=self;
 			os[name]=c;
 		end
 		@needs=os;
+		@outhome=File.join(Rsim.ui.outs[:root],'configs',@id);
 	end ##}}}
 
 	## finalize, 
 	def finalize; ##{{{
+		@needs.each_pair do |name,o|
+			Rsim.info("finalize component(#{o.id}) ...",3);
+			o.finalize;
+		end
 	end ##}}}
 private
 end

@@ -9,13 +9,16 @@ class GeneratorExecutor
 
 	attr_accessor :name;
 	attr_accessor :group;
+	attr_accessor :root;
 	attr :__args__;
+	attr :__cmds__;
 
 	## initialize, description
 	def initialize(n,g); ##{{{
 		@definition=g;
 		@name = n.to_s;
 		@__args__={};
+		@__cmds__=[];
 	end ##}}}
 
 	## context, return context of definition
@@ -26,6 +29,10 @@ class GeneratorExecutor
 	## precedences, return definition's precedences
 	def precedences; ##{{{
 		return @definition.precedences;
+	end ##}}}
+	## exe, return definition's exec name
+	def exe ##{{{
+		return @definition.exec;
 	end ##}}}
 
 	## option(opts=nil), if opts not nil, then
@@ -71,8 +78,35 @@ class GeneratorExecutor
 	def precedences; ##{{{
 		return @definition.precedences;
 	end ##}}}
-	## blocks(t), 
+	## command(s), add the given command string s into command file: @__cmds__
+	def command(s); ##{{{
+		@__cmds__ << s+';';
+	end ##}}}
+	## blocks(t), arrange actions according to definition's actions
 	def blocks(t,b=nil); ##{{{
-		return @definition.actions if t==:actions;
+		d=@definition;
+		as=[];
+		if t==:actions
+			# build actions and return
+			if d.jobtype==:system
+				cmdf=%Q|#{d.name}.cmd|;
+				p = lambda { |ctx|
+					# block will call command to setup commands
+					Rsim.info("executing the action definition(#{d.action[0]})",9);
+					ctx.instance_eval &d.action[1];
+					Rsim.info("build command file(#{cmdf}): #{@__cmds__}",9);
+					Rsim.os.build(File.join(@root,cmdf),@__cmds__);
+					%Q|sh #{cmdf}|;
+				};
+				as << [p.source_location,p];
+				#p=lambda { |ctx|
+				#	%Q|cd #{@root};source #{cmdf}|;
+				#};
+				#as << [p.source_location,p];
+			else
+				as << d.action;
+			end
+		end
+		return as;
 	end ##}}}
 end

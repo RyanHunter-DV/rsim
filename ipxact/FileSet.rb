@@ -4,25 +4,31 @@ FileSet, sub object of a component
 """
 class FileSet < IpxData
 
+	#[:verilog]=[{:file=>...,:filelist=>...,...},{xxx}]
 	attr :sources;
 	attr :includes; # inc dir for certain specified language files.
 	attr :root;
 	attr :location; # location of the caller node.
 
+	attr :container; # the container object of this fileset
 	## initialize(id), description
-	def initialize(id); ##{{{
+	def initialize(id,from); ##{{{
 		#puts "#{__FILE__}:start initialize(id) ..."
 		super(:id=>id);
 		@sources={};@includes={};
 		#@root=File.dirname(File.absolute_path(__FILE__)); # default root
 		@root=nil;
 		@location=nil;
+		@container=from;
+	end ##}}}
+	## container(c), set container
+	def container(c) ##{{{
+		@container=c;
 	end ##}}}
 
 	# support commands
 	## root(r), set root dir to search for source and include files
 	def root(r); ##{{{
-		#puts "#{__FILE__}:start root(r) ..."
 		d= eval %Q|"#{r}"|;
 		@root=File.absolute_path(d);
 		Rsim.info("getting root: #{@root}",9);
@@ -72,24 +78,36 @@ class FileSet < IpxData
 	# - change the sources,includes into absolute path
 	# - unique the filelist
 	def elaborate; ##{{{
-		#puts "#{__FILE__}:start elaborate ..."
+		@root=@container.root unless @root;
+		_checkSourceFiles
 	end ##}}}
 
 	## source, return all available source files
 	def source ##{{{
 		r=[];
 		@sources.each_pair do |t,ss|
-			r.append(*ss);
+			ss.each do |sf|
+				r<<sf[:file];
+			end
 		end
 		return r;
 	end ##}}}
 
 private
-	## setDefaultRoot(c), according to the caller information, set the default root
-	# this will be called only after nodes loaded, in elaborate phase.
-	def setDefaultRoot(c); ##{{{
-		#puts "#{__FILE__}:start setDefaultRoot(c) ..."
-		#TODO
+
+	## _checkSourceFiles, checking the giving source file existance and change to absolute_path
+	def _checkSourceFiles ##{{{
+		@sources.each_pair do |t,ss|
+			ss.each do |sf|
+				fn=sf[:file];
+				if Rsim.os.fileExists?(fn,@root)
+					sf[:file]=File.join(@root,sf[:file]);
+					Rsim.info("get sf: #{sf[:file]}");
+				else
+					Rsim.exception(NodeE,:reason=>"file(#{fn}) not exists in root(#{@root})");
+				end
+			end
+		end
 	end ##}}}
 
 	## filterIncludes(*fs), according to given

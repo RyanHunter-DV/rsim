@@ -67,10 +67,11 @@ component 'rh/rtl/fifo/1.0' do
 	view :rtl do
 		fileSet 'fifo_rtl'
 		generator :link,:build
+		#generator :copy,:build
 	end
 	fileSet 'fifo_rtl' do
 		root '.'
-		verilog 'fifo_core.v','fifo_top.v',:filelist=>true
+		verilog 'rtl/fifo_core.v','rtl/fifo_top.v',:filelist=>true
 		verilog 'lib/fifo_reg.v'
 		verilog 'lib/std//stdcell.v'
 	end

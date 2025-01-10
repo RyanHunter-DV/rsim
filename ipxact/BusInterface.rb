@@ -3,12 +3,13 @@
 BusInterface, connection information of a specific component
 """
 require 'ipxact/IpxData.rb'
-class BusInterface <IpxData ##{{{
+class BusInterface <IpxData
 	# [:object] -> BusDefinition object after elaborate
 	# [:id] -> BusDefinition id description
 	attr :__abs__;
 
 	attr :__pname__; # parent name, like: a.b.c
+	attr :__c__; # container
 
 	# hash pairs of: <target hierarchy named port/bus> => <target object>
 	attr_accessor :consumers;
@@ -19,6 +20,10 @@ class BusInterface <IpxData ##{{{
 		@__abs__=ref.to_s;
 		@__pname__=nil;
 		@consumers = {};
+	end ##}}}
+	## container(c), description
+	def container(c) ##{{{
+		@__c__=c;
 	end ##}}}
 	## connect(to,block), used for bus connection
 	# tn: target object name, for bus it's BusInterface object
@@ -42,4 +47,4 @@ class BusInterface <IpxData ##{{{
 		@__abs__=DataBase.find(id,:busDefinition);
 		#Rsim.exception(NodeE,:reason=>"cannot find busDefinition #{id}") unless o;
 	end ##}}}
-end ##}}}
+end

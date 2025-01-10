@@ -17,10 +17,12 @@ class RsimFlow < IpxData
 	attr :ename;
 
 	attr :__args__; # args for generator chain scope
+	attr :__updated__;
 	def initialize(name); ##{{{
 		super(:id=>name)
 		@steps={};@selected={};
 		@jobs={};
+		@__updated__=false;
 	end ##}}}
 	## name, return the generator chain id
 	def name; ##{{{
@@ -61,7 +63,7 @@ class RsimFlow < IpxData
 			opts.delete(:selected);
 		end
 		@steps[step.name] = step;
-		@selected[step.name]=opts if selected==true;
+		select(step.name,opts) if selected==true;
 	end ##}}}
 	## command(name,&block), define a new command(API) for
 	# the newly created flow.
@@ -81,6 +83,11 @@ class RsimFlow < IpxData
 	def execute(**opts); ##{{{
 		# 1. select generators of this group
 		@__args__ = opts;
+		_pickupAndExecute while (@__updated__);
+	end ##}}}
+	## _pickupAndExecute(opts={}), 
+	def _pickupAndExecute() ##{{{
+		opts=@__args__;
 		selected = _pickupExecutor(**opts);
 		# 2.run generators
 		selected.each do |e|
@@ -91,7 +98,7 @@ class RsimFlow < IpxData
 				e.execute(e.context);
 			else
 				# :system jobtype
-				j=Job.new(e.jobtype,e.execute);
+				j=Job.new(e.jobtype,e.execute,:path=>e.root,:id=>e.name);
 				e.precedences.each do |pre|
 					@jobs[pre].wait if @jobs.has_key?(pre);
 				end
@@ -99,12 +106,15 @@ class RsimFlow < IpxData
 				@jobs[e.name] = j;
 			end
 		end
+		
 	end ##}}}
 	## select(g), select generator name
 	# select a generator to be executed with specific args
 	# this method is similar of calling the execute command, 
 	def select(gn,opts={}); ##{{{
+		opts[:executed]=false unless opts.has_key?(:executed);
 		@selected[gn]= opts;
+		@__updated__ = true; # update flag of the selected generators
 	end ##}}}
 private
 	## _pickupExecutor, 
@@ -112,6 +122,7 @@ private
 	def _pickupExecutor(**eOpts); ##{{{
 		ges=[];
 		@selected.each_pair do |name,opts|
+			next if opts[:executed];
 			# 1.create new generator executor
 			Rsim.exception(NodeE,:reason=>"generator #{name} not defined") unless @steps.has_key?(name);
 			# 2.copy key information from generator
@@ -123,7 +134,9 @@ private
 			end
 			e.option(opts);
 			ges << e;
+			opts[:executed]=true;
 		end
+		@__updated__=false; # clear updated flag once called _pickupExecutor
 		return ges;
 	end ##}}}
 end

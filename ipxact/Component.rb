@@ -12,7 +12,6 @@ Component, ip-xact concept object.
 """
 class Component < IpxData
 	attr_accessor :root; # source home of this component desc file.
-	attr_accessor :out; # out home of this component with publsihed intance
 
 	# [:view] => {:id=>xxx,:info=>{}};
 	attr :pool;
@@ -31,7 +30,6 @@ class Component < IpxData
 		#puts "#{__FILE__}:start initialize(name,opts={}) ..."
 		super(:id=>vlnv);
 		@pool={};
-		@out={}; # :id=>path,...
 		@commands=[];
 		@__isInst__=false;
 		@__isInst__=opts[:inst] if opts.has_key?(:inst);
@@ -52,7 +50,7 @@ class Component < IpxData
 	# declare a new view description by node
 	def view(name,&block); ##{{{
 		#1.create a new ComponentView object.
-		v=ComponentView.new(name);
+		v=ComponentView.new(name,self);
 		#2.eval block within the object,
 		v.instance_eval &block;
 		#3.register the view object into this component
@@ -63,7 +61,7 @@ class Component < IpxData
 	def fileSet(name,&block); ##{{{
 		#puts "#{__FILE__}:start fileSet(name,&block) ..."
 		#1.create FileSet object.
-		f=FileSet.new(name);
+		f=FileSet.new(name,self);
 		#2.eval the object with given block.
 		f.instance_eval &block;
 		#3.register
@@ -85,9 +83,8 @@ class Component < IpxData
 	# all available views
 	def views(id=nil); ##{{{
 		return nil unless @pool.has_key?(:view);
-		return @pool[:view][id][:object] if id;
+		return @pool[:view][id.to_s][:object] if id;
 		# return array of all view objects
-		# @pool[t][id][:object]
 		r=[];
 		@pool[:view].each_value do |is|
 			r<<is[:object];
@@ -102,17 +99,13 @@ class Component < IpxData
 		register(r,:regBlock);
 	end ##}}}
 
-	## elaborate, description
-	# the elaborate can only be called by the component instance
-	#def elaborate; ##{{{
-	#end ##}}}
 	## find(t,n), return object from given typed pool and the given name, if
 	# not exists, return nil
 	def find(t,n) ##{{{
 		n=n.to_s;
 		return nil unless @pool.has_key?(t);
 		return nil unless @pool[t].has_key?(n);
-		return @pool[t][n];
+		return @pool[t][n][:object];
 	end ##}}}
 
 	## instance(o), called by the component instance, to copy
@@ -134,6 +127,7 @@ class Component < IpxData
 	def register(o,type,**opts); ##{{{
 		@pool[type] = {} unless @pool.has_key?(type);
 		@pool[type][o.id] = {:object=>o};
+		o.container(self);
 		if (@__isInst__)
 			# component instance register the bus/port need set the instance name
 			o.hierarchy(opts[:hierarchy]) if type==:busInterface;

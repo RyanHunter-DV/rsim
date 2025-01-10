@@ -19,6 +19,11 @@ class RegBlock < IpxData ##{{{
 		@__c__=c;
 	end ##}}}
 
+	## container(c), description
+	def container(c) ##{{{
+		@__c__=c;
+	end ##}}}
+
 	# support commands
 	## reg(name,offset,&block), description
 	def reg(name,offset,&block); ##{{{

@@ -10,7 +10,7 @@ $anchors = ["RUNNING","COMPLETE","KILLED"]
 def buildAnchor(path,pid,name); ##{{{
 	$anchors.each do |a|
 		fn=File.join(path,"#{a}.#{pid}");
-		system("rm -f #{fn}") if File.exists?(fn);
+		system("rm -f #{fn}") if File.exist?(fn);
 	end
 	fn=File.join(path,"#{name}.#{pid}");
 	fh=File.open(fn,'w');
@@ -32,6 +32,17 @@ def main; ##{{{
 	buildAnchor(path,pid,'RUNNING')
 	out,err,st = Open3.capture3(%Q|cd #{path};#{cmd}|);
 	#TODO, can add out,err, st information into complete anchor.
+	#puts "#{err.class}";
+	logn=cmd.gsub(/ /,'-')+'.log';
+	logh=File.open(File.join(path,logn),'w');
+	if st.exitstatus==0
+		logh.write("#{out}");
+	else
+		logh.write("#{err}");
+	end
+	logh.write("#{st.exitstatus}\n");
+	logh.close;
+
 	buildAnchor(path,pid,'COMPLETE')
 
 	return st.exitstatus;

@@ -5,7 +5,7 @@ require 'ipxact/Port.rb'
 WirePort, declare the Wire typed port information
 Support the port command in component and abstractionDefinition.
 """
-class WirePort < Port ##{{{
+class WirePort < Port
 	attr :direction;
 	attr_accessor :rsb;
 	attr_accessor :lsb;
@@ -39,6 +39,10 @@ class WirePort < Port ##{{{
 	## usedBy(p), set container
 	def usedBy(p); ##{{{
 		@__container__ = p;
+	end ##}}}
+	## container(c), set containter
+	def container(c) ##{{{
+		usedBy(c);
 	end ##}}}
 	## qualifier(q), description
 	def qualifier(q); ##{{{
@@ -97,4 +101,4 @@ private
 		@rsb=rsb;@lsb=lsb;
 	end ##}}}
 
-end ##}}}
+end

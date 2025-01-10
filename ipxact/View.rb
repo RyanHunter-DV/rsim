@@ -6,27 +6,32 @@ class ComponentView < IpxData
 	attr :__fs__; # list of file set references
 	attr :generator;
 
+	attr :container;
 	## initialize(name), 
-	def initialize(id); ##{{{
+	def initialize(id,from); ##{{{
 		super(:id=>id);
 		@__fs__={};
-		@generator={};
+		@container=from;
 	end ##}}}
 
+	## container(c), change container
+	def container(c) ##{{{
+		@container=c;
+	end ##}}}
 
 	#### support commands {
 	## fileSet(refn), 
 	# find fileSet object in container
 	def fileSet(refn); ##{{{
-		#puts "#{__FILE__}:start fileSet(refn) ..."
 		@__fs__[refn.to_s]=nil;
 	end ##}}}
 
 	## generator(n,c,**opts), specify generator reference for current view
 	# generator reference won't to find the object
 	def generator(n,c,**opts) ##{{{
+		@generator={};
 		@generator[:name]=n.to_s;
-		@generator[:chain]=c,to_s;
+		@generator[:chain]=c.to_s;
 		@generator[:options]=opts;
 	end ##}}}
 	#}
@@ -53,19 +58,24 @@ class ComponentView < IpxData
 	
 	## selectGenerator, call the specified chain's select api and setup the generator names and options
 	def selectGenerator ##{{{
+		_buildDefaultGenerator unless @generator;
 		cn=@generator[:chain];
 		gn=@generator[:name];
 		opts=@generator[:options];
 		opts[:src] = _sources;
-		#opts[:tar] =
+		opts[:tar] = @container.outhome;
 		Rsim.ipxact.select(cn,gn,**opts);
 	end ##}}}
 private
+	## _buildDefaultGenerator, build default link generator unless as specified by user
+	def _buildDefaultGenerator ##{{{
+		@generator={:name=>'link',:chain=>'build',:options=>{}};
+	end ##}}}
 	## _sources, return all source files according to fileSet
 	def _sources ##{{{
 		srcs=[];
 		@__fs__.each_value do |o|
-			srcs.append(o.source);
+			srcs.append(*o.source);
 		end
 		return srcs;
 	end ##}}}

@@ -6,6 +6,8 @@ require 'ipxact/Component.rb'
 class ComponentInstance < Component
 
 	attr_accessor :parent;
+	attr_accessor :outhome;
+	attr_accessor :config;
 	attr :__cn__; # component vlnv
 	attr :__c__; # component object
 	attr :__iname__; # instance name
@@ -22,7 +24,6 @@ class ComponentInstance < Component
 		@__cn__ = cn;
 		@__iname__= as.to_s;
 		@parent=p;
-		@view=nil;
 	end ##}}}
 
 	## fullname, return full hierarchical name
@@ -39,6 +40,9 @@ class ComponentInstance < Component
 		c.instance(self);
 		@__c__ = c;
 
+		@pool[:fileSet].each_pair do |id,info|
+			info[:object].elaborate;
+		end
 		self.views.each do |v|
 			# set fileSet objects to all views
 			v.link(:fileSet,self);
@@ -48,7 +52,17 @@ class ComponentInstance < Component
 	# be found by config, which will also set the componentInstance's selected view
 	# so in component finalize, it will select the selected view's generator into specified chain.
 	def finalize ##{{{
+		cn=@id.gsub(/\//,'_');
+		@outhome=File.join(@config.outhome,'components',cn+'-'+@__iname__);
 		@view.selectGenerator
+	end ##}}}
+	## selectView(vn), choose the view object according to the view name, if view name is nil
+	# the views shall only have one item, or else will report NodeE.
+	def selectView(vn) ##{{{
+		vs=views(vn);
+		Rsim.exception(NodeE,:reason=>"viewname not given and multiple views found in component(#{@id})") if vn==nil and vs.length >1;
+		Rsim.exception(NodeE,:reason=>"invalid viewname(#{vn}) given of component(#{@id})") unless vs;
+		@view=vs;
 	end ##}}}
 private
 

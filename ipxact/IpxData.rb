@@ -8,6 +8,9 @@ class IpxData
 	attr_accessor :elaborated;
 
 	attr :__evals__;
+
+	attr :__type__; # object type
+
 	## initialize(opts={}), 
 	def initialize(opts={}); ##{{{
 		#puts "#{__FILE__}:start initialize(opts={}) ..."
@@ -38,5 +41,10 @@ class IpxData
 	## finalize, description
 	def finalize ##{{{
 		Rsim.info("nothing to do with #{@id}",1);
+	end ##}}}
+
+	## data, return a hash that contains unified ipxact concepts
+	def data ##{{{
+		
 	end ##}}}
 end

@@ -3,7 +3,7 @@
 Job, job object been thrown into JobManager
 """
 require 'mult/JobM.rb'
-class Job ##{{{
+class Job
 
 	attr_accessor :id; # meaningful name of the job, name is unique item.
 	attr_accessor :pid; # the process id while executing
@@ -50,18 +50,19 @@ class Job ##{{{
 		opts.each_pair do |k,v|
 			@__opts__[k] = v;
 		end
-		JobM.register(@id,self);
+		#JobM.register(@id,self);
 	end ##}}}
 
 	## dispatch, dispatching the given job
-	def dispatch(); ##{{{
+	def dispatch; ##{{{
 		JobM.applySlots(1,self); # apply for one empty slot, or else wait
 		case (@__type__)
 		when :system
 			#1. build cmd commands through Rsim.os
-			fn=_buildCmdFile;
+			#fn=_buildCmdFile;
 			#2. build source command by using anchor
-			cmd =@__anchor__+%Q| 'source #{fn}' #{@__path__}|;
+			cmd =@__anchor__+%Q| '#{@__exe__}' #{@__path__}|;
+			Rsim.info("throwing job (#{cmd})",8);
 			#3. call with Process.spawn, and record pid
 			@pid=Process.spawn(cmd);
 			#TODO, 4. require a job anchor process to monitor the job anchor flag changes.
@@ -123,14 +124,14 @@ private
 	## _buildCmdFile, build command file according to the @__exe__
 	# string, then return the file name
 # cmd file naming rule: <id>.cmd
-	def _buildCmdFile ##{{{
-		fn="#{@id}.cmd";
-		Rsim.os.create(:file,fn,@__path__);
-		fh=File.open(File.join(@__path__,fn),'w');
-		@__exe__.split(';').each do |line|
-			fh.write("#{line}\n");
-		end
-		fh.close;
-		return fn;
-	end ##}}}
-end ##}}}
+	#def _buildCmdFile ##{{{
+	#	fn="#{@id}.cmd";
+	#	Rsim.os.create(:file,fn,@__path__);
+	#	fh=File.open(File.join(@__path__,fn),'w');
+	#	@__exe__.split(';').each do |line|
+	#		fh.write("#{line}\n");
+	#	end
+	#	fh.close;
+	#	return fn;
+	#end ##}}}
+end
