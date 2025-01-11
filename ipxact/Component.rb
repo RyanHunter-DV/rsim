@@ -28,7 +28,7 @@ class Component < IpxData
 
 	def initialize(vlnv,opts={},sloc); ##{{{
 		#puts "#{__FILE__}:start initialize(name,opts={}) ..."
-		super(:id=>vlnv);
+		super(:id=>vlnv,:ipxact=>:component);
 		@pool={};
 		@commands=[];
 		@__isInst__=false;

@@ -26,6 +26,11 @@ datafile example:
 	xxx
 }
 ```
+In base IpxData class, provides a standard method that can be called by sub classes to record the datainfo, like: `metadata.record(<key>,<value>)`.
+By which will record into metadata hash in the IpxData class.
+Then in last step of finalize, to call `metadata.write(<path>)` to write data file.
+
+
 
 # rtl building
 The builtin buildflow will support:

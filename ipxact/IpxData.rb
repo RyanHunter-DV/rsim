@@ -6,6 +6,7 @@ class IpxData
 
 	attr_accessor :id;
 	attr_accessor :elaborated;
+	attr_accessor :metadata;
 
 	attr :__evals__;
 
@@ -21,6 +22,7 @@ class IpxData
 		@id = opts[:id].to_s;
 		@elaborated=false;
 		@__evals__=[];
+		@metadata=MetaData.new(opts[:ipxact].to_sym,@id);
 	end ##}}}
 
 	## add(block), add evaluate blocks into __evals__

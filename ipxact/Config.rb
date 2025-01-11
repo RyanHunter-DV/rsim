@@ -23,7 +23,7 @@ class Config <IpxData
 	def initialize(vlnv,opts={}); ##{{{
 		@needs={};@design=nil;
 		@nodes={};
-		super(:id=>vlnv);
+		super(:id=>vlnv,:ipxact=>:config);
 	end ##}}}
 
 	## components, return all needed components

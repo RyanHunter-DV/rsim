@@ -10,7 +10,7 @@ class BusDefinition < IpxData
 	attr :__max__;
 	## initialize(vlnv), description
 	def initialize(vlnv); ##{{{
-		super(:id=>vlnv);
+		super(:id=>vlnv,:ipxact=>:busDefinition);
 		@__max__={:master=>0,:slave=>0};
 	end ##}}}
 	## maxMasters(n), set max master

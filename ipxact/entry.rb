@@ -1,16 +1,17 @@
 $rsim_global_loadpath=File.dirname(File.absolute_path(__FILE__));
 $LOAD_PATH<<$rsim_global_loadpath;
 
-require 'IpxData'
-require 'Config'
+require 'MetaData';
+require 'IpxData';
+require 'Config';
 
 # load for chain required
-require 'Generator'
-require 'GeneratorExecutor'
-require 'RsimFlow'
+require 'Generator';
+require 'GeneratorExecutor';
+require 'RsimFlow';
 
 
-require 'Ipxact'
+require 'Ipxact';
 
 
 $LOAD_PATH.delete($rsim_global_loadpath);

@@ -13,8 +13,7 @@ class FileSet < IpxData
 	attr :container; # the container object of this fileset
 	## initialize(id), description
 	def initialize(id,from); ##{{{
-		#puts "#{__FILE__}:start initialize(id) ..."
-		super(:id=>id);
+		super(:id=>id,:ipxact=>:fileSet);
 		@sources={};@includes={};
 		#@root=File.dirname(File.absolute_path(__FILE__)); # default root
 		@root=nil;

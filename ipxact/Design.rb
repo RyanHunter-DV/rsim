@@ -20,8 +20,7 @@ class Design < IpxData
 
 	## initialize(vlnv), description
 	def initialize(vlnv,opts={}); ##{{{
-		#puts "#{__FILE__}:start initialize(vlnv) ..."
-		super(:id=>vlnv)
+		super(:id=>vlnv,:ipxact=>:design)
 		@__iname__='design';
 		@parent=nil;
 		@instances={};

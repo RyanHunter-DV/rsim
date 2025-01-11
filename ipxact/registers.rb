@@ -3,7 +3,7 @@
 RegBlock, register block 
 """
 require 'ipxact/IpxData.rb'
-class RegBlock < IpxData ##{{{
+class RegBlock < IpxData
 	attr :__ba__; # base address
 	attr :__files__;
 	attr :__regs__;
@@ -12,8 +12,7 @@ class RegBlock < IpxData ##{{{
 
 	## initialize(id), description
 	def initialize(id,c); ##{{{
-		#puts "#{__FILE__}:start initialize(id) ..."
-		super(:id=>id);
+		super(:id=>id,:ipxact=>:regblock);
 		@__ba__ =0x0;
 		@__regs__ = {};
 		@__c__=c;
@@ -74,21 +73,20 @@ private
 			#TODO, wait for execption Rsim.exception(NodeE,:reason => "register file #{fn} not exists");
 		end
 	end ##}}}
-end ##}}}
+end
 
 """
 # Object description:
 Register, for register description
 """
-class Register < IpxData ##{{{
+class Register < IpxData
 	attr :container;
 	
 	attr :__off__; ## offset
 	attr :__fields__;
 	## initialize(name,c), description
 	def initialize(name,c); ##{{{
-		#puts "#{__FILE__}:start initialize(name,c) ..."
-		super(:id=>name);
+		super(:id=>name,:ipxact=>:register);
 		@container=c;
 		@__off__=0x0;
 		@__fields__={};
@@ -118,13 +116,13 @@ class Register < IpxData ##{{{
 			f.display;
 		end
 	end ##}}}
-end ##}}}
+end
 
 """
 # Object description:
 RegisterField, descript the register field data
 """
-class RegisterField < IpxData ##{{{
+class RegisterField < IpxData
 
 	attr :__access__;
 	attr :__bo__; # bit offset.
@@ -134,7 +132,7 @@ class RegisterField < IpxData ##{{{
 	## initialize(name,acc,off,bits,v), description
 	def initialize(name,acc,off,bits,v); ##{{{
 		#puts "#{__FILE__}:start initialize(name,acc,off,bits,v) ..."
-		super(:id=>name);
+		super(:id=>name,:ipxact=>:registerField);
 		access(acc);
 		offset(off);
 		width(bits);
@@ -176,4 +174,4 @@ private
 		@__rv__=0;
 		@__rv__=v unless v==nil or v<0;
 	end ##}}}
-end ##}}}
+end

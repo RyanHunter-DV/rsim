@@ -16,7 +16,7 @@ class BusInterface <IpxData
 	## initialize(id), description
 	def initialize(id,ref); ##{{{
 		#puts "#{__FILE__}:start initialize(id) ..."
-		super(:id=>id);
+		super(:id=>id,:ipxact=>:busInterface);
 		@__abs__=ref.to_s;
 		@__pname__=nil;
 		@consumers = {};

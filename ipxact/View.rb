@@ -9,7 +9,7 @@ class ComponentView < IpxData
 	attr :container;
 	## initialize(name), 
 	def initialize(id,from); ##{{{
-		super(:id=>id);
+		super(:id=>id,:ipxact=>:view);
 		@__fs__={};
 		@container=from;
 	end ##}}}

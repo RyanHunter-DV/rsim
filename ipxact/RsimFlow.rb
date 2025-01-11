@@ -19,7 +19,7 @@ class RsimFlow < IpxData
 	attr :__args__; # args for generator chain scope
 	attr :__updated__;
 	def initialize(name); ##{{{
-		super(:id=>name)
+		super(:id=>name,:ipxact=>:chain)
 		@steps={};@selected={};
 		@jobs={};
 		@__updated__=false;

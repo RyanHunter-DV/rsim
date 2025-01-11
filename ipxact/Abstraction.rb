@@ -6,14 +6,14 @@ the abstraction object used to store information related to the abstraction defi
 require 'ipxact/IpxData.rb'
 require 'ipxact/IpxParameter.rb'
 require 'ipxact/WirePort.rb'
-class AbstractionDefinition < IpxData ##{{{
+class AbstractionDefinition < IpxData
 	
 	attr :__params__;
 	attr :__ports__;
 	attr :__busref__;
 	## initialize, description
 	def initialize(id); ##{{{
-		super(:id=>id);
+		super(:id=>id,:ipxact=>:abstraction);
 		@__params__={};
 		@__ports__={:wire=>[],:trans=>[]};
 	end ##}}}
@@ -59,4 +59,4 @@ class AbstractionDefinition < IpxData ##{{{
 		end
 	end ##}}}
 
-end ##}}}
+end

@@ -55,6 +55,8 @@ class ComponentInstance < Component
 		cn=@id.gsub(/\//,'_');
 		@outhome=File.join(@config.outhome,'components',cn+'-'+@__iname__);
 		@view.selectGenerator
+
+		_recordData;
 	end ##}}}
 	## selectView(vn), choose the view object according to the view name, if view name is nil
 	# the views shall only have one item, or else will report NodeE.
@@ -65,5 +67,21 @@ class ComponentInstance < Component
 		@view=vs;
 	end ##}}}
 private
+
+	## _recordData, record component metadata
+	def _recordData ##{{{
+		@metadata.record(:node,@root);
+		@metadata.record(:outhome,@outhome);
+		@metadata.record(:config,@config.id);
+		# recording views
+		@metadata.record(:views,{});
+		views.each do |v|
+			#TODO, how to record hierarchical key and values?
+			@metadata.record(v.id,
+		end
+
+
+		@metadata.write(@outhome);
+	end ##}}}
 
 end
