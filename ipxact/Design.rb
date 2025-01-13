@@ -100,8 +100,24 @@ class Design < IpxData
 		end
 	end ##}}}
 
+	## finalize, call to dump metadata
+	#def finalize ##{{{
+	#	_dumpMetaData;
+	#end ##}}}
 
 private
+	## _dumpMetaData, dump the config data information
+#TODO, design has no outhome, so is it necessary to dump metadata?
+	#def _dumpMetaData ##{{{
+	#	#@metadata.record(:node,@root);
+	#	@metadata.record(:outhome,@outhome);
+	#	#@metadata.record(:design,@design.id);
+	#	@metadata.record(:instances,{});
+	#	@instances.each_pair do |n,o|
+	#		@metadata.record(n,o.id,:instances);
+	#	end
+	#	@metadata.write(@outhome);
+	#end ##}}}
 
 	## _adhocConnect(**pairs), description
 	def _adhocConnect(**pairs); ##{{{

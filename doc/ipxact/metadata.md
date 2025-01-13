@@ -66,4 +66,37 @@ data format of component type will be:
 ```
 
 # design type
-#TBD
+```ruby
+{
+	:type => :design,
+	:vlnv => 'xxx',
+	:outhome=>'xxx',
+	:instances => {
+		'instance name' => 'component vlnv'
+		...
+	}
+}
+```
+
+# config type
+```ruby
+{
+	:type => :config,
+	:vlnv => 'xxx',
+	:node => 'xxx',
+	:outhome => 'xxx",
+	:design => 'design vlnv',
+	:needs => {
+		'instance name' => 'component vlnv',
+		...
+	}
+}
+```
+
+# Architecture on metadata program
+This chapter depicts how to develop the rsim tool to support recording and writing metadata.
+1. record hierarchically
+2. write the data directly, since the data is used by program, so it's not necessary to make data readable.
+## record hierarchically
+Every ipxact object will have a metadata class instance which will be called by the object to record data like: `metadata.record(key,value,parent)`, it supports only one depth of keys. and call method of `metadata` will return the hash which stores current object.
+#MARKER

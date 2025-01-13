@@ -24,6 +24,7 @@ class ComponentView < IpxData
 	# find fileSet object in container
 	def fileSet(refn); ##{{{
 		@__fs__[refn.to_s]=nil;
+		@metadata.add(:fileSet,refn.to_s);
 	end ##}}}
 
 	## generator(n,c,**opts), specify generator reference for current view
@@ -33,6 +34,7 @@ class ComponentView < IpxData
 		@generator[:name]=n.to_s;
 		@generator[:chain]=c.to_s;
 		@generator[:options]=opts;
+		@metadata.record(:generator,@generator);
 	end ##}}}
 	#}
 
@@ -41,19 +43,10 @@ class ComponentView < IpxData
 		_linkfs(from) if t==:fileSet;
 	end ##}}}
 
-
-	## display, 
-	# print internal data formats of view component
-	def display; ##{{{
-		#puts "#{__FILE__}:start display ..."
-		puts "type: ComponentView";
-		puts "- id: #{id}";
-		puts "- fileSets-> Array"
-		puts "["
-		@files.each do |f|
-			puts "-- #{f}";
-		end
-		puts "]"
+	## metadata(t=:ruby), call metadata directly will return the data information to be recorded
+	# by default use ruby type.
+	def metadata(t=:ruby) ##{{{
+		@metadata.dataString(t);
 	end ##}}}
 	
 	## selectGenerator, call the specified chain's select api and setup the generator names and options

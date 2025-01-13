@@ -73,6 +73,18 @@ class Config <IpxData
 			Rsim.info("finalize component(#{o.id}) ...",3);
 			o.finalize;
 		end
+		_dumpMetaData;
 	end ##}}}
 private
+	## _dumpMetaData, dump the config data information
+	def _dumpMetaData ##{{{
+		#@metadata.record(:node,@root);
+		@metadata.record(:outhome,@outhome);
+		@metadata.record(:design,@design.id);
+		@metadata.record(:needs,{});
+		@needs.each_pair do |n,o|
+			@metadata.record(n,o.id,:needs);
+		end
+		@metadata.write(@outhome);
+	end ##}}}
 end

@@ -6,11 +6,10 @@ class IpxData
 
 	attr_accessor :id;
 	attr_accessor :elaborated;
-	attr_accessor :metadata;
 
 	attr :__evals__;
-
 	attr :__type__; # object type
+	attr :metadata; # internal metadata object
 
 	## initialize(opts={}), 
 	def initialize(opts={}); ##{{{
