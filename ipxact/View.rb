@@ -34,7 +34,6 @@ class ComponentView < IpxData
 		@generator[:name]=n.to_s;
 		@generator[:chain]=c.to_s;
 		@generator[:options]=opts;
-		@metadata.record(:generator,@generator);
 	end ##}}}
 	#}
 
@@ -46,7 +45,7 @@ class ComponentView < IpxData
 	## metadata(t=:ruby), call metadata directly will return the data information to be recorded
 	# by default use ruby type.
 	def metadata(t=:ruby) ##{{{
-		@metadata.dataString(t);
+		return @metadata.dataString(t);
 	end ##}}}
 	
 	## selectGenerator, call the specified chain's select api and setup the generator names and options
@@ -57,11 +56,14 @@ class ComponentView < IpxData
 		opts=@generator[:options];
 		opts[:src] = _sources;
 		opts[:tar] = @container.outhome;
-		Rsim.ipxact.select(cn,gn,**opts);
+		opts[:from]= 'component';
+		Rsim.ipxact.select(cn,%Q|#{gn}-#{@container.instname}|,**opts);
+		@metadata.record(:generator,@generator);
 	end ##}}}
 private
 	## _buildDefaultGenerator, build default link generator unless as specified by user
 	def _buildDefaultGenerator ##{{{
+		Rsim.info("no generator selected by #{@container.id}::#{@id}, enable default link generator",3);
 		@generator={:name=>'link',:chain=>'build',:options=>{}};
 	end ##}}}
 	## _sources, return all source files according to fileSet

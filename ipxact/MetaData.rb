@@ -32,9 +32,12 @@ class MetaData
 	## add(k,v), call add will treat the key is an array and will get the variable 
 	# and add to new value.
 	def add(k,v) ##{{{
-		self.instance_variable_set("@#{k}",[]) unless self.instance_variable_defined?("@#{k}");
+		unless self.instance_variable_defined?("@#{k}")
+			self.instance_variable_set("@#{k}",[]);
+			@__fields__<<k.to_s;
+		end
 		c=self.instance_variable_get("@#{k}");
-		c.append(v);
+		c << v;
 	end ##}}}
 	## dataString(t=:ruby), return hash based data format for ruby
 	def dataString(t=:ruby) ##{{{
@@ -48,6 +51,7 @@ class MetaData
 	## write, write recordd data into metadata file in the given path
 	def write(path) ##{{{
 		ds=self.dataString;
+		Rsim.os.mkdir(path,:recursive=>true) unless Rsim.os.exists?(:dir,path);
 		fh=File.open(File.join(path,@filename),'w');
 		fh.write(ds);
 		fh.close;

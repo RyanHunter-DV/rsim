@@ -15,7 +15,7 @@ flow :buildflow do
 	generator :link,:selected=>false do ##{{{
 		phase 2.0
 		action '/bin/ln' do
-			Rsim.info("execute generator buildflow:link");
+			Rsim.info("execute generator buildflow:link for #{option[:tar]}");
 			@root= option[:tar];
 			option[:src].each do |s|
 				Rsim.info("given src file: #{s}",9);

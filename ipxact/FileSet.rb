@@ -27,8 +27,10 @@ class FileSet < IpxData
 
 	# support commands
 	## root(r), set root dir to search for source and include files
+	# root shall be based on current container node.rh
 	def root(r); ##{{{
-		d= eval %Q|"#{r}"|;
+		#d= eval %Q|"#{r}"|;
+		d=File.join(@container.root,r);
 		@root=File.absolute_path(d);
 		Rsim.info("getting root: #{@root}",9);
 	end ##}}}

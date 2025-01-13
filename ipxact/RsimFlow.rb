@@ -63,6 +63,7 @@ class RsimFlow < IpxData
 			opts.delete(:selected);
 		end
 		@steps[step.name] = step;
+		opts[:from]='command';
 		select(step.name,opts) if selected==true;
 	end ##}}}
 	## command(name,&block), define a new command(API) for
@@ -111,6 +112,8 @@ class RsimFlow < IpxData
 	## select(g), select generator name
 	# select a generator to be executed with specific args
 	# this method is similar of calling the execute command, 
+	# for component generators, which may execute the same generator by different components,
+	# so the generator name shall be declared as: <generator>-<component>
 	def select(gn,opts={}); ##{{{
 		opts[:executed]=false unless opts.has_key?(:executed);
 		@selected[gn]= opts;
@@ -121,12 +124,14 @@ private
 	# create a new generator executor if the given generator is selected
 	def _pickupExecutor(**eOpts); ##{{{
 		ges=[];
-		@selected.each_pair do |name,opts|
+		@selected.each_pair do |gn,opts|
 			next if opts[:executed];
 			# 1.create new generator executor
+			name=gn;
+			name=gn.split(/-/)[0] if opts[:from]=='component';
 			Rsim.exception(NodeE,:reason=>"generator #{name} not defined") unless @steps.has_key?(name);
 			# 2.copy key information from generator
-			e=GeneratorExecutor.new(name,@steps[name]);
+			e=GeneratorExecutor.new(gn,@steps[name]);
 			# 3.setup options in selected opts
 			# 4.setup extra options from execute call.
 			eOpts.each_pair do |k,v|

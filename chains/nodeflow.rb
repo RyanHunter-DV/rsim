@@ -38,18 +38,76 @@ flow :nodeflow do
 		c.instance_eval &block;
 		Rsim.ipxact.register(c,:config);
 	end
+	command :rhload do |fname,visible=false|
+		# used by nested rhload
+		unless (/\.rh/=~fname or /\.rb/=~fname)
+			fname += '.rh';
+		end
+		path = Rsim.loadingPath;
+		puts "Error, loading path not set to load #{fname}" unless path;
+		Rsim.info("loading path(#{path}) for node #{fname}",9);
+		## checking if the caller give an relative path
+		## load by relative path first
+		f = File.join(path,fname);
+		if Rsim.os.fileExists?(f)
+			## puts "DEBUG, load: #{f}";
+			#load f;
+			fh=File.open(f,'r');
+			Rsim.loadingPath File.dirname(File.absolute_path(f));
+			Rsim.loadingNode fh;
+			Rsim.loadContext.instance_eval fh.readlines().join("");
+			fh.close;
+			puts "file #{File.absolute_path(f)} processed" if visible==true;
+		elsif Rsim.os.fileExists?(fname)
+			## checking if the caller gives an abasolute path
+			## load directly with the given path+name
+			## load directly
+			## dir = File.dirname(File.absolute_path(fname));
+			## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
+			## puts "DEBUG, load: #{File.absolute_path(fname)}";
+			#load fname;
+			fh=File.open(fname,'r');
+			Rsim.loadingPath File.dirname(File.absolute_path(fname));
+			Rsim.loadingNode fh;
+			Rsim.loadContext.instance_eval fh.readlines().join("");
+			fh.close;
+			info("file #{File.absolute_path(fname)} processed",1) if visible;
+		else
+			## if not exists by the path, searching with LOAD_PATH
+			## load from RUBYLIB
+			loaded=false;
+			$LOAD_PATH.each do |p|
+				full = File.join(p,fname);
+				if Rsim.os.fileExists?(full)
+					## push dir to LOAD_PATH
+					## dir = File.dirname(File.absolute_path(full));
+					## $LOAD_PATH << dir unless $LOAD_PATH.include?(dir);
+					## puts "DEBUG, load: #{full}";
+					#load full;
+					fh=File.open(full,'r');
+					Rsim.loadingPath File.dirname(File.absolute_path(full));
+					Rsim.loadingNode fh;
+					Rsim.loadContext.instance_eval fh.readlines().join("");
+					fh.close;
+					info("file #{File.absolute_path(full)} processed",1) if visible;
+					loaded=true;break;
+				end
+			end
+			Rsim.exception(NodeE,:reason=>"file not exists in search path(#{fname})") if not loaded;
+		end
+	end
 	# the flow that support loading IP-XACT compatible nodes.
 	generator :loading,:selected=>true do ##{{{
 		action do
 			Rsim.loadContext self;
 			Rsim.info("load context: #{Rsim.loadContext}")
 			option[:entries].each do |e|
-				rhload e;
+				global_rhload e;
 			end
 		end
 	end ##}}}
 end
-def rhload(fname,visible=false)
+def global_rhload(fname,visible=false)
 	#failed = 1;success = 0;
 	## if visible in arg is false, then set by Rhload's visible config
 	## visible = @visible if visible==false;
@@ -57,11 +115,11 @@ def rhload(fname,visible=false)
 	unless (/\.rh/=~fname or /\.rb/=~fname)
 		fname += '.rh';
 	end
-	stacks = (caller(1)[0]).split(':');
-	if stacks==nil
-		Rsim.exception(NodeE,:reason=>"Error, cannot get caller, no load will execute");
-	end
-	path = File.dirname(File.absolute_path(stacks[0]));
+	#stacks = (caller(1)[0]).split(':');
+	#if stacks==nil
+	#	Rsim.exception(NodeE,:reason=>"Error, cannot get caller, no load will execute");
+	#end
+	path = Rsim.ui.options[:STEM];
 	## checking if the caller give an relative path
 	## load by relative path first
 	f = File.join(path,fname);
@@ -69,6 +127,7 @@ def rhload(fname,visible=false)
 		## puts "DEBUG, load: #{f}";
 		#load f;
 		fh=File.open(f,'r');
+		Rsim.loadingPath File.dirname(File.absolute_path(f));
 		Rsim.loadingNode fh;
 		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
@@ -82,6 +141,7 @@ def rhload(fname,visible=false)
 		## puts "DEBUG, load: #{File.absolute_path(fname)}";
 		#load fname;
 		fh=File.open(fname,'r');
+		Rsim.loadingPath File.dirname(File.absolute_path(fname));
 		Rsim.loadingNode fh;
 		Rsim.loadContext.instance_eval fh.readlines().join("");
 		fh.close;
@@ -99,6 +159,7 @@ def rhload(fname,visible=false)
 				## puts "DEBUG, load: #{full}";
 				#load full;
 				fh=File.open(full,'r');
+				Rsim.loadingPath File.dirname(File.absolute_path(full));
 				Rsim.loadingNode fh;
 				Rsim.loadContext.instance_eval fh.readlines().join("");
 				fh.close;

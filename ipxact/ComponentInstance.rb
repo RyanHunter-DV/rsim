@@ -31,6 +31,10 @@ class ComponentInstance < Component
 		p=@parent.fullname+'.'+@__iname__;
 		return @__iname__;
 	end ##}}}
+	## instname, return the instance name of this component
+	def instname ##{{{
+		return @__iname__;
+	end ##}}}
 
 	## elaborate, 
 	def elaborate; ##{{{
@@ -77,7 +81,6 @@ private
 		# recording views
 		@metadata.record(:views,{});
 		views.each do |v|
-			#TODO, how to record hierarchical key and values?
 			@metadata.record(v.id,v.metadata,:views);
 		end
 		@metadata.record(:selectView,@view.id);

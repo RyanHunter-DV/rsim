@@ -9,7 +9,7 @@ module Rsim
 	@ipxact=nil;@ui=nil;
 
 	@loadContext=nil; # current loading context
-	@node=nil; # current loading node file
+	@node={}; # current loading node file
 
 	FINTERNAL = 1;
 
@@ -117,7 +117,12 @@ module Rsim
 	## self.loadingNode(f=nil), description
 	#TODO, set up current loading node context
 	def self.loadingNode(f=nil); ##{{{
-		return @node unless f;
-		@node= f;
+		return @node[:name] unless f;
+		@node[:name]= f;
+	end ##}}}
+	## self.loadingPath(p=nil), set or get current loading file path
+	def self.loadingPath(p=nil) ##{{{
+		return @node[:path] unless p;
+		@node[:path]= p;
 	end ##}}}
 end

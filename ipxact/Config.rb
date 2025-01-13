@@ -45,6 +45,10 @@ class Config <IpxData
 	def design(r) ##{{{
 		@design=r.to_s;
 	end ##}}}
+	## simulator(n,&block), specify simulator and options that necessary for it
+	def simulator(n,&block) ##{{{
+		#TODO, not ready yet.
+	end ##}}}
 	##### }
 
 	## elaborate, 
