@@ -90,7 +90,13 @@ private
 				if (fmt[:default].is_a?(FalseClass) or fmt[:default.is_a?(TrueClass)])
 					block = Proc.new {
 						@options[fmt[:name]] = true;
-						self.instance_eval &fmt[:execute] if fmt.has_key?(:execute);
+						if fmt.has_key?(:execute)
+							if fmt[:execute].is_a?(String)
+								self.instance_eval fmt[:execute];
+							else
+								self.instance_eval &fmt[:execute];
+							end
+						end
 					};
 				else
 					block = Proc.new {|v|
@@ -106,7 +112,6 @@ private
 
 	## _initOptionFormat, description
 	def _initOptionFormat; ##{{{
-		#puts "#{__FILE__}:start _initOptionFormat ..."
 		@formats = [
 			{
 				:name=>:version,:sflag=>'-V',:lflag=>'--version',:default=>false,
@@ -114,7 +119,7 @@ private
 			},
 			{
 				:name=>:help,:sflag=>'-h',:lflag=>'--help',:default=>false,
-				:execute => '@helpMessage=opt',
+				:execute => '@helpMessage=opt;puts opt;exit 0',
 				:display=>'display help message'
 			},
 			{
@@ -135,7 +140,7 @@ private
 			},
 			{
 				:name=>:execute,:sflag=>'-e',:lflag=>'--execute=COMMAND',:default=>nil,
-				:display=>%Q|set command for executing\n\texamples:\n\t\trsim -e 'buildflow(ConfigName)'\n\t\trsim -e 'runflow(SuiteName/TestName,skip=>compile)'|
+				:display=>%Q|set command for executing\n\texamples:\n\t\trsim -e 'build(ConfigName)'\n\t\trsim -e 'sim(SuiteName/TestName)'|
 			},
 			{
 				:name=>:skip,:sflag=>'-s',:lflag=>'--skip=FLOWNAME',:default=>'',
@@ -170,7 +175,7 @@ private
 	# -e 'compile(ConfigName)', this is to run sim::compile for certain config, #TODO
 	def _splitCommandName(cmdS); ##{{{
 		Rsim.info("cmdS: #{cmdS}",9)
-		ptrn=Regexp.new(' *(\w+) *\((\w+)\) *');
+		ptrn=Regexp.new(' *(\w+) *\(([\w\/]+)\) *');
 		md=ptrn.match(cmdS);
 		splitted=[];
 		if md
@@ -190,6 +195,11 @@ private
 		command[:name]=splitted[0];
 		if command[:name]=='build'
 			command[:opts][:config]=splitted[1];
+		elsif command[:name]=='sim'
+			s=splitted[1].split('/');
+			Rsim.exception(UIE,:reason=>"invalid command format(#{splitted[1]})") unless s.length==2;
+			command[:opts][:suite]=s[0];
+			command[:opts][:test]=s[1];
 		end
 		Rsim.info("get command(#{command})")
 		#TODO, for other flows.
@@ -247,7 +257,12 @@ private
 		case(target[:name])
 		when 'build'
 			_setupNode unless skipped?('node');
-			_setupBuild(target[:opts][:config]) unless skipped?('build');
+			_setupBuild(:config=>target[:opts][:config]) unless skipped?('build');
+		when 'sim'
+			_setupNode unless skipped?('node');
+			s=target[:opts][:suite];t=target[:opts][:test];
+			_setupBuild(:suite=>s,:test=>t) unless skipped?('build');
+			_setupSim(:suite=>s,:test=>t);
 		#TODO, more
 		end
 		# setup includes
@@ -275,10 +290,16 @@ private
 	# options:
 	# :skip
 	# :config
-	def _setupBuild(cn) ##{{{
+	def _setupBuild(opts={}) ##{{{
 		s=skipSteps('build');
-		opts={:skip=>s,:config=>cn};
+		opts[:skip]=s;
 		@chains[:names][:build]=opts;
+	end ##}}}
+	## _setupSim(), setup sim flow with given options
+	def _setupSim(opts={}) ##{{{
+		s=skipSteps('sim');
+		opts[:skip]=s;
+		@chains[:names][:sim]=opts;
 	end ##}}}
 
 	## _addSkipSteps(s), pattern process the input string of skip steps and append to @skipflows

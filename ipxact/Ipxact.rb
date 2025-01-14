@@ -89,6 +89,7 @@ class Ipxact
 		etype(:component) if @pool.has_key?(:component);
 		etype(:design) if @pool.has_key?(:design);
 		etype(:config) if @pool.has_key?(:config);
+		etype(:suite) if @pool.has_key?(:suite);
 	end ##}}}
 	## etype(t), elaborate according to different ipx type
 	def etype(t); ##{{{
@@ -99,14 +100,21 @@ class Ipxact
 		end
 	end ##}}}
 	## finalize, description
-	def finalize; ##{{{
-		@pool.each_pair do |t,os|
-			next if t==:generatorChain;
-			os.each_value do |o|
-				Rsim.info("finalizing ipx #{t}:#{o.id}");
-				o.finalize;
-			end
+	def finalize(cn); ##{{{
+		o=@pool[:config][cn];
+		Rsim.exception(UIE,:reason=>"config #{cn} not declared") unless o;
+		Rsim.info("finalizing config: #{o.id}");
+		o.finalize;
+
+		# all test suites required to be finalized
+		os=@pool[:suite];
+		os.each_value do |o|
+			Rsim.info("finalizing ipx suite:#{o.id}");
+			o.finalize;
 		end
+		#@pool.each_pair do |t,os|
+		#	next if t==:generatorChain;
+		#end
 	end ##}}}
 private
 end

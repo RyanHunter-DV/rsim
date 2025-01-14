@@ -38,6 +38,12 @@ flow :nodeflow do
 		c.instance_eval &block;
 		Rsim.ipxact.register(c,:config);
 	end
+	command :suite do |name,opts={},block|
+		info("command: suite(#{name},#{opts},#{block})",9);
+		c=TestSuite.new(name);
+		c.instance_eval &block;
+		Rsim.ipxact.register(c,:suite); # tests are all inside the suite
+	end
 	command :rhload do |fname,visible=false|
 		# used by nested rhload
 		unless (/\.rh/=~fname or /\.rb/=~fname)

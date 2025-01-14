@@ -38,6 +38,7 @@ Following are concepts and ideas that may not achived in G2 version: #TBD
 	1. test node
 2. env building flow.
 # simulation flow
+Details in [[doc/chains/SimFlow.md]]
 This flow will provide common options to organize the eda simulators to compile, elaborate and sim, while also supports manual options.
 - [ ] run args from test node
 - [ ] compile/elab options from config node

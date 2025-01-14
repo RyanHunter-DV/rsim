@@ -125,3 +125,17 @@ select another chain or a component generator if the specified component has mul
 feature of selecting another generatorChain is currently not supported, #TBD 
 use select to pick up required generators in order
 examples in [[buildflow]]
+
+# suite
+Command to build test suite data info, in which will have descriptions to build up a test by which can be invoked to start a test.
+## template
+To declare a new test template, whose information can be derived by the tests. The commands are incommon within the test and template, if test has duplicated command setting than the derived template, then the config will cover the template's.
+### config
+specify the config used by current test/template
+### flow
+specify flow, used to run this test/template, which gives the execute name
+### args
+to specify run args to given flow.
+
+## test
+Describe a new test, detailed commands are defined in template

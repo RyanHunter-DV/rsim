@@ -9,7 +9,17 @@ flow :buildflow do
 	generator :finalize,:selected=>true do ##{{{
 		action do
 			Rsim.info("execute generator buildflow:finalize");
-			Rsim.ipxact.finalize;
+			cn=nil;
+			cn=option[:config] if option.has_key?(:config);
+			if cn==nil
+				s=Rsim.ipxact.find(option[:suite],:suite);
+				Rsim.exception(NodeE,:reason=>"test suite(#{option[:suite]}) not declared") unless s;
+				t=s.find(option[:test],:test);
+				Rsim.exception(NodeE,:reason=>"test (#{option[:test]}) not declared") unless t;
+				cn=t.config;
+				Rsim.info("getting config(#{cn}) from test(#{t.id})",9);
+			end
+			Rsim.ipxact.finalize(cn);
 		end
 	end ##}}}
 	generator :link,:selected=>false do ##{{{

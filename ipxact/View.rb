@@ -78,7 +78,7 @@ private
 	def _linkfs(from) ##{{{
 		@__fs__.each_key do |n|
 			o=from.find(:fileSet,n);
-			Rsim.exception(:NodeE,:reason=>"fileSet(#{n}) not registered in component(#{from.id})") unless o;
+			Rsim.exception(NodeE,:reason=>"fileSet(#{n}) not registered in component(#{from.id})") unless o;
 			@__fs__[n]=o;
 		end
 	end ##}}}

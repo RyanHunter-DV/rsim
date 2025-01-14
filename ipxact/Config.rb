@@ -16,6 +16,7 @@ class Config <IpxData
 	attr :needs;
 	# before elaborate is reference name, after elaborate is object
 	attr :design;
+	attr :eda;
 
 	attr_accessor :outhome;
 
@@ -46,8 +47,12 @@ class Config <IpxData
 		@design=r.to_s;
 	end ##}}}
 	## simulator(n,&block), specify simulator and options that necessary for it
-	def simulator(n,&block) ##{{{
+	def simulator(n=nil,&block) ##{{{
 		#TODO, not ready yet.
+		return @eda unless n;
+		@eda={};
+		@eda[:name]=n.to_s.capitalize;
+		@eda[:exe]= block;
 	end ##}}}
 	##### }
 
@@ -55,10 +60,10 @@ class Config <IpxData
 	# 1.eval the node block
 	def elaborate; ##{{{
 		Rsim.info("elaborating config #{@id} ...",3);
-		Rsim.exception(:NodeE,:reason=>'no design reference specified by config') unless @design;
+		Rsim.exception(NodeE,:reason=>'no design reference specified by config') unless @design;
 		n=@design;
 		@design=Rsim.ipxact.find(n,:design);
-		Rsim.exception(:NodeE,:reason=>"cannot find design ref(#{n})") unless @design;
+		Rsim.exception(NodeE,:reason=>"cannot find design ref(#{n})") unless @design;
 		os={};
 		@needs.each_pair do |name,view|
 			c=@design.send(name.to_sym);

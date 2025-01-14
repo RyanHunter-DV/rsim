@@ -1,5 +1,4 @@
-$rsim_global_loadpath=File.dirname(File.absolute_path(__FILE__));
-$LOAD_PATH<<$rsim_global_loadpath;
+$LOAD_PATH<<File.dirname(File.absolute_path(__FILE__));
 
 require 'MetaData';
 require 'IpxData';
@@ -13,5 +12,8 @@ require 'RsimFlow';
 
 require 'Ipxact';
 
+require 'tests/entry';
 
-$LOAD_PATH.delete($rsim_global_loadpath);
+require 'Simulator';
+
+$LOAD_PATH.delete(File.dirname(File.absolute_path(__FILE__)));

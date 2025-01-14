@@ -32,6 +32,8 @@ class GeneratorExecutor
 	end ##}}}
 	## exe, return definition's exec name
 	def exe ##{{{
+		# support override by the action block
+		return option[:exec] if option.has_key?(:exec);
 		return @definition.exec;
 	end ##}}}
 
