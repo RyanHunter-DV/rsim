@@ -33,6 +33,7 @@ flow :buildflow do
 				t=File.join(option[:tar],basename)
 				Rsim.os.mkdir(option[:tar],:recursive=>true) unless Rsim.os.exists?(:dir,option[:tar]);
 				Rsim.info("generator(link) action command: #{exe} -s #{s} #{t}");
+				Rsim.ipxact.config.filelist t;
 				command %Q|#{exe} -s #{s} #{t}|;
 			end
 		end
@@ -47,6 +48,7 @@ flow :buildflow do
 				basename=File.basename(s);
 				t=File.join(option[:tar],basename)
 				Rsim.os.mkdir(option[:tar],:recursive=>true) unless Rsim.os.exists?(:dir,option[:tar]);
+				Rsim.ipxact.config.filelist t;
 				command %Q|#{exe} #{s} #{t}|;
 			end
 		end

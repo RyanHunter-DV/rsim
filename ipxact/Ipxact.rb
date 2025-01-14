@@ -6,6 +6,8 @@ class Ipxact
 	attr :chains;
 	attr :searchPath;
 
+	attr_accessor :config;
+
 	## initialize(ui), init ipxact system
 	# 1.attr init
 	# 2.load required chain definitions
@@ -104,6 +106,7 @@ class Ipxact
 		o=@pool[:config][cn];
 		Rsim.exception(UIE,:reason=>"config #{cn} not declared") unless o;
 		Rsim.info("finalizing config: #{o.id}");
+		@config=o;
 		o.finalize;
 
 		# all test suites required to be finalized

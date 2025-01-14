@@ -17,6 +17,7 @@ class Config <IpxData
 	# before elaborate is reference name, after elaborate is object
 	attr :design;
 	attr :eda;
+	attr :rawfiles;
 
 	attr_accessor :outhome;
 
@@ -25,6 +26,7 @@ class Config <IpxData
 		@needs={};@design=nil;
 		@nodes={};
 		super(:id=>vlnv,:ipxact=>:config);
+		@rawfiles=[];
 	end ##}}}
 
 	## components, return all needed components
@@ -83,6 +85,12 @@ class Config <IpxData
 			o.finalize;
 		end
 		_dumpMetaData;
+	end ##}}}
+
+	## filelist(f), called by buildflow, to setup basic filelist files
+	def filelist(f=nil) ##{{{
+		return @rawfiles unless f;
+		@rawfiles << f;
 	end ##}}}
 private
 	## _dumpMetaData, dump the config data information
