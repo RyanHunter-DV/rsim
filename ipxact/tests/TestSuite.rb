@@ -42,12 +42,12 @@ class TestSuite < IpxData
 		@tests.each_value do |test|
 			test.link(:template,self);
 		end
+		@tests.each_value do |test|
+			test.link(:config,Rsim.ipxact);
+		end
 	end ##}}}
 
 	## finalize, calling finalize of different templates reference and tests reference
 	def finalize ##{{{
-		@tests.each_value do |test|
-			test.link(:config,Rsim.ipxact);
-		end
 	end ##}}}
 end

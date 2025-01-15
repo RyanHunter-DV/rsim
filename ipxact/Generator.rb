@@ -17,6 +17,7 @@ class Generator
 	attr :__params__;
 	attr :__phase__;
 	attr :__action__;
+	attr :skips;
 	## initialize(name), 
 	def initialize(n,c); ##{{{
 		#puts "#{__FILE__}:start initialize(name) ..."
@@ -30,6 +31,7 @@ class Generator
 		@context=c;
 		@precedences=[];
 		@__phase__ = 0.0;
+		@skips=[];
 	end ##}}}
 
 	## action(&block), declare the detailed action of this step
@@ -45,6 +47,17 @@ class Generator
 	def phase(p); ##{{{
 		return @__phase__ if p==nil;
 		@__phase__ = p;
+	end ##}}}
+	## skip(**s), skip steps, once in action block got the skipped option, need skip it
+	def skip(*s) ##{{{
+		@skips.append(*s);
+	end ##}}}
+	## skip?(s=[]), according to input s array, if any of @skips matched the s item, then retru true
+	def skip?(s=[]) ##{{{
+		s.each do |v|
+			return true if @skips.include?(v);
+		end
+		return false;
 	end ##}}}
 	## parameter(**pairs), 
 	# record parameter name and default value in generator definition class

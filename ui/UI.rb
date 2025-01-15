@@ -69,8 +69,9 @@ class UI
 		s=[];
 		chain=chain.to_s;
 		@skipflows.each do |sk|
-			s << sk.sub(/#{chain}::/,'') if /#{chain}/ =~ sk;
+			s << sk.sub(/#{chain}::/,'').to_sym if /#{chain}/ =~ sk;
 		end
+		Rsim.info("get skipped steps(#{s})",9);
 		return s;
 	end ##}}}
 private
@@ -256,11 +257,11 @@ private
 		target=_setupUserCommands(user);
 		case(target[:name])
 		when 'build'
-			_setupNode unless skipped?('node');
+			_setupNode(:config=>target[:opts][:config]) # node flow cannot be skipped
 			_setupBuild(:config=>target[:opts][:config]) unless skipped?('build');
 		when 'sim'
-			_setupNode unless skipped?('node');
 			s=target[:opts][:suite];t=target[:opts][:test];
+			_setupNode(:suite=>s,:test=>t); # node flow cannot be skipped
 			_setupBuild(:suite=>s,:test=>t) unless skipped?('build');
 			_setupSim(:suite=>s,:test=>t);
 		#TODO, more
@@ -281,9 +282,10 @@ private
 		return @options[:ROOT].split(/;/);
 	end ##}}}
 	## _setupNode, setup the node flow requirements, :skip options if has node step skipped
-	def _setupNode ##{{{
+	def _setupNode(opts={}) ##{{{
 		s=skipSteps('node');
-		opts={:skip=>s,:entries=>_parseNodeEntries};
+		opts[:skip]=s;
+		opts[:entries]=_parseNodeEntries;
 		@chains[:names][:node]=opts;
 	end ##}}}
 	## _setupBuild, setup the build flow requirements,
@@ -299,6 +301,8 @@ private
 	def _setupSim(opts={}) ##{{{
 		s=skipSteps('sim');
 		opts[:skip]=s;
+		opts[:skip] << :build if skipped?('build');
+		Rsim.info("sim options(#{opts})",9);
 		@chains[:names][:sim]=opts;
 	end ##}}}
 

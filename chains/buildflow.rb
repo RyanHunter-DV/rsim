@@ -1,14 +1,8 @@
 flow :buildflow do
 	exe :build
-	generator :elaborate,:selected=>true do ##{{{
-		action do
-			Rsim.info("execute generator buildflow:elaborate");
-			Rsim.ipxact.elaborate;
-		end
-	end ##}}}
 	generator :finalize,:selected=>true do ##{{{
 		action do
-			Rsim.info("execute generator buildflow:finalize");
+			Rsim.info("start generator: build:finalize");
 			cn=nil;
 			cn=option[:config] if option.has_key?(:config);
 			if cn==nil
@@ -16,16 +10,16 @@ flow :buildflow do
 				Rsim.exception(NodeE,:reason=>"test suite(#{option[:suite]}) not declared") unless s;
 				t=s.find(option[:test],:test);
 				Rsim.exception(NodeE,:reason=>"test (#{option[:test]}) not declared") unless t;
-				cn=t.config;
-				Rsim.info("getting config(#{cn}) from test(#{t.id})",9);
+				c=t.config;
+				Rsim.info("getting config(#{c}) from test(#{t.id})",9);
 			end
-			Rsim.ipxact.finalize(cn);
+			Rsim.ipxact.finalize(c.id);
 		end
 	end ##}}}
 	generator :link,:selected=>false do ##{{{
 		phase 2.0
 		action '/bin/ln' do
-			Rsim.info("execute generator buildflow:link for #{option[:tar]}");
+			Rsim.info("start generator build:link");
 			@root= option[:tar];
 			option[:src].each do |s|
 				Rsim.info("given src file: #{s}",9);
@@ -42,7 +36,7 @@ flow :buildflow do
 		#parameter :src => [], :tar => ''
 		phase 2.0
 		action '/bin/cp' do
-			Rsim.info("execute generator buildflow:copy");
+			Rsim.info("start generator build:copy");
 			@root= option[:tar];
 			option[:src].each do |s|
 				basename=File.basename(s);

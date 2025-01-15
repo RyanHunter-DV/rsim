@@ -105,11 +105,18 @@ flow :nodeflow do
 	# the flow that support loading IP-XACT compatible nodes.
 	generator :loading,:selected=>true do ##{{{
 		action do
+			Rsim.info("start generator node:loading");
 			Rsim.loadContext self;
 			Rsim.info("load context: #{Rsim.loadContext}")
 			option[:entries].each do |e|
 				global_rhload e;
 			end
+		end
+	end ##}}}
+	generator :elaborate,:selected=>true do ##{{{
+		action do
+			Rsim.info("start generator node:elaborate");
+			Rsim.ipxact.elaborate;
 		end
 	end ##}}}
 end

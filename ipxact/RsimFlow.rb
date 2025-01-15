@@ -131,6 +131,8 @@ private
 			name=gn.split(/-/)[0] if opts[:from]=='component';
 			Rsim.exception(NodeE,:reason=>"generator #{name} not defined") unless @steps.has_key?(name);
 			# 2.copy key information from generator
+			next if @steps[name].skip?(option[:skip]);
+			next if @steps[name].skip?;
 			e=GeneratorExecutor.new(gn,@steps[name]);
 			# 3.setup options in selected opts
 			# 4.setup extra options from execute call.

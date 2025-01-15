@@ -32,7 +32,7 @@ module Rsim
 		raise e;
 	end ##}}}
 	## self.report, description
-	def self.report; ##{{{
+	def self.report(); ##{{{
 		return @report unless @report==nil;
 		puts "FATAL, report not correctly initialized before using";
 		puts caller(1);
@@ -45,7 +45,7 @@ module Rsim
 		if @report
 			self.report.info(msg,depth,verbo);
 		else
-			puts "[RAW] #{msg}";
+			puts "[RAW@#{caller(1)[0]}] #{msg}";
 		end
 	end ##}}}
 
@@ -94,9 +94,15 @@ module Rsim
 			self.execute;
 		rescue RsimExceptionBase => e
 			#TODO, may need more actions such for job controls etc.
-			self.report.error("captured exception #{e.type}, exited: #{e.exit?}");
-			self.report.error("reason: #{e.reason}");
-			self.report.error("\n-- Stack information: --\n#{e.stack}")
+			if @report
+				self.report.error("captured exception #{e.type}, exited: #{e.exit?}");
+				self.report.error("reason: #{e.reason}");
+				self.report.error("\n-- Stack information: --\n#{e.stack}")
+			else
+				self.info("captured exception #{e.type}, exited: #{e.exit?}");
+				self.info("reason: #{e.reason}");
+				self.info("\n-- Stack information: --\n#{e.stack}")
+			end
 			return e.exitSignal if e.exit?;
 		rescue Interrupt => e
 			self.info ("get user interrupt signal: #{e.signo}")
