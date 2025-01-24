@@ -1,7 +1,7 @@
 # Feature description
 [[doc/ToolRequirements]]
 # Actions to do
-- [ ] plugin manager will be removed, all generator chain commands will be defined in Rsim module.
+- [x] plugin manager will be removed, all generator chain commands will be defined in Rsim module.
 - [ ] regression flow requires Rsim module has the ability to call buildflow, simflow etc directly.
 
 # file structure
@@ -80,3 +80,47 @@ Once the required chains are loaded, using a string based command with hash opti
 ## chain options while executing
 detailed options support for common chains
 - 'skip', used to specify which generator step will be skipped, this option supports by all chains.
+## feature object supported
+two types of feature are supported by Rsim-G2, one is global feature, and another is local feature.
+The local feature can only be used within a declared component, need add supported command to declare the local feature:
+```ruby
+component 'vlnv' do
+	feature <feature file>
+end
+```
+The global feature can be used by the all objects in current project, which will be loaded directly:
+```ruby
+feature <feature name> do
+	...
+end
+```
+Local feature file is a fixed set of a certain project, that means in this project, the features are fixed, but may not the same in different project.
+*feature file place*
+```
+<STEM>/src/meta/features/global/<*>.rh # stores the global features, can be multiple files with different name
+<STEM>/src/meta/features/local/<*>.rh # stores local features.
+```
+feature node will not be loaded directly, but by the feature command in component or config, once a component node is loaded, the feature command will be executed, so the feature file will be loaded and be stored in local component or config object. An object such as a bus or port that can use the feature after in there description, which requires the feature file must be loaded before or other objects.
+By the way, to use the config global feature under a component for example, the feature node must be loaded first.
+### feature node description
+The feature node file has the same format, the only difference is the node file will be loaded directly or by a component object.
+```ruby
+feature <feature name> do
+	# set <feature name>, <value>
+	set DEPTH, 30
+	set hashT,{xxx=>,xxx=>}
+	set listT,[xxx,xxx]
+	set stringT, 'xxxx'
+	set boolT, true # false
+end
+```
+### use local features
+```ruby
+component <vlnv> do
+	feature <feature file>
+	wire 'name', :in,features.local('DEPTH')-1,0,:type==>xxx
+	if features.local('boolT')
+		wire 'name2',:out,:type=>xxx
+	end
+end
+```
