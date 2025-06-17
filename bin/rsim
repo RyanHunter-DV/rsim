@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-
-$LOAD_PATH << File.dirname(File.dirname(File.absolute_path(__FILE__)));
-require 'Rsim.rb'
-$SIG = Rsim.run;
-puts "";
-puts "Program exist with signal: #{$SIG}"
-puts "";
-exit $SIG;
