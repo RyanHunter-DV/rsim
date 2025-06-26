@@ -1,0 +1,27 @@
+#! /usr/bin/env ruby
+# this is the main shell executor to start a rsim flow
+
+if ENV['RUBY_LIB']
+	ENV['RUBY_LIB'].split(';').each do |path|
+		if File.directory?(path)
+			$LOAD_PATH << path
+			puts "Loading path: #{path}"
+		end
+	end
+end
+
+require_relative '../app/RsApp'
+
+def main
+	signal=0;
+	begin
+		RsApp.init
+		RsApp.run
+	rescue => e
+		signal=-1;
+		puts "Error: #{e.message}"
+		puts e.backtrace
+	end
+	return signal;
+end
+exit main;

@@ -1,0 +1,1 @@
+plugin manager, stores codes for plugins.

@@ -1,0 +1,53 @@
+#action :setup do
+#	RsApp.debug("Setting up build flow - phase 0", 8)
+#	phase 0
+#	command :internal,container do
+#		RsApp.debug("Setting up meta database for #{this.name}", 8)
+#		# setup meta_database, which will be used to store all IP-XACT based information.
+#		this.define_singleton_method(:meta) do
+#			if not instance_variable_defined?(:@meta_database)
+#				RsApp.debug("Creating new MetaDatabase instance", 8)
+#				instance_variable_set(:@meta_database,MetaDatabase.new);
+#			else
+#				RsApp.debug("Using existing MetaDatabase instance", 8)
+#			end
+#			return @meta_database;
+#		end
+#		RsApp.debug("Meta database setup completed, #{this.methods}", 8)
+#	end
+#end
+
+action :load_ipxact do
+	RsApp.debug("Loading IP-XACT files - phase 1", 8)
+	phase 1
+	copy_variable(:rsim_entry);
+	command :internal,container do
+		rsim_entry = context.instance_variable_get(:@rsim_entry);
+		RsApp.debug("Starting to load rsim entry files: #{rsim_entry.inspect}", 8)
+		# loading rsim entry files.
+		rsim_entry.each do |entry|
+			RsApp.debug("Loading rsim entry file: #{entry}", 8)
+			# TODO, need fix the path information
+			rhload entry; 
+			RsApp.debug("Loading rsim entry file: #{entry} done", 8)	
+		end
+		RsApp.debug("All rsim entry files loaded", 8)
+		0
+	end
+end
+action :finalize do
+	RsApp.debug("Finalizing build flow - phase 2", 8)
+	phase 2
+	command :internal,container do
+		RsApp.info("Finalizing build flow", 8)
+		# find the meta database, and finalize all ipx objects, may require a certain order.
+		meta = container.meta;
+		puts "meta: #{meta.inspect}";
+		meta.components.each do |name,c|
+			RsApp.info("Finalizing component #{name}", 8)
+			c.finalize;
+			RsApp.info("Finalizing component #{name} done", 8)
+		end
+		0
+	end
+end
