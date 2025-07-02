@@ -1,6 +1,8 @@
 require_relative 'ReportApi'
 require_relative '../ui/nlui'
 require_relative '../ipxact/init'
+require_relative '../ipxact/global_def'
+require_relative '../loaders/init'
 require_relative '../exceptions/uie'
 require_relative '../exceptions/ipxe'
 
@@ -25,7 +27,7 @@ class Application
 		NodeApp.printer.open_log(@ui.log_file);
 		NodeApp.debugger.open_log(@ui.debug_log_file);
 
-		@meta = MetaDatabase.new(@ui.out_home);
+		@meta = MetaDatabase.new(@ui.out_home,NodeApp);
 		@loader=LoadM.new;
 
 		NodeApp.debug("Application initialized", 5)

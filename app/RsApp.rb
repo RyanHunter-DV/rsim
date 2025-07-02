@@ -49,6 +49,7 @@ class Application
 		unless RsApp.chains.has_key?(chain[:name])
 			raise UIException, "Chain '#{chain[:name]}' not defined"
 		end
+		RsApp.debug("Chain params: #{chain[:params]}", 5)
 		RsApp.chains[chain[:name]].execute(chain[:params]);
 	end
 end
@@ -108,7 +109,7 @@ module RsApp extend ReportApi
 		@@app = Application.new() if @@app.nil?;
 
 		# init mjs system.
-		MultJobSystem.run(@@app.ui.max_jobs,10);
+		MultJobSystem.run(@@app.ui.max_jobs,10,@@app.ui.log_path);
 
 		self.debug("RsApp initialized", 5)
 	end

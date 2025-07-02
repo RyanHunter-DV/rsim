@@ -1,23 +1,55 @@
 class ConfigParser
-	attr_accessor :xml_parser, :config, :database_dir
+	attr_accessor :xml_parser, :config, :database_dir, :app
 
-	def initialize(config, database_dir)
-		@config = config
+	def initialize(obj_or_name, database_dir,app)
+		@app = app
 		@database_dir = database_dir
-		@xml_parser = XmlParser.new(File.join(database_dir, "#{config.name}.xml"))
+		if obj_or_name.is_a?(String)
+			@config = nil
+			@xml_parser = XmlParser.new(File.join(@database_dir, "#{obj_or_name}.xml"))
+		else
+			@config = obj_or_name
+			@xml_parser = XmlParser.new(File.join(@database_dir, "#{@config.name}.xml"))
+		end
 	end
 
 	def parse_to_xml()
-		NodeApp.info("Parsing config #{@config.name} to IP-XACT XML", 8)
+		@app.info("Parsing config #{@config.name} to IP-XACT XML", 8)
 		
 		# Build IP-XACT config structure
 		build_config_xml(@config)
 		@xml_parser.write_to_file
 		
-		NodeApp.info("Config #{@config.name} parsed to XML successfully", 8)
+		@app.info("Config #{@config.name} parsed to XML successfully", 8)
+	end
+	def read_from_xml
+		@app.info("Reading config from IP-XACT XML", 8)
+		config = build_config_from_xml(@xml_parser.read_from_file)
+		@app.info("Config created from XML successfully", 8)
+		config
 	end
 
 private
+
+	def build_config_from_xml(xml_data)
+		config_name = @xml_parser.extract_vlnv(xml_data)
+		config = Config.new(config_name, @database_dir)
+		designRef = @xml_parser.extract_value(xml_data, 'designRef')
+		config.designRef(designRef)
+		viewConfiguration = @xml_parser.extract_section(xml_data, 'viewConfiguration')
+		if viewConfiguration
+			instance_name=nil;
+			view_name=nil;
+			viewConfiguration.scan(/<instanceName>(.*?)<\/instanceName>/) do |instanceName|
+				instance_name=instanceName[0];
+			end
+			viewConfiguration.scan(/<viewName>(.*?)<\/viewName>/) do |viewName|
+				view_name=viewName[0];
+			end
+			config.need(instance_name, :as=>view_name);
+		end
+		config
+	end
 
 	def build_config_xml(config)
 		@xml_parser.header '<?xml version="1.0" encoding="UTF-8"?>'

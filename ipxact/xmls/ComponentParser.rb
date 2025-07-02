@@ -2,33 +2,39 @@
 # IP-XACT Component Parser
 # Parses Component objects to IP-XACT XML format and vice versa
 class ComponentParser
-	attr_accessor :xml_parser, :component, :database_dir
+	attr_accessor :xml_parser, :component, :database_dir, :app
 
-	def initialize(component, database_dir)
-		@component = component
+	def initialize(obj_or_name, database_dir,app)
+		@app = app
 		@database_dir = database_dir
-		@xml_parser = XmlParser.new(File.join(database_dir, "#{component.name}.xml"))
+		if obj_or_name.is_a?(String)
+			@component = nil
+			@xml_parser = XmlParser.new(File.join(@database_dir, "#{obj_or_name}.xml"))
+		else
+			@component = obj_or_name
+			@xml_parser = XmlParser.new(File.join(@database_dir, "#{@component.name}.xml"))
+		end
 	end
 
 	# Parse Component object to IP-XACT XML format
 	def parse_to_xml()
-		NodeApp.info("Parsing component #{@component.name} to IP-XACT XML", 8)
+		@app.info("Parsing component #{@component.name} to IP-XACT XML", 8)
 		
 		# Build IP-XACT component structure
 		build_component_xml(@component)
 		@xml_parser.write_to_file
 		
-		NodeApp.info("Component #{@component.name} parsed to XML successfully", 8)
+		@app.info("Component #{@component.name} parsed to XML successfully", 8)
 	end
 
 	# Read IP-XACT XML file and create Component object
 	def read_from_xml
-		NodeApp.info("Reading component from IP-XACT XML", 8)
+		@app.info("Reading component from IP-XACT XML", 8)
 		
 		xml_data = @xml_parser.read_from_file
 		component = build_component_from_xml(xml_data)
 		
-		NodeApp.info("Component created from XML successfully", 8)
+		@app.info("Component created from XML successfully", 8)
 		component
 	end
 
@@ -84,9 +90,9 @@ private
 		
 		# Files
 		if file_set.sources && !file_set.sources.empty?
-			@xml_parser.add_tag('file', :parent=>'fileSet')
 			file_set.sources.each do |type, files|
 				files.each do |file_name, opts|
+					@xml_parser.add_tag('file', :parent=>'fileSet')
 					@xml_parser.add_tag('name', :value=>file_name, :parent=>'file')
 					@xml_parser.add_tag('fileType', :value=>opts[:type].to_s, :parent=>'file')
 					@xml_parser.add_tag('isIncludeFile', :value=>'false', :parent=>'file')
@@ -98,24 +104,26 @@ private
 			#TODO, need add file_set.includes later.
 		end
 	end
+
+
 	def build_component_from_xml(xml_data)
 		# Parse XML data and create Component object
 		# This is a simplified implementation - in production you'd use a proper XML parser
 		
-		component_name = extract_value(xml_data, 'ipxact:name')
+		component_name = @xml_parser.extract_vlnv(xml_data)
 		component = Component.new(component_name, @database_dir)
 		
 		# Extract views
-		views_data = extract_section(xml_data, 'ipxact:views')
+		views_data = @xml_parser.extract_section(xml_data, 'views')
 		if views_data
-			views_data.scan(/<ipxact:view>(.*?)<\/ipxact:view>/m) do |view_content|
-				view_name = extract_value(view_content[0], 'ipxact:name')
+			views_data.scan(/<view>(.*?)<\/view>/m) do |view_content|
+				view_name = @xml_parser.extract_value(view_content[0], 'envIdentifier')
 				view = View.new(view_name, component)
 				
 				# Extract file set references
-				file_set_refs = extract_section(view_content[0], 'ipxact:fileSetRef')
+				file_set_refs = @xml_parser.extract_section(view_content[0], 'fileSetRef')
 				if file_set_refs
-					file_set_refs.scan(/<ipxact:localName>(.*?)<\/ipxact:localName>/) do |file_set_name|
+					file_set_refs.scan(/<name>(.*?)<\/name>/) do |file_set_name|
 						view.fileSet(file_set_name[0])
 					end
 				end
@@ -123,17 +131,25 @@ private
 				component.views[view_name] = view
 			end
 		end
+		file_sets_data = @xml_parser.extract_section(xml_data, 'fileSets')
+		if file_sets_data
+			file_set_content= @xml_parser.extract_section(file_sets_data, 'fileSet')
+			file_set_name = @xml_parser.extract_value(file_set_content, 'name')
+			file_set = FileSet.new(file_set_name, component)
+			# extract the file from given content.
+			files=@xml_parser.extract_section(file_set_content, 'file',false)
+			files=[files] unless files.is_a?(Array);
+			files.each do |file|
+				file_name = @xml_parser.extract_value(file, 'name')
+				file_type = @xml_parser.extract_value(file, 'fileType')
+				file_set.file(file_name, file_type)
+				@app.debug("File: #{file_name} type: #{file_type}", 5)
+			end
+			component.file_sets[file_set_name] = file_set
+		end
 		
 		component
 	end
 
-	def extract_value(xml_content, tag_name)
-		match = xml_content.match(/<#{tag_name}>(.*?)<\/#{tag_name}>/m)
-		match ? match[1].strip : nil
-	end
 
-	def extract_section(xml_content, section_name)
-		match = xml_content.match(/<#{section_name}>(.*?)<\/#{section_name}>/m)
-		match ? match[1] : nil
-	end
 end

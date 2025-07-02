@@ -97,6 +97,10 @@ class XmlParser
 		fh.write assemble_xml_string(@root_tag)+"\n"
 		fh.close
 	end
+	def read_from_file
+		xml_data = File.read(@db_file)
+		xml_data
+	end
 
 	def xml_string(content)
 		(@indent_string * @current_indent) + content
@@ -110,8 +114,12 @@ class XmlParser
 		indent unless tag.parent.nil?;
   
 		# Start tag with attributes
+		if tag.parent.nil?
+			s+=xml_string( %Q|<root:#{tag.name}|);
+		else
+			s+=xml_string( %Q|<#{tag.name}|);
+		end
 		NodeApp.debug("Adding start tag: <#{tag.name}", 9)
-		s+=xml_string( %Q|<#{tag.name}|);
 
 		tag.properties.each_pair do |p,v|
 			NodeApp.debug("Adding property: #{p}=\"#{tag.properties[p]}\"", 9)
@@ -149,5 +157,118 @@ class XmlParser
   
 		NodeApp.debug("Completed XML string assembly for tag: #{tag.name}", 9)
 		s
+	end
+	def extract_value(xml_content, tag_name, match_once=true)
+		results = []
+		pos = 0
+		
+		while pos < xml_content.length
+			# Find the next opening tag (including any attributes)
+			start_pos = xml_content.index(/<#{tag_name}(?:\s+[^>]*)?>/, pos)
+			break if start_pos.nil?
+			
+			# Find the position after the opening tag
+			opening_tag_end = xml_content.index('>', start_pos) + 1
+			
+			# Count opening and closing tags to find the matching closing tag
+			depth = 1
+			search_pos = opening_tag_end
+			
+			while depth > 0 && search_pos < xml_content.length
+				next_open = xml_content.index(/<#{tag_name}(?:\s+[^>]*)?>/, search_pos)
+				next_close = xml_content.index("</#{tag_name}>", search_pos)
+				
+				if next_open && next_close && next_open < next_close
+					depth += 1
+					search_pos = next_open + 1
+				elsif next_close
+					depth -= 1
+					search_pos = next_close + 1
+				else
+					break
+				end
+			end
+			
+			if depth == 0
+				# Found the matching closing tag
+				end_pos = xml_content.rindex("</#{tag_name}>", search_pos - 1)
+				content = xml_content[opening_tag_end...end_pos]
+				results << content.strip
+				
+				# If match_once is true, break after first match
+				break if match_once
+				
+				pos = end_pos + "</#{tag_name}>".length
+			else
+				# No matching closing tag found, move to next position
+				pos = start_pos + 1
+			end
+		end
+		
+		raise IpxException.new("extract_value: #{tag_name} not found in xml_content") if results.empty?
+		
+		# Return string if match_once is true, array if match_once is false
+		return match_once ? results[0] : results
+	end
+
+	def extract_section(xml_content, section_name, match_once=true)
+		results = []
+		pos = 0
+		
+		while pos < xml_content.length
+			# Find the next opening tag (including any attributes)
+			start_pos = xml_content.index(/<#{section_name}(?:\s+[^>]*)?>/, pos)
+			break if start_pos.nil?
+			
+			# Find the position after the opening tag
+			opening_tag_end = xml_content.index('>', start_pos) + 1
+			
+			# Count opening and closing tags to find the matching closing tag
+			depth = 1
+			search_pos = opening_tag_end
+			
+			while depth > 0 && search_pos < xml_content.length
+				next_open = xml_content.index(/<#{section_name}(?:\s+[^>]*)?>/, search_pos)
+				next_close = xml_content.index("</#{section_name}>", search_pos)
+				
+				if next_open && next_close && next_open < next_close
+					depth += 1
+					search_pos = next_open + 1
+				elsif next_close
+					depth -= 1
+					search_pos = next_close + 1
+				else
+					break
+				end
+			end
+			
+			if depth == 0
+				# Found the matching closing tag
+				end_pos = xml_content.rindex("</#{section_name}>", search_pos - 1)
+				# Include the complete tag pair (opening tag + content + closing tag)
+				content = xml_content[start_pos...(end_pos + "</#{section_name}>".length)]
+				results << content
+				
+				# If match_once is true, break after first match
+				break if match_once
+				
+				pos = end_pos + "</#{section_name}>".length
+			else
+				# No matching closing tag found, move to next position
+				pos = start_pos + 1
+			end
+		end
+		
+		raise IpxException.new("extract_section: #{section_name} not found in xml_content") if results.empty?
+		
+		# Return string if match_once is true, array if match_once is false
+		return match_once ? results[0] : results
+	end
+	def extract_vlnv(xml_data)
+		vendor=extract_value(xml_data, 'vendor')
+		library=extract_value(xml_data, 'library')
+		name=extract_value(xml_data, 'name')
+		version=extract_value(xml_data, 'version')
+		return "#{vendor}/#{library}/#{name}/#{version}"
 	end
 end

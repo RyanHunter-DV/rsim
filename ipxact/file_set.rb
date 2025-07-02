@@ -6,8 +6,8 @@ class FileSet < IpxBaseObject
 		super(component.node_path);
 		@component = component;
 		@root_path = @node_path;
-		@sources = [];
-		@includes = [];
+		@sources = {};
+		@includes = {};
 		set_xml_fields(name)
 	end
 
@@ -16,21 +16,25 @@ class FileSet < IpxBaseObject
 			name;
 		end
 	end
+	def file(name,type)
+		opts={:type=>type.to_sym};
+		add_source(opts,name);
+	end
 
 	# support user commands:
 	# verilog, specify verilog files, all verilog source files will be built in filelist, unless
 	# explicitly specified :filelist=>false.
-	def verilog(opts={},*files)
+	def verilog(*files,**opts)
 		opts[:type] = :verilog;
 		opts[:filelist] = true unless opts.has_key?(:filelist);
 		opts[:incdir] = true unless opts.has_key?(:incdir);
-		add_source(opts,files);
+		add_source(opts,*files);
 	end
-	def sv(opts={},*files)
+	def sv(*files,**opts)
 		opts[:type] = :sv;
 		opts[:filelist] = true unless opts.has_key?(:filelist);
 		opts[:incdir] = true unless opts.has_key?(:incdir);
-		add_source(opts,files);
+		add_source(opts,*files);
 	end
 
 	# root, the root path for the files will be collected, by default is the node path.

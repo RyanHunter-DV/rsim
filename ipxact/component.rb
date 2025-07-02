@@ -49,15 +49,5 @@ class Component < IpxBaseObject
 	end
 end
 
-#command :component do |name,&block|
-def component(name,&block)
-	# ip xact component, create a Component instance, eval the block and register to self.meta
-	# self should be buildflow.
-	node_path = File.absolute_path(File.dirname(__FILE__))
-	c = Component.new(name,node_path);
-	NodeApp.debug("execute component command with args: #{name},#{block.inspect}")
-	c.instance_eval(&block);
-	NodeApp.meta.register('component',c);
-	NodeApp.info("Component #{name} registered", 8)
-end
+
 

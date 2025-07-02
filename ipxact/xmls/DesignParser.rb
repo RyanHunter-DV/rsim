@@ -1,23 +1,54 @@
 class DesignParser
-	attr_accessor :xml_parser, :design, :database_dir
+	attr_accessor :xml_parser, :design, :database_dir, :app
 
-	def initialize(design, database_dir)
-		@design = design
+	def initialize(obj_or_name, database_dir,app)
+		@app = app
 		@database_dir = database_dir
-		@xml_parser = XmlParser.new(File.join(database_dir, "#{design.name}.xml"))
+		if obj_or_name.is_a?(String)
+			@design = nil
+			@xml_parser = XmlParser.new(File.join(@database_dir, "#{obj_or_name}.xml"))
+		else
+			@design = obj_or_name
+			@xml_parser = XmlParser.new(File.join(@database_dir, "#{@design.name}.xml"))
+		end
 	end
 
 	def parse_to_xml()
-		NodeApp.info("Parsing design #{@design.name} to IP-XACT XML", 8)
-		
+		@app.info("Parsing design #{@design.name} to IP-XACT XML", 8)
 		# Build IP-XACT design structure
 		build_design_xml(@design)
 		@xml_parser.write_to_file
-		
-		NodeApp.info("Design #{@design.name} parsed to XML successfully", 8)
+		@app.info("Design #{@design.name} parsed to XML successfully", 8)
 	end
 
+	def read_from_xml
+		@app.info("Reading design from IP-XACT XML", 8)
+		design = build_design_from_xml(@xml_parser.read_from_file)
+		@app.info("Design created from XML successfully", 8)
+		design
+	end
 private
+
+	def build_design_from_xml(xml_data)
+		design_name = @xml_parser.extract_vlnv(xml_data)
+		design = Design.new(design_name, @database_dir)
+
+		componentInstances = @xml_parser.extract_section(xml_data, 'componentInstances')
+		if componentInstances
+			opts={};
+			componentInstances.scan(/<componentInstance>(.*?)<\/componentInstance>/) do |componentInstance|
+				instance_name=componentInstance[0];
+				opts[:as]=instance_name;
+			end
+			componentInstances.scan(/<componentRef>(.*?)<\/componentRef>/) do |componentRef|
+				opts[:componentRef]=componentRef[0];
+			end
+			design.instance(opts[:componentRef],opts);
+			@app.debug("design.instances: #{design.instances}", 9)
+		end
+
+		design
+	end
 
 	def build_design_xml(design)
 		@xml_parser.header '<?xml version="1.0" encoding="UTF-8"?>'
@@ -32,7 +63,7 @@ private
 		@xml_parser.add_tag('componentInstances',:parent=>'design')
 		design.instances.each do |name, opts|
 			@xml_parser.add_tag('componentInstance',:value=>opts[:as], :parent=>'componentInstances')
-			@xml_parser.add_tag('componentRef',:value=>name, :parent=>'componentInstances')
+			@xml_parser.add_tag('componentRef',:value=>opts[:componentRef], :parent=>'componentInstances')
 		end
 	end
 end

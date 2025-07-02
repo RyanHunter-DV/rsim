@@ -27,17 +27,16 @@ class Design < IpxBaseObject
 	# instance 'component vlnv',:as=>'inst name'
 	def instance(vlnv,opts={})
 		raise IpxException.new("as must be specified for instance command") unless opts.has_key?(:as)
-		@instances[vlnv.to_s] = opts;
-		self.define_singleton_method(opts[:as].to_s) do
-			return 'design.'+opts[:as].to_s;
+		instance_name = opts[:as].to_s;
+		opts[:componentRef] = vlnv.to_s;
+		@instances[instance_name] = opts;
+		self.define_singleton_method(instance_name) do
+			return opts[:componentRef]
+			#return 'design.'+instance_name;
 		end
+	end
+	def find_component_name(instance_name)
+		@instances[instance_name][:componentRef]
 	end
 end
 
-#command :design do |name,&block|
-def design(name,&block)
-	node_path = File.absolute_path(File.dirname(__FILE__))
-	d = Design.new(name,node_path);
-	d.instance_eval(&block);
-	NodeApp.meta.register('design',d);
-end

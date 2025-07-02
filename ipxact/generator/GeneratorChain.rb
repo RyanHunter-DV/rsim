@@ -28,7 +28,7 @@ class GenRef
 		@generator.send(method_name.to_sym, *args, &block)
 	end
 
-	def param(**opts)
+	def param(opts={})
 		@params.merge!(opts);
 	end
 	def phase
@@ -125,7 +125,14 @@ class GeneratorChain
 			end
 			
 			# Wait for all jobs in this phase to complete before moving to next phase
-			RsApp.mj.await(processes)
+			status=RsApp.mj.await(processes)
+			RsApp.info("Status: #{status}", 1)
+			failed_jobs = status.select { |job_id, job_status| job_status == :finished_on_error }
+			if failed_jobs.any?
+				failed_job_ids = failed_jobs.keys
+				RsApp.info("Failed job IDs: #{failed_job_ids.join(', ')}", 1)
+				raise Exception, "One or more generators in phase #{phase} failed with error"
+			end
 		end
 	end
 end

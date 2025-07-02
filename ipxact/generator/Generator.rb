@@ -40,19 +40,23 @@ class Generator
 		@args.each do |id, opts|
 			value = opts[:value]
 			if value
-				value.gsub!(/\$\{(\w+)\}/) do |match|
-					param_key = id.to_sym;
-					if params.has_key?(param_key)
-						params[param_key].to_s
+				value.gsub!(/(\S+)\s+\$\{(\w+)\}/) do |match|
+					prefix = $1
+					param_key = $2.to_s
+					if params.has_key?(prefix)
+						puts "#{prefix} #{params[prefix]}"
+						"#{prefix} #{params[prefix]}"
 					else
 						RsApp.info("Warning: Parameter #{param_key} not found, using empty string", 3)
-						""
+						puts "#{prefix} "
+						"#{prefix} "
 					end
 				end
 				cmd_args << value
 			end
 		end
 		cmd=%Q|#{@exe} #{cmd_args.join(' ')}|
+		#exit 3;
 		RsApp.debug("Executing command: #{cmd}", 5)
 		job = MjsCommand.new(:external,self,cmd)
 		return RsApp.mj.dispatch(job)

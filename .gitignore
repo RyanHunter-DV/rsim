@@ -1,4 +1,5 @@
 .obsidian/*
-tests/out*
-tests/rsim.log
-tests/rsim.log*
+test/out*
+test/rsim.log
+test/rsim.log*
+test/*

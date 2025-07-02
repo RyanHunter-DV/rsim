@@ -57,14 +57,15 @@ class Config < IpxBaseObject
 		view=opts[:as].to_s;
 		@need_components[inst_name.to_s] = view.to_s;
 	end
+	def needs
+		@need_components.keys;
+	end
+
+	def find_component_name(instance_name)
+		@design[:object].find_component_name(instance_name)
+	end
+	def find_component_view_name(c)
+		@need_components[c.to_s]
+	end
 end
 
-#command :config do |name,&block|
-def config(name,&block)
-	node_path = File.absolute_path(File.dirname(__FILE__))
-	c = Config.new(name,node_path);
-	# first register to get the design instance, then to call block evaluation
-	NodeApp.meta.link_design(c);
-	c.instance_eval(&block);
-	NodeApp.meta.register('config',c);
-end

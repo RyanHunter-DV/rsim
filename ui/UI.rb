@@ -6,10 +6,9 @@ class UI
 	attr :options
 
 	attr_accessor :proj_home;
-
 	attr :flow_command;
-
 	attr_accessor :chain;
+	attr_accessor :log_path;
 
 	def initialize
 		@verbosity = {:info => 5,:debug => 10}
@@ -23,7 +22,7 @@ class UI
 		}
 		@chain = {:name=>nil,:skip =>[],:params =>{} }
 		setup_options
-		
+		@log_path = File.join(@options[:out_home],'logs')
 	end
 
 	def verbosity(type)
@@ -86,6 +85,9 @@ private
 			end
 			opts.on("-h", "--help", "Show this help message") do
 				puts opts
+				puts "Using example:"
+				puts " -e sim -s build,compile... -p '--eda vcs --config config_name'"
+				puts " -e build -p '--config config_name'"
 				exit
 			end
 			opts.on("-j", "--jobs NUMBER", Integer, "Set maximum number of jobs") do |number|
@@ -110,9 +112,10 @@ private
 				# format: -p 'name = value'
 				if params.include?('=')
 					name, value = params.split('=', 2)
-					@chain[:params][name.strip.to_sym] = value.strip
+					@chain[:params][name.strip.to_s] = value.strip
 				else
-					raise UIException.new("Invalid -p option format. Use 'name=value'")
+					name, value = params.split(' ')
+					@chain[:params][name.strip.to_s] = value.strip
 				end
 			end
 
