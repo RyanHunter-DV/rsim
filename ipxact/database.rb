@@ -1,4 +1,4 @@
-require_relative 'xmls/init'
+﻿require_relative 'xmls/init'
 class MetaDatabase
 	attr_accessor :components;
 	attr_accessor :configs;

@@ -1,4 +1,4 @@
-generator :node_load do
+﻿generator :node_load do
 	# generate to load all nodes compatibale with IP-XACT and build to xml baed meta data
 	exe "#{ENV['RSIM_HOME']}/bins/node_load"
 	arg :out,:value=>'--out ${out}', :required => true

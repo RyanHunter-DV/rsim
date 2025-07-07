@@ -1,4 +1,4 @@
-class Builder
+﻿class Builder
 
 	attr_accessor :app;
 	attr :exe;

@@ -1,4 +1,4 @@
-class XmlTag
+﻿class XmlTag
 	attr_accessor :name,:parent;
 	attr :children;
 	attr :single;

@@ -1,4 +1,4 @@
-require 'printer'
+﻿require 'printer'
 module ReportApi
 	@printer = nil
 	@debugger = nil

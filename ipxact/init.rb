@@ -1,4 +1,4 @@
-require_relative 'rhload'
+﻿require_relative 'rhload'
 
 require_relative 'IpxBaseObject'
 require_relative 'config'

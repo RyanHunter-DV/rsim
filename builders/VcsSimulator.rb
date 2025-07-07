@@ -1,4 +1,4 @@
-require_relative '../exceptions/ipxe'
+﻿require_relative '../exceptions/ipxe'
 require 'fileutils'
 
 class VcsSimulator

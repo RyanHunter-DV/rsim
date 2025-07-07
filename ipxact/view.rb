@@ -1,4 +1,4 @@
-class View < IpxBaseObject
+﻿class View < IpxBaseObject
 	attr :component;
 	attr :file_sets;
 

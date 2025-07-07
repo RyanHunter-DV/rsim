@@ -1,4 +1,4 @@
-class DesignParser
+﻿class DesignParser
 	attr_accessor :xml_parser, :design, :database_dir, :app
 
 	def initialize(obj_or_name, database_dir,app)

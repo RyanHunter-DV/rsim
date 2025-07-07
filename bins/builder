@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby
+﻿#! /usr/bin/env ruby
 if ENV['RUBY_LIB']
 	ENV['RUBY_LIB'].split(';').each do |path|
 		if File.directory?(path)

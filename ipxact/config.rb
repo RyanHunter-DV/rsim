@@ -1,4 +1,4 @@
-class Config < IpxBaseObject
+﻿class Config < IpxBaseObject
 	attr_accessor :need_components;
 	attr_accessor :description;
 	attr :design;

@@ -1,4 +1,4 @@
-class IpxException < Exception
+﻿class IpxException < Exception
 	attr_accessor :level
 	attr_accessor :message
 	def initialize(message,level=0)

@@ -1,4 +1,4 @@
-require 'mjs/MjsCommand'
+﻿require 'mjs/MjsCommand'
 class RsAction
 	# action belongs to a certain step name, if not specified, the step_name is 'default_step'
 	attr :step_name;

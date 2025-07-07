@@ -1,4 +1,4 @@
-# # build flow features:
+﻿# # build flow features:
 # collect all specified node.rh and root.rh config files.
 # so it required a ui option named rsim_entry to get all root.rh files.
 #

@@ -1,4 +1,4 @@
-
+﻿
 class Component < IpxBaseObject
 	attr_accessor :views;
 	attr_accessor :file_sets;

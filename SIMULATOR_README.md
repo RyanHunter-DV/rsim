@@ -1,4 +1,4 @@
-# Simulator Framework
+﻿# Simulator Framework
 
 This framework provides a direct way to execute VCS simulator operations (compile, elaborate, run) through a command-line interface.
 
@@ -188,14 +188,14 @@ The `VcsSimulator` class can be extended to support additional VCS-specific opti
 ## File Structure
 
 ```
-├── bins/
-│   └── simulator          # Main executable
-├── app/
-│   └── SimApp.rb         # Application logic with direct execution
-├── ui/
-│   └── SimUI.rb          # Command-line interface
-└── builders/
-    └── VcsSimulator.rb   # VCS simulator implementation
+â”œâ”€â”€ bins/
+â”‚   â””â”€â”€ simulator          # Main executable
+â”œâ”€â”€ app/
+â”‚   â””â”€â”€ SimApp.rb         # Application logic with direct execution
+â”œâ”€â”€ ui/
+â”‚   â””â”€â”€ SimUI.rb          # Command-line interface
+â””â”€â”€ builders/
+    â””â”€â”€ VcsSimulator.rb   # VCS simulator implementation
 ```
 
 ## Logging

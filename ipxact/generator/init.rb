@@ -1,4 +1,4 @@
-# this is the init entry file for generators.
+﻿# this is the init entry file for generators.
 require_relative 'Generator'
 require_relative 'GeneratorChain'
 

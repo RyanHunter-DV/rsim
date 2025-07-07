@@ -1,4 +1,4 @@
-class BuilderUi
+﻿class BuilderUi
 	attr_accessor :options
 	attr_accessor :verbosity
 	attr_accessor :log_file

@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby
+﻿#! /usr/bin/env ruby
 # this is the main shell executor to start a rsim flow
 
 if ENV['RUBY_LIB']

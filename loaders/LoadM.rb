@@ -1,4 +1,4 @@
-class LoadM
+﻿class LoadM
 
 	attr_accessor :load_path
 

@@ -1,4 +1,4 @@
-require 'optparse'
+﻿require 'optparse'
 
 class NlUi
 	attr_accessor :options

@@ -1,4 +1,4 @@
-require_relative 'RsFlow'
+﻿require_relative 'RsFlow'
 class PluginManager
 	attr :skip_list;
 	attr :plugins;

@@ -1,4 +1,4 @@
-require_relative 'ReportApi'
+﻿require_relative 'ReportApi'
 require_relative '../ui/bui'
 require_relative '../ipxact/init'
 require_relative '../ipxact/xmls/init'

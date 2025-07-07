@@ -1,4 +1,4 @@
-require 'optparse'
+﻿require 'optparse'
 require_relative '../exceptions/uie'
 require 'fileutils'
 

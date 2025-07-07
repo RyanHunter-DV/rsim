@@ -1,4 +1,4 @@
-class Design < IpxBaseObject
+﻿class Design < IpxBaseObject
 	attr_accessor :description;
 	attr_accessor :instances;
 

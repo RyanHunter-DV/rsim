@@ -1,4 +1,4 @@
-class FileSet < IpxBaseObject
+﻿class FileSet < IpxBaseObject
 	attr :component;
 	attr :root_path;
 	attr :sources, :includes;

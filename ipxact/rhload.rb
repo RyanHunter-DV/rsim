@@ -1,4 +1,4 @@
-
+﻿
 def rhload(entry_file)
 	if File.extname(entry_file).empty?
 		NodeApp.debug("No extension detected, adding .rh extension to: #{entry_file}", 8)

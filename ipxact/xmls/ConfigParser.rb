@@ -1,4 +1,4 @@
-class ConfigParser
+﻿class ConfigParser
 	attr_accessor :xml_parser, :config, :database_dir, :app
 
 	def initialize(obj_or_name, database_dir,app)

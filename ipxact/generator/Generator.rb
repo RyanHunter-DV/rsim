@@ -1,4 +1,4 @@
-class Generator
+﻿class Generator
 
 	# the unique identifier for recognized by other classes.
 	attr_accessor :name;

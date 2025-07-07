@@ -1,4 +1,4 @@
-require 'mjs'
+﻿require 'mjs'
 require_relative '../exceptions/uie'
 require_relative '../exceptions/ipxe'
 require_relative 'ReportApi'

@@ -1,4 +1,4 @@
-class IpxBaseObject
+﻿class IpxBaseObject
 	attr_accessor :node_path;
 	def initialize(p)
 		@node_path = p;

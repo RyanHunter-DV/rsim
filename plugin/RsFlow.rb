@@ -1,4 +1,4 @@
-# This is the class for describing the Flow object that created by the global flow command.
+﻿# This is the class for describing the Flow object that created by the global flow command.
 require_relative 'RsAction'
 class RsFlow
 

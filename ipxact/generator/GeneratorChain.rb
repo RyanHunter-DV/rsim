@@ -1,4 +1,4 @@
-class GenRef
+﻿class GenRef
 	attr :name;
 	attr :block;
 	attr :type;

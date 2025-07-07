@@ -1,4 +1,4 @@
-
+﻿
 # IP-XACT Component Parser
 # Parses Component objects to IP-XACT XML format and vice versa
 class ComponentParser

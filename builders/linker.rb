@@ -1,4 +1,4 @@
-# the entry file of link builder for rtl
+﻿# the entry file of link builder for rtl
 class Linker
 	attr_accessor :app
 

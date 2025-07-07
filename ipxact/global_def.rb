@@ -1,4 +1,4 @@
-#command :config do |name,&block|
+﻿#command :config do |name,&block|
 def config(name,&block)
 	node_path = File.absolute_path(File.dirname(__FILE__))
 	c = Config.new(name,node_path);
