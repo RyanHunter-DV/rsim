@@ -1,7 +1,7 @@
-﻿require_relative '../exceptions/ipxe'
+require_relative '../exceptions/ipxe'
 require 'fileutils'
 
-class VcsSimulator
+class XceliumSimulator
 	attr_accessor :out_dir, :testbench, :source_files, :defines, :include_dirs
 	attr_accessor :compile_options, :elaborate_options, :run_options
 	attr_accessor :full64, :debug, :verbose
@@ -25,7 +25,6 @@ class VcsSimulator
 	end
 
 	def create_run_dir
-
 		if @testcase
 			# Validate testcase format: testsuite/testname
 			unless @testcase.match?(/^[^\/]+\/[^\/]+$/)
@@ -39,7 +38,7 @@ class VcsSimulator
 	end
 
 	def compile
-		SimApp.info("VCS Compiling...")
+		SimApp.info("Xcelium Compiling...")
 		SimApp.debug("Compile parameters: #{compile_params}", 5)
 		
 		# Build the compile command
@@ -50,7 +49,7 @@ class VcsSimulator
 	end
 
 	def elaborate
-		SimApp.info("VCS Elaborating...")
+		SimApp.info("Xcelium Elaborating...")
 		SimApp.debug("Elaborate parameters: #{elaborate_params}", 5)
 		
 		# Build the elaborate command
@@ -61,7 +60,7 @@ class VcsSimulator
 	end
 
 	def run
-		SimApp.info("VCS Running simulation...")
+		SimApp.info("Xcelium Running simulation...")
 		SimApp.debug("Run parameters: #{run_params}", 5)
 		
 		# Build the run command
@@ -72,9 +71,9 @@ class VcsSimulator
 	end
 
 	def clean
-		SimApp.info("VCS Cleaning...")
+		SimApp.info("Xcelium Cleaning...")
 		FileUtils.rm_rf(Dir.glob(File.join(@out_dir, '*')))
-		SimApp.info("VCS Clean completed")
+		SimApp.info("Xcelium Clean completed")
 	end
 
 private
@@ -95,9 +94,9 @@ private
 		exit_status = 0
 		
 		if exit_status == 0
-			SimApp.info("VCS #{operation_name} successful")
+			SimApp.info("Xcelium #{operation_name} successful")
 		else
-			raise EdaException.new("VCS #{operation_name} failed with exit status: #{exit_status}")
+			raise EdaException.new("Xcelium #{operation_name} failed with exit status: #{exit_status}")
 		end
 	end
 
@@ -134,7 +133,7 @@ private
 	end
 
 	def build_compile_command
-		cmd_parts = ['vlogan']
+		cmd_parts = ['xmvlog']
 		
 		# Add filelist if provided
 		if @filelist
@@ -151,40 +150,41 @@ private
 		@include_dirs.each { |dir| cmd_parts << "+incdir+#{dir}" } unless @include_dirs.empty?
 		
 		# Add output directory
-		cmd_parts << "-o #{File.join(@out_dir, 'simv')}"
+		cmd_parts << "-o #{File.join(@out_dir, 'xmsim')}"
 		
 		# Add compile options
 		cmd_parts << @compile_options unless @compile_options.empty?
 		
 		# Add flags
-		cmd_parts << '-full64' if @full64
-		cmd_parts << '-debug_all' if @debug
+		cmd_parts << '-64bit' if @full64
+		cmd_parts << '-debug' if @debug
+		cmd_parts << '-v' if @verbose
 		
 		cmd_parts.join(' ')
 	end
 
 	def build_elaborate_command
-		cmd_parts = ['vcs']
+		cmd_parts = ['xmelab']
 		
 		# Add output directory
-		cmd_parts << "-o #{File.join(@out_dir, 'simv')}"
+		cmd_parts << "-o #{File.join(@out_dir, 'xmsim')}"
 		
 		# Add elaborate options
 		cmd_parts << @elaborate_options unless @elaborate_options.empty?
 		
 		# Add flags
-		cmd_parts << '-full64' if @full64
-		cmd_parts << '-debug_all' if @debug
+		cmd_parts << '-64bit' if @full64
+		cmd_parts << '-debug' if @debug
 		cmd_parts << '-v' if @verbose
 		
 		cmd_parts.join(' ')
 	end
 
 	def build_run_command
-		simv_path = File.join(@out_dir, 'simv')
-		raise IpxException.new("Simulator executable not found: #{simv_path}") unless File.exist?(simv_path)
+		xmsim_path = File.join(@out_dir, 'xmsim')
+		raise IpxException.new("Simulator executable not found: #{xmsim_path}") unless File.exist?(xmsim_path)
 		
-		cmd_parts = [simv_path]
+		cmd_parts = [xmsim_path]
 		
 		# Add testbench
 		cmd_parts << "-testbench #{@testbench}" if @testbench
@@ -201,4 +201,4 @@ private
 		
 		cmd_parts.join(' ')
 	end
-end
+end 

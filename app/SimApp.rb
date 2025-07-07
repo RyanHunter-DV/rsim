@@ -67,21 +67,23 @@ class SimApplication
 			testcase: params[:testcase]
 		}
 		
-		vcs = VcsSimulator.new(vcs_params)
+		eda = VcsSimulator.new(vcs_params) if params[:simulator] == 'vcs';
+		eda = XceliumSimulator.new(vcs_params) if params[:simulator] == 'xcelium';
+		raise UIException, "Unsupported simulator: #{params[:simulator]}" if eda.nil?;
 		
 		# Execute based on action
 		case params[:action]
 		when 'compile_only'
-			vcs.compile
+			eda.compile
 		when 'run_only'
-			vcs.run
+			eda.run
 		when 'clean_only'
-			vcs.clean
+			eda.clean
 		else
 			# Default: full simulation flow
-			vcs.compile
-			vcs.elaborate
-			vcs.run
+			eda.compile
+			eda.elaborate
+			eda.run
 		end
 	end
 end
