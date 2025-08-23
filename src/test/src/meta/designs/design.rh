@@ -1,0 +1,3 @@
+design 'ryan/test/tdesign/1.0' do
+	instance 'ryan/test_lib/test_component/1.0', :as => :inst
+end

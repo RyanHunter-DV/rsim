@@ -1,0 +1,3 @@
+config 'ryan/test/config/1.0' do
+	need :inst, :as => :test_view
+end

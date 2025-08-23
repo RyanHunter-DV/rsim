@@ -1,0 +1,9 @@
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/SimApp.rb:24:in `initialize'](21:21:04) SimApplication initialized
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/SimApp.rb:124:in `init'](21:21:04) SimApp initialized
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/SimApp.rb:28:in `run'](21:21:04) SimApplication running
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/SimApp.rb:38:in `execute_simulation'](21:21:04) Executing simulation with params: {:simulator=>"vcs", :action=>"sim", :testcase=>"suite/testn"}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/builders/VcsSimulator.rb:43:in `compile'](21:21:04) Compile parameters: {:out_dir=>"/Users/ryanhunter/project/local/rsim/g3_00/test/sim/out", :source_files=>[], :defines=>[], :include_dirs=>[], :compile_options=>"", :full64=>false, :debug=>false, :verbose=>false}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/builders/VcsSimulator.rb:47:in `compile'](21:21:04) Compile command: vcs -o /Users/ryanhunter/project/local/rsim/g3_00/test/sim/out/simv
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/builders/VcsSimulator.rb:54:in `elaborate'](21:21:04) Elaborate parameters: {:out_dir=>"/Users/ryanhunter/project/local/rsim/g3_00/test/sim/out", :elaborate_options=>"", :full64=>false, :debug=>false, :verbose=>false}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/builders/VcsSimulator.rb:58:in `elaborate'](21:21:04) Elaborate command: vcs -o /Users/ryanhunter/project/local/rsim/g3_00/test/sim/out/simv
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/builders/VcsSimulator.rb:65:in `run'](21:21:04) Run parameters: {:out_dir=>"/Users/ryanhunter/project/local/rsim/g3_00/test/sim/out", :testbench=>nil, :run_options=>"", :verbose=>false}

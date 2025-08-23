@@ -1,0 +1,8 @@
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/Application.rb:24:in `initialize'](22:14:34) Application initialized
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:62:in `init'](22:14:34) RsApp initialized
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/GeneratorChain.rb:116:in `block in execute'](22:14:34) Executing generators in phase 0
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:38:in `execute'](22:14:34) Executing generator node_load with params {:name=>"node_load", :out=>"out"}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:56:in `execute'](22:14:34) Executing command: echo node_load --out out
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/GeneratorChain.rb:116:in `block in execute'](22:14:39) Executing generators in phase 1
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:38:in `execute'](22:14:39) Executing generator build with params {:name=>"build", :out=>"out"}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:56:in `execute'](22:14:39) Executing command: echo build --out out

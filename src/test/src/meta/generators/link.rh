@@ -1,0 +1,79 @@
+# this is a generator for link operations
+# the node is declared as an example to determine the config file formats.
+# generator xml format
+#<generator>
+#<name>ASIC_RTL_Generator</name>
+#<vendor>TSMC</vendor>
+#<apiType>commandLine</apiType>
+#<commandLine>
+#  <executable>asic_gen.sh</executable>
+#  <arguments>
+#	<argument>--lib $(lib)</argument>
+#  </arguments>
+#</commandLine>
+#</generator>
+#generator :link do |name,opts|
+#	exe '/bin/ln'
+#	arg :id=>:src,:value=>'${src}', :required => true
+#	arg :id=>:dest,:value=>'${dest}', :required => true
+#end
+
+generator :node_load do
+	# loading nodes and translate to xml.
+end
+chain :build do
+	# build --database <xxx/xxx/meta.db> --out <xxx>
+	exe "#{ENV['RSIM_HOME']}/bin/build"
+	arg :id=>:database,:value=>'--database ${database}', :required => true
+	arg :id=>:config,:value=>'--config ${config}', :required => true
+	arg :id=>:out,:value=>'--out ${out}', :required => true
+end
+
+
+generator :compile do
+	exe "#{ENV['RSIM_HOME']}/bin/compile"
+	arg :id=>:filelist,:value=>'--filelist ${filelist}', :required => true
+	phase 1
+	#TOOD, more
+end
+
+generator :sim do
+	exe "#{ENV['RSIM_HOME']}/bin/sim"
+	arg :multiple_test, :value=>'--regression ${testlist}',:type=>:string
+	arg :single_test,:value=>'--test ${test}',:type=>:string
+	arg :eda,:value=>'--eda ${eda}',:type=>:string
+end
+
+chain :compile do
+	generator :compile do
+		param :database => RsApp.pm.loadflow.meta.database_file
+		param :out => ENV['OUT']
+	end
+	generator :elaborate do
+	end
+end
+# chain :name, :when => <condition>
+chain :simflow_vcs, :when => '${simulation}' do
+
+	chain_sel :build do
+		param :database => RsApp.pm.loadflow.meta.database_file
+		param :out => ENV['OUT']
+	end
+	chain_sel :compile do
+		param :filelist => RsApp.ui.filelist_file
+		param :eda=>'vcs'
+	end
+end
+
+chain :regression, :when => '${regression}' do
+	chain_sel :build do
+		param :database => RsApp.pm.loadflow.meta.database_file
+		param :out => ENV['OUT']
+	end
+	chain_sel :compile do
+		param :filelist => RsApp.ui.filelist_file
+		param :eda=>'vcs'
+	end
+	generator :sim do
+	end
+end

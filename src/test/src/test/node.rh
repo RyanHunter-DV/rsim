@@ -1,0 +1,13 @@
+suite :example do
+	template :uvm_test_template do
+		parameter 'uvm_test_name', 'base_test'
+		parameter 'uvm_verbosity', 'UVM_MEDIUM'
+		parameter 'coverage_enable', true
+		config :chip_tb
+	end
+
+	testcase :smoke_test, :template => 'uvm_test_template' do
+		description "Basic smoke test case"
+		test_template 'uvm_test_template'
+	end
+end

@@ -1,0 +1,12 @@
+component 'ryan/test_lib/test_component/1.0' do
+	view :test_view do
+		# during the instance of creating stage, the command only been set directly.
+		# and next in finalize stage, all objects' linking shall be done.
+		fileSet :test_file_set
+	end
+	fileSet :test_file_set do
+		verilog 'src/rtl/test.v'
+		verilog 'src/rtl/test2.v'
+		NodeApp.info("test_file_set registered", 8)
+	end
+end

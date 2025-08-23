@@ -1,0 +1,4 @@
+puts "executing node file, self: #{self.inspect}"
+NodeApp.info("start loading node file: #{__FILE__}",0);
+rhload 'src/node'
+NodeApp.info("node file: #{__FILE__} loaded",0);

@@ -1,0 +1,12 @@
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:27:in `initialize'](21:30:15) Application initialized
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:114:in `init'](21:30:15) RsApp initialized
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:34:in `run'](21:30:15) Application running
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:44:in `chain_execute'](21:30:15) Executing chain: build
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:52:in `chain_execute'](21:30:15) Chain params: {"--config"=>"config"}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/GeneratorChain.rb:116:in `block in execute'](21:30:15) Executing generators in phase 0
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:38:in `execute'](21:30:15) Executing generator node_load with params {"--config"=>"config", "--out"=>"./out", "--entry"=>"./root.rh", "--verbosity"=>10, "--debug"=>10}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:60:in `execute'](21:30:15) Executing command: /Users/ryanhunter/project/local/rsim/g3_00/bins/node_load --out ./out --entry ./root.rh --verbosity 10 --debug 10
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/GeneratorChain.rb:116:in `block in execute'](21:30:21) Executing generators in phase 1
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:38:in `execute'](21:30:21) Executing generator file_build with params {"--config"=>"config", "--out"=>"./out"}
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/ipxact/generator/Generator.rb:60:in `execute'](21:30:21) Executing command: /Users/ryanhunter/project/local/rsim/g3_00/bins/builder --config config --out ./out --method link
+[D] [/Users/ryanhunter/project/local/rsim/g3_00/app/RsApp.rb:39:in `run'](21:30:26) Application finished
