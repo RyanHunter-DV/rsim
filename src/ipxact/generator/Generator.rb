@@ -46,19 +46,23 @@
 						cmd_args << opts[:value]
 					end
 				else
-					value.gsub!(/(\S+)\s+\$\{(\w+)\}/) do |match|
+					# Find pattern: prefix and ${xxx}
+					if value =~ /(\S+)\s+\$\{(\w+)\}/
 						prefix = $1
 						param_key = $2.to_s
 						if params.has_key?(prefix)
-							puts "#{prefix} #{params[prefix]}"
-							"#{prefix} #{params[prefix]}"
+							param_values = params[prefix]
+							#param_values = [param_values] unless param_values.is_a?(Array)
+							param_values.each do |item|
+								cmd_args << "#{prefix} #{item}"
+							end
 						else
 							RsApp.info("Warning: Parameter #{param_key} not found, using empty string", 3)
-							puts "#{prefix} "
-							"#{prefix} "
+							cmd_args << "#{prefix} "
 						end
+					else
+						cmd_args << value
 					end
-					cmd_args << value
 				end
 			end
 		end

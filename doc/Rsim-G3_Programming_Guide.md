@@ -18,9 +18,9 @@ The system is built around four main application types:
 ### Directory Structure
 
 ```
+├── bins/          # Executable entry points
 src/
 ├── app/           # Main application classes
-├── bins/          # Executable entry points
 ├── builders/      # Build and simulation engines
 ├── chains/        # Workflow definitions
 ├── exceptions/    # Custom exception classes
@@ -472,10 +472,10 @@ export PROJ_HOME=/path/to/project
 export OUT_HOME=/path/to/output
 
 # Run VCS simulation
-./src/bins/simulator -e simflow -p '--simulator vcs --filelist filelist.f --testcase testsuite/test1'
+./bins/simulator -e simflow -p '--simulator vcs --filelist filelist.f --testcase testsuite/test1'
 
 # Run with custom options
-./src/bins/simulator -e simflow -p '--simulator vcs --filelist filelist.f --testcase testsuite/test1 --vcs_comp_options "-full64 -debug_all"'
+./bins/simulator -e simflow -p '--simulator vcs --filelist filelist.f --testcase testsuite/test1 --vcs_comp_options "-full64 -debug_all"'
 ```
 
 ### Building Components
@@ -486,7 +486,7 @@ export PROJ_HOME=/path/to/project
 export OUT_HOME=/path/to/output
 
 # Build components
-./src/bins/builder --config config_name --method vcs
+./bins/builder --config config_name --method vcs
 ```
 
 ### Running Workflows
@@ -497,10 +497,10 @@ export PROJ_HOME=/path/to/project
 export OUT_HOME=/path/to/output
 
 # Execute a workflow chain
-./src/bins/rsim -e buildflow -p '--config config_name'
+./bins/rsim -e buildflow -p '--config config_name'
 
 # Execute simulation flow
-./src/bins/rsim -e simflow -p '--eda vcs --config config_name'
+./bins/rsim -e simflow -p '--eda vcs --config config_name'
 ```
 
 ## Development Guidelines

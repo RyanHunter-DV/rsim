@@ -29,7 +29,10 @@
 	end
 
 	def param(opts={})
-		@params.merge!(opts);
+		opts.each do |key, value|
+			@params[key]=[] unless @params.include?(key);
+			@params[key] << value;
+		end
 	end
 	def phase
 		return @generator.phase;
@@ -120,7 +123,14 @@ class GeneratorChain
 			# if type is gen
 			processes = [];
 			phase_gens.each do |gen|
-				p=params.merge(gen.params);
+				p = params.dup
+				gen.params.each do |k, v|
+					if p.has_key?(k)
+						p[k].append(*v);
+					else
+						p[k] = v
+					end
+				end
 				processes << gen.execute(p)
 			end
 			

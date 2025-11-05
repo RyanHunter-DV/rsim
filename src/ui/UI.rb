@@ -92,10 +92,25 @@ private
 			end
 			opts.on("-h", "--help", "Show this help message") do
 				puts opts
-				puts "Using example:"
-				puts " -e sim -s build,compile... -p '--eda vcs --config config_name'"
-				puts " -e sim  -p '--eda vcs --test testsuite/testname'"
-				puts " -e build -p '--config config_name'"
+				puts ""
+				puts "Examples:"
+				puts "  # Execute build flow with config"
+				puts "  ./bins/rsim -e buildflow -p '--config config_name'"
+				puts ""
+				puts "  # Execute simulation flow with simulator and options"
+				puts "  ./bins/rsim -e simflow -p '--simulator vcs --full64'"
+				puts ""
+				puts "  # Skip specific generators in a flow"
+				puts "  ./bins/rsim -e buildflow -s node_load -p '--config config_name'"
+				puts ""
+				puts "  # Run with verbose and debug output"
+				puts "  ./bins/rsim -e buildflow -v 10 -d 10 -p '--config config_name'"
+				puts ""
+				puts "Available flows:"
+				puts "  - buildflow  : Build components and generate filelists"
+				puts "  - simflow    : Run simulation (compile and run)"
+				puts ""
+				puts "Note: Set RSIM_HOME environment variable to point to the g3 directory"
 				exit
 			end
 			opts.on("-j", "--jobs NUMBER", Integer, "Set maximum number of jobs") do |number|
@@ -120,10 +135,12 @@ private
 				# format: -p 'name = value'
 				if params.include?('=')
 					name, value = params.split('=', 2)
-					@chain[:params][name.strip.to_s] = value.strip
+					@chain[:params][name.strip.to_s]=[] unless @chain[:params].include?(name.strip.to_s);
+					@chain[:params][name.strip.to_s] << value.strip
 				else
 					name, value = params.split(' ')
-					@chain[:params][name.strip.to_s] = value.strip
+					@chain[:params][name.strip.to_s]=[] unless @chain[:params].include?(name.strip.to_s);
+					@chain[:params][name.strip.to_s] << value.strip
 				end
 			end
 
