@@ -1,0 +1,127 @@
+"""
+File Description:
+comment sift lib in verilogAnalyzer.
+a global def siftComment, which gets an array of contents, and returns contents after deleting all
+comments
+
+"""
+
+module SinglelineComment ##{
+
+    ## delete singleline comment from given line with specific flag
+    def self.deleteComment line,flag ##{{{
+        ptrn = Regexp.new (flag.to_s+".*$")
+        m = ptrn.match(line)
+        if m==nil
+            beginPos = line.length-1;
+        else
+            beginPos = m.begin(0)-1;
+        end
+        return line[0..beginPos]
+    end ##}}}
+
+end ##}
+
+module MultilineComment ##{
+
+    ## if flag matched in line, then call block with give pos
+    def self.match line,flag,start,&block ##{{{
+        ptrn = Regexp.new flag;
+        m = ptrn.match(line);
+        if m != nil
+            if start
+                block.call m.begin(0);
+            else
+                block.call m.end(0);
+            end
+        end
+    end ##}}}
+
+    def self.commentHasMultilines cmt ##{{{
+        return true if /\n/.match cmt;
+        return false;
+    end ##}}}
+
+    ## flag[:start], the start flag of comment
+    ## flag[:end], the end flag of comment
+    ## cnts, array of contents
+    ## delete one pair or multiple line comment
+    def self.deleteOnePairComment cnts,flag ##{{{
+        cntline = cnts.join("\n");
+        cntlen  = cntline.length;
+        siftedline = '';
+        commentStarted=false;
+        startPos=0;
+        unless commentStarted ##{
+            match cntline,flag[:start],true do |pos|
+                commentStarted=true;
+                startPos=pos;
+            end
+        end ##}
+        if commentStarted ##{
+            match cntline,flag[:end],false do |pos|
+                sep = '';
+                sep = "\n" if commentHasMultilines cntline[startPos,pos];
+                siftedline = cntline[0..(startPos-1)]+sep+cntline[(pos+1)..(cntlen-1)];
+                commentStarted=false;startPos=0;
+            end
+        end ##}
+        cnts = siftedline.split("\n");
+        return cnts;
+    end ##}}}
+
+    def self.hasCommentFlag? cnts,sflag ##{{{
+        p = Regexp.new(sflag.to_s);
+        cntStr = cnts.join(' ');
+        return true if p.match(cntStr);
+        return false;
+    end ##}}}
+    def self.deleteComment cnts,flag ##{{{
+        tmpCnts = cnts;
+        while hasCommentFlag?(tmpCnts,flag[:start])
+            tmpCnts = deleteOnePairComment(tmpCnts,flag);
+        end
+        cnts=tmpCnts;
+    end ##}}}
+end ##}
+
+module SVComment ##{
+
+    @@sCommentFlag = ['\/\/'];
+    @@mCommentFlag = [{:start=>'\/\*',:end=>'\*\/'}]
+
+    def self.deleteSinglelineComment line ##{{{
+        @@sCommentFlag.each do |f|
+            line = SinglelineComment.deleteComment(line,f)
+        end
+        return line;
+    end ##}}}
+
+    def self.deleteMultilineComment cnts ##{{{
+        @@mCommentFlag.each do |mf|
+            cnts = MultilineComment.deleteComment(cnts,mf)
+        end
+        return cnts;
+    end ##}}}
+
+end ##}
+
+
+
+
+## args
+## rawCnts, file contents, one element of rawCnts array indicates to one line
+def siftComment rawCnts,**opts; ##{
+    siftedCnts = []
+
+    ## delete all single line comments first.
+    rawCnts.each do |line|
+        siftedCnts << SVComment.deleteSinglelineComment(line)
+    end
+
+    rawCnts = siftedCnts
+    ## delete multiple line comments
+    siftedCnts = SVComment.deleteMultilineComment(rawCnts)
+
+    return siftedCnts;
+end ##}

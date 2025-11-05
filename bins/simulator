@@ -1,4 +1,6 @@
 #! /usr/bin/env ruby
+# this is the main shell executor to start a simulator flow
+
 if ENV['RUBY_LIB']
 	ENV['RUBY_LIB'].split(';').each do |path|
 		if File.directory?(path)
@@ -8,13 +10,13 @@ if ENV['RUBY_LIB']
 	end
 end
 
-require_relative '../app/NodeApp'
+require_relative '../src/app/SimApp'
 
 def main
 	signal=0;
 	begin
-		NodeApp.init
-		NodeApp.run
+		SimApp.init
+		SimApp.run
 	rescue => e
 		signal=-1;
 		puts "Error: #{e.message}"
@@ -22,4 +24,4 @@ def main
 	end
 	return signal;
 end
-exit main;
+exit main; 

@@ -1,6 +1,4 @@
 #! /usr/bin/env ruby
-# this is the main shell executor to start a rsim flow
-
 if ENV['RUBY_LIB']
 	ENV['RUBY_LIB'].split(';').each do |path|
 		if File.directory?(path)
@@ -10,13 +8,13 @@ if ENV['RUBY_LIB']
 	end
 end
 
-require_relative '../app/RsApp'
+require_relative '../src/app/BuildApp'
 
 def main
 	signal=0;
 	begin
-		RsApp.init
-		RsApp.run
+		BuildApp.init
+		BuildApp.run
 	rescue => e
 		signal=-1;
 		puts "Error: #{e.message}"
@@ -25,3 +23,5 @@ def main
 	return signal;
 end
 exit main;
+
+
