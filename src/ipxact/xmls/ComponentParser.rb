@@ -157,9 +157,11 @@ private
 				@app.debug("File: #{file_name} type: #{file_type}", 5)
 			end
 			includes=@xml_parser.extract_section(file_set_content, 'include',false)
-			includes=[includes] unless includes.is_a?(Array);
-			includes.each do |include|
-				file_set.incdir(@xml_parser.extract_value(include, 'include'))
+			unless includes==nil
+				includes=[includes] unless includes.is_a?(Array);
+				includes.each do |include|
+					file_set.incdir(@xml_parser.extract_value(include, 'include'))
+				end
 			end
 			component.file_sets[file_set_name] = file_set
 		end
